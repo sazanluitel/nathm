@@ -10,7 +10,7 @@ class AccessCheck:
             if not request.user.is_authenticated:
                 return redirect('userauth:login')  # Adjust the login URL as necessary
             if not request.user.is_staff:
-                return redirect('website:index')
+                return redirect('dashboard:index')
         
         response = self.get_response(request)
         return response
