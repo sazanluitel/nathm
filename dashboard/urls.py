@@ -1,6 +1,6 @@
 from django.urls import path
 from django.urls import path
-from .views import CustomLoginView
+from .views import *
 
 from .views import *
 
