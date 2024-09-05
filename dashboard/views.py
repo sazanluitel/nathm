@@ -52,4 +52,8 @@ class CampusView(View):
 class DepartmentView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'dashboard/department/add.html')
+
+class ProgramView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'dashboard/program/add.html')
     
