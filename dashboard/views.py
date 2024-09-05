@@ -15,3 +15,12 @@ class DashboardView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'dashboard/parts/index.html')
     
+
+class CampusView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'dashboard/campus/add.html')
+
+class DepartmentView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'dashboard/department/add.html')
+    
