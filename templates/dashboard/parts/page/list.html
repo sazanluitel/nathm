@@ -1,0 +1,33 @@
+{% extends "admin-base.html" %}
+{% block title %}Pages{% endblock title %}
+{% block beadcrumb %}Pages{% endblock beadcrumb %}
+{% block maintitle %}Pages{% endblock maintitle %}
+
+{% block content %}
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-body">
+            {% with messages=messages %}
+                {% include 'alert.html' %}
+            {% endwith %}
+
+            <div class="dt-responsive">
+                <table 
+                    class="ajaxdatatable table table-bordered nowrap"
+                    data-ajax="{% url 'dashboard:pageajax' %}"
+                    data-nodata="No Pages Found"
+                >
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
