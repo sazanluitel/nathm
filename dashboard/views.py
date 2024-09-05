@@ -21,6 +21,16 @@ class DashboardView(View):
         return render(request, 'dashboard/parts/index.html')
 
 class CampusView(View):
+    def post(self, request, *args, **kwargs):
+        form = CampusForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Campus added successfully.')
+            return redirect('dashboard:campus-list')
+        else:
+            messages.error(request, forms.errors)
+            return render(request, 'dashboard/campus/add.html', {'form': form})
+        
     def get(self, request, *args, **kwargs):
         return render(request, 'dashboard/campus/add.html')
 
@@ -96,8 +106,19 @@ class DepartmentList(View):
         return render(request, 'dashboard/department/list.html', {'department': departments})
 
 class ProgramView(View):
+    def post(self, request, *args, **kwargs):
+        form = ProgramForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Program added successfully.')
+            return redirect('dashboard:program-list')
+        else:
+            messages.error(request, forms.errors)
+            return render(request, 'dashboard/program/add.html', {'form': form})
+        
     def get(self, request, *args, **kwargs):
-        return render(request, 'dashboard/program/add.html')
+        form = ProgramForm
+        return render(request, 'dashboard/program/add.html', {'form': form})
     
 class ProgramList(View):
     def get(self, request, *args, **kwargs):

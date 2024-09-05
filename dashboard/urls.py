@@ -22,6 +22,7 @@ urlpatterns = [
 
 
     path('program/add', ProgramView.as_view(), name = 'program'),
+    path('modules/', ModulesView.as_view(), name = 'modules'),
     path('program/list', ProgramList.as_view(), name = 'programlist'),
     path('program/edit/<id>', ProgramEdit.as_view(), name = 'programedit'),
     path('program/ajax', ProgramAjax.as_view(), name = 'programajax'),
