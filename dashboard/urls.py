@@ -12,5 +12,6 @@ urlpatterns = [
     path('campus/', CampusView.as_view(), name='campus'),
     path('department/', DepartmentView.as_view(), name = 'department'),
     path('program/', ProgramView.as_view(), name = 'program'),
+    path('modules/', ModulesView.as_view(), name = 'modules'),
 
 ]

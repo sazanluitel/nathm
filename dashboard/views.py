@@ -46,14 +46,61 @@ class DashboardView(View):
         return render(request, 'dashboard/parts/index.html')
 
 class CampusView(View):
+    def post(self, request, *args, **kwargs):
+        form = CampusForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Campus added successfully.')
+            return redirect('dashboard:campus-list')
+        else:
+            messages.error(request, forms.errors)
+            return render(request, 'dashboard/campus/add.html', {'form': form})
+        
     def get(self, request, *args, **kwargs):
-        return render(request, 'dashboard/campus/add.html')
+        form = CampusForm
+        return render(request, 'dashboard/campus/add.html',{'form': form})
 
 class DepartmentView(View):
+    def post(self, request, *args, **kwargs):
+        form = DepartmentForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Department added successfully.')
+            return redirect('dashboard:department-list')
+        else:
+            messages.error(request, forms.errors)
+            return render(request, 'dashboard/department/add.html', {'form': form})
+        
+
     def get(self, request, *args, **kwargs):
-        return render(request, 'dashboard/department/add.html')
+        form = DepartmentForm
+        return render(request, 'dashboard/department/add.html', {'form': form})
 
 class ProgramView(View):
+    def post(self, request, *args, **kwargs):
+        form = ProgramForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Program added successfully.')
+            return redirect('dashboard:program-list')
+        else:
+            messages.error(request, forms.errors)
+            return render(request, 'dashboard/program/add.html', {'form': form})
+        
     def get(self, request, *args, **kwargs):
-        return render(request, 'dashboard/program/add.html')
+        form = ProgramForm
+        return render(request, 'dashboard/program/add.html', {'form': form})
     
+class ModulesView(View):
+    def post(self, request, *args, **kwargs):
+        form = ModulesForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Module added successfully.')
+            return redirect('dashboard:module-list')
+        else:
+            messages.error(request, forms.errors)
+            return render(request, 'dashboard/modules/add.html', {'form': form})
+    def get(self, request, *args, **kwargs):
+        form = ModulesForm
+        return render(request, 'dashboard/modules/add.html', {'form': form})
