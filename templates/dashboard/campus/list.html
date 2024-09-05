@@ -7,7 +7,7 @@
 
 <div class="col-sm-12">
     <div class="d-flex justify-content-end mb-2">
-         <a href="{% url 'dashboard:campus %}" class="btn btn-success mt-3">Add Campus</a>
+         <a href="{% url 'dashboard:campus' %}" class="btn btn-success mt-3">Add Campus</a>
     </div>
     {% with messages=messages %}
     {% include 'dashboard/alert.html' %}
@@ -17,7 +17,7 @@
             <div class="dt-responsive">
                 <table 
                     class="ajaxdatatable table table-bordered nowrap"
-                    data-ajax="{% url 'menu:campusajax' %}"
+                    data-ajax="{% url 'dashboard:campusajax' %}"
                     data-nodata="No Data Found"
                 >
                     <thead>
