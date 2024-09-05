@@ -1,0 +1,39 @@
+{% extends "dashboard/admin-base.html" %}
+{% block title %}Menus{% endblock title %}
+{% block breadcrumb %}Menus{% endblock breadcrumb %}
+{% block maintitle %}Menus{% endblock maintitle %}
+
+{% block content %}
+
+<div class="col-sm-12">
+    <div class="d-flex justify-content-end mb-2">
+         <a href="{% url 'menu:menu' %}" class="btn btn-success mt-3">Add Menus</a>
+    </div>
+    {% with messages=messages %}
+    {% include 'dashboard/alert.html' %}
+{% endwith %}
+    <div class="card">
+        <div class="card-body">
+            <div class="dt-responsive">
+                <table 
+                    class="ajaxdatatable table table-bordered nowrap"
+                    data-ajax="{% url 'menu:menuajax' %}"
+                    data-nodata="No Data Found"
+                >
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Price</th>
+                            <th>Category</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

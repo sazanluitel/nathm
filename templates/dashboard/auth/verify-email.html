@@ -1,0 +1,24 @@
+{% extends "dashboard/login-base.html" %}
+{% block title %}Forget Password - HamroGuru{% endblock title %}
+
+{% block content %}
+<form class="theme-form" method="post" action="/forget-password/">
+    {% csrf_token %}
+
+    <h4>Forget Password </h4>
+    <p>Enter your email address and we'll send you an email with instructions to reset your password.</p>
+
+    <div class="form-group">
+        <label class="col-form-label">Email Address</label>
+        <input class="form-control" type="email" name="email" required="" placeholder="test@example.com">
+    </div>
+    
+    <div class="form-group mb-0">
+        <div class="text-end mt-3">
+            <button class="btn btn-primary btn-block w-100" type="submit">Request Password</button>
+        </div>
+    </div>
+    
+    <p class="mt-4 mb-0 text-center">Remember Password?<a class="ms-2" href="{% url 'userauth:login' %}">Login from here</a></p>
+</form>
+{% endblock content %}

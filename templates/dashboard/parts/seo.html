@@ -1,0 +1,14 @@
+<div class="form-group">
+    <label class="form-label" for="seoTitle">SEO Title</label>
+    <input type="text" name="seo_title" class="form-control" id="seoTitle" value="{% if seo_title %}{{seo_title}}{% endif %}" />
+</div>
+
+<div class="form-group mt-4">
+    <label class="form-label" for="seoDes">SEO Description</label>
+    <textarea type="text" name="seo_des" class="form-control" id="seoDes" rows="3">{% if seo_des %}{{seo_des}}{% endif %}</textarea>
+</div>
+
+<div class="form-group mt-4">
+    <label class="form-label" for="seoKeywords">SEO Keywords</label>
+    <input type="text" name="seo_keywords" value="{% if seo_keywords %}{{seo_keywords}}{% endif %}" class="form-control" id="seoKeywords" />
+</div>

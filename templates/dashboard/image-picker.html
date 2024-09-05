@@ -1,0 +1,15 @@
+<div class="from-group image_picker_container {% if image %}added{% endif %}">
+    <input type="text" id="{{ name }}_url" value="{{image}}" name="{{ name }}" style="display:none;" />
+    <div class="empty_placeholder">
+      <a href="{% url 'filehub:browser_select' %}?callback_fnc={{ name }}" class="select_{{ name }}_url openImagePicker">Select Image</a>
+    </div>
+  
+    {% if image %}
+      <div class="image_fill_placeholder">
+        <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512">
+          <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M368 368L144 144M368 144L144 368"></path>
+        </svg>
+        <img src="{{image}}" alt="PreView Image" />
+      </div>
+    {% endif %}
+  </div>

@@ -1,0 +1,90 @@
+<div class="row">
+    <div class="col-12">
+        <div class="form-group">
+            <label class="form-label" for="{{ form.website_name.id_for_label }}">Website Name</label>
+            {{ form.website_name }}
+        </div>
+    </div>
+
+    <div class="col-md-6 mt-3">
+        <div class="form-group">
+            <label class="form-label">Favicon</label>
+            {% with name="website_fav" image=form.website_fav.value %}
+                {% include 'dashboard/image-picker.html' %}
+            {% endwith %}
+        </div>
+    </div>
+
+    <div class="col-md-6 mt-3">
+        <div class="form-group">
+            <label class="form-label">Logo</label>
+            {% with name="website_logo" image=form.website_logo.value %}
+                {% include 'dashboard/image-picker.html' %}
+            {% endwith %}
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <label class="form-label">Featured Images</label>
+        <div class="col-6">
+            <div class="form-group">
+                {% with name="website_feature1" image=form.website_feature1.value %}
+                    {% include 'dashboard/image-picker.html' %}
+                {% endwith %}
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="form-group">
+                {% with name="website_feature2" image=form.website_feature2.value %}
+                    {% include 'dashboard/image-picker.html' %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <label class="form-label">Scrolling Images front page</label>
+        <div class="col-4">
+            <div class="form-group">
+                {% with name="website_scrollimg1" image=form.website_scrollimg1.value %}
+                    {% include 'dashboard/image-picker.html' %}
+                {% endwith %}
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                {% with name="website_scrollimg2" image=form.website_scrollimg2.value %}
+                    {% include 'dashboard/image-picker.html' %}
+                {% endwith %}
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                {% with name="website_scrollimg3" image=form.website_scrollimg3.value %}
+                    {% include 'dashboard/image-picker.html' %}
+                {% endwith %}
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                {% with name="website_scrollimg4" image=form.website_scrollimg4.value %}
+                    {% include 'dashboard/image-picker.html' %}
+                {% endwith %}
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                {% with name="website_scrollimg5" image=form.website_scrollimg5.value %}
+                    {% include 'dashboard/image-picker.html' %}
+                {% endwith %}
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                {% with name="website_scrollimg6" image=form.website_scrollimg6.value %}
+                    {% include 'dashboard/image-picker.html' %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+</div>
