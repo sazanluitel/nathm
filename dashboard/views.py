@@ -184,6 +184,7 @@ class DepartmentSelect(View):
 class DepartmentEdit(View):
     def get(self, request, *args, **kwargs):
         department_id = kwargs.get('id')
+        campus = Campus.objects.all()
 
         try:
             department = get_object_or_404(Department, id=department_id)
@@ -191,7 +192,7 @@ class DepartmentEdit(View):
                 "department_id": department.id,
                 "name": department.name,
                 "image": department.image,
-                "campus": department.campus,
+                "campus": campus,
                 "description": department.description
             })
         except Exception as e:
