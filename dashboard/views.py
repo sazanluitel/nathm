@@ -185,6 +185,7 @@ class DepartmentEdit(View):
     def get(self, request, *args, **kwargs):
         department_id = kwargs.get('id')
         campus = Campus.objects.all()
+        campus = Campus.objects.all()
 
         try:
             department = get_object_or_404(Department, id=department_id)
