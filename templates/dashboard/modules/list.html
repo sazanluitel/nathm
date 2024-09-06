@@ -1,13 +1,13 @@
 {% extends "dashboard/admin-base.html" %}
-{% block title %}Department{% endblock title %}
-{% block breadcrumb %}Department{% endblock breadcrumb %}
-{% block maintitle %}Department{% endblock maintitle %}
+{% block title %}Module{% endblock title %}
+{% block breadcrumb %}Module{% endblock breadcrumb %}
+{% block maintitle %}Module{% endblock maintitle %}
 
 {% block content %}
 
 <div class="col-sm-12">
     <div class="d-flex justify-content-end mb-2">
-         <a href="{% url 'dashboard:department' %}" class="btn btn-success mt-3">Add New Department</a>
+         <a href="{% url 'dashboard:modules' %}" class="btn btn-success mt-3">Add Subject</a>
     </div>
     {% with messages=messages %}
     {% include 'dashboard/alert.html' %}
@@ -17,13 +17,15 @@
             <div class="dt-responsive">
                 <table 
                     class="ajaxdatatable table table-bordered nowrap"
-                    data-ajax="{% url 'dashboard:departmentajax' %}"
+                    data-ajax="{% url 'dashboard:modulesajax' %}"
                     data-nodata="No Data Found"
                 >
                     <thead>
                         <tr>
-                            <th>Department Name</th>
-                            <th>Campus</th>
+                            <th>Name</th>
+                            <th>Subject Code</th>
+                            <th>Credit Hours</th>
+                            <th>Level</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
