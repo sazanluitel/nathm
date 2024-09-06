@@ -121,7 +121,7 @@ class CampusAjax(View):
                 [
                     campus.name,
                     campus.location,
-                    campus.phone_no,  # Assuming MenuItem has a 'price' field
+                    campus.contact,  # Assuming MenuItem has a 'price' field
                     self.get_action(campus.id),
                 ]
             )
@@ -253,7 +253,7 @@ class DepartmentAjax(View):
             data.append(
                 [
                     department.name,
-                    department.campus,
+                    department.campus.name,
                     self.get_action(department.id),
                 ]
             )
