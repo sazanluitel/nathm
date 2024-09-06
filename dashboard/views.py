@@ -390,7 +390,7 @@ class ProgramAjax(View):
                     program.name,
                     program.tenure,
                     program.academic_plan,
-                    program.campus,
+                    program.campus.name,
                     program.department,
                     self.get_action(program.id),
                 ]
@@ -432,13 +432,15 @@ class ModulesView(View):
         if form.is_valid():
             form.save()
             messages.success(request, 'Module added successfully.')
-            return redirect('dashboard:module-list')
+            return redirect('dashboard:moduleslist')
         else:
-            messages.error(request, forms.errors)
-            return render(request, 'dashboard/modules/add.html', {'form': form})
+            program = Program.objects.all()
+            messages.error(request, "Form is not valid")
+            return render(request, 'dashboard/modules/add.html', {'form': form, 'program': program})
     def get(self, request, *args, **kwargs):
+        program = Program.objects.all()
         form = ModulesForm
-        return render(request, 'dashboard/modules/add.html', {'form': form})
+        return render(request, 'dashboard/modules/add.html', {'form': form, 'program': program})
     
 class ModulesList(View):
     def get(self, request, *args, **kwargs):
@@ -549,7 +551,7 @@ class ModulesAjax(View):
 class ModulesDelete(View):
     def post(self, request, *args, **kwargs):
         modules_id = kwargs.get("id")
-        modules_item = get_object_or_404(Program, id=modules_id)
+        modules_item = get_object_or_404(Modules, id=modules_id)
         modules_item.delete()
         messages.success(request, "Item deleted successfully")
         return redirect("dashboard:moduleslist") 
