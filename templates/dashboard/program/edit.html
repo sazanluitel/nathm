@@ -1,0 +1,93 @@
+{% extends 'dashboard/admin-base.html' %}
+{% load static %}
+{% block title %}
+  Program
+{% endblock %}
+{% block breadcrumb %}
+  Edit Program
+{% endblock %}
+{% block maintitle %}
+  Edit Program
+{% endblock %}
+
+{% block content %}
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-body">
+        {% with messages=messages %}
+          {% include 'dashboard/alert.html' %}
+        {% endwith %}
+
+        <form method="post" enctype="multipart/form-data" action="{% url 'dashboard:programedit' id=program_id%}">
+            {% csrf_token %}
+
+          <!-- Use the fields with explicit IDs -->
+          <div class="form-group">
+            <label for="name">Name<span class="required">*</span></label>
+            <input type="text" name="name" class="form-control" id="name" placeholder="Enter program name" {% if name %}value="{{name}}"{% endif %} />
+          </div>
+          <div class="d-flex">
+            <div class="form-group">
+                <label for="tenure">Tenure<span class="required">*</span></label>
+                <input type="number" name="tenure" class="form-control" id="tenure" placeholder="Enter program year . Eg: 4yrs" {% if tenure %}value="{{tenure}}"{% endif %} />
+              </div>
+              <div class="form-group">
+                <label for="academic_plan">Academic Plan<span class="required">*</span></label>
+                <select name="academic_plan" class="form-control w-100" id="academic_plan">
+                    <option value="" disabled selected>Select a Plan</option>
+                    <option value="year">Year</option>
+                    <option value="Sem">Sem</option>
+                  </select>
+              </div>
+          </div>
+
+          <div class="form-group mt-3">
+            {% if image %}
+             <img src="{{image.url}}" alt="current image" style="max-width:200px">
+             {% else %}
+             <p>No image</p>
+            {% endif %}
+            <label for="image">Image</label>
+            <input type="file" name="image" class="form-control" id="image" placeholder="Choose the image" />
+          </div>
+
+          <div class="d-flex">
+            <div class="col-md-6">
+              <div class="form-group mt-3">
+                <label for="campus-select">Campus</label>
+                <select name="campus" class="form-control w-100" id="campus-select" onchange="fetchdepartment()">
+                  <option value="" disabled selected>Select a Campus</option>
+                  {% for result in campus %}
+                    <option value="{{ result.id }}">{{ result.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group mt-3">
+                <label for="department-select">Department</label>
+                <select name="department" class="form-control w-100" id="department-select">
+                  <option value="" disabled selected>Select a department</option>
+                    {% for result in campus %}
+                    <option value="{{ result.id }}" {% if result.id == campus_id %}selected{% endif %}>{{ result.name }}</option>
+                    {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mt-3">
+            <label for="description">Description</label>
+            <textarea name="description" class="form-control tinymce" id="description" placeholder="Description...">{{description}}</textarea>
+          </div>
+          <div class="flex mb-5 ms-3">
+            <button type="submit" class="btn btn-success mt-3">Submit</button>
+            <a href="dashboard:programlist" class="btn btn-secondary mt-3">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src="{% static 'dashboard/assets/js/program.js' %}"></script>
+{% endblock %}
