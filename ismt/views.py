@@ -7,4 +7,4 @@ def redirect_to_dashboard_or_login(request):
         return redirect('dashboard:index')
     else:
         # Redirect to login page if the user is not authenticated
-        return redirect('dashboard:login')
+        return redirect('userauth:login')

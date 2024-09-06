@@ -150,7 +150,7 @@ class CampusAjax(View):
 class CampusDelete(View):
     def post(self, request, *args, **kwargs):
         campus_id = kwargs.get("id")
-        campus_item = get_object_or_404(Program, id=campus_id)
+        campus_item = get_object_or_404(Campus, id=campus_id)
         campus_item.delete()
         messages.success(request, "Item deleted successfully")
         return redirect("dashboard:campuslist") 
@@ -184,6 +184,7 @@ class DepartmentSelect(View):
 class DepartmentEdit(View):
     def get(self, request, *args, **kwargs):
         department_id = kwargs.get('id')
+        campus = Campus.objects.all()
 
         try:
             department = get_object_or_404(Department, id=department_id)
@@ -192,7 +193,8 @@ class DepartmentEdit(View):
                 "name": department.name,
                 "image": department.image,
                 "campus": department.campus,
-                "description": department.description
+                "description": department.description,
+                "campus":campus,
             })
         except Exception as e:
             messages.error(request, str(e))
@@ -282,7 +284,7 @@ class DepartmentAjax(View):
 class DepartmentDelete(View):
     def post(self, request, *args, **kwargs):
         department_id = kwargs.get("id")
-        department_item = get_object_or_404(Program, id=department_id)
+        department_item = get_object_or_404(Department, id=department_id)
         department_item.delete()
         messages.success(request, "Item deleted successfully")
         return redirect("dashboard:departmentlist") 
@@ -313,6 +315,7 @@ class ProgramList(View):
 class ProgramEdit(View):
     def get(self, request, *args, **kwargs):
         program_id = kwargs.get('id')
+        campus =Campus.objects.all()
 
         try:
             program = get_object_or_404(Program, id=program_id)
@@ -323,7 +326,8 @@ class ProgramEdit(View):
                 "academic_plan": program.academic_plan,
                 "image": program.image,
                 "department": program.department,
-                "description": program.description
+                "description": program.description,
+                "campus": campus,
             })
         except Exception as e:
             messages.error(request, str(e))
@@ -390,8 +394,8 @@ class ProgramAjax(View):
                     program.name,
                     program.tenure,
                     program.academic_plan,
-                    program.campus.name,
-                    program.department,
+                    program.campus,
+                    program.department.name,
                     self.get_action(program.id),
                 ]
             )
