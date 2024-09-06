@@ -1,0 +1,73 @@
+{% extends 'dashboard/admin-base.html' %}
+{% load static %}
+{% block title %}
+  Add Modules
+{% endblock %}
+{% block breadcrumb %}
+  Add Modules
+{% endblock %}
+{% block maintitle %}
+  Add Modules
+{% endblock %}
+
+{% block content %}
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-body">
+        {% with messages=messages %}
+          {% include 'dashboard/alert.html' %}
+        {% endwith %}
+
+        <form method="post" enctype="multipart/form-data" action="{% url 'dashboard:modulesedit' id=modules_id %}"
+        >
+          {% csrf_token %}
+
+          <!-- Use the fields with explicit IDs -->
+          <div class="form-group">
+            <label for="name">Name<span class="required">*</span></label>
+            <input type="text" name="name" class="form-control" id="name" placeholder="Enter modules name" {% if name %} value="{{name}}" {% endif %} />
+          </div>
+          <div class="form-group">
+            <label for="code">Subject Code<span class="required">*</span></label>
+            <input type="number" name="code" class="form-control" id="code" placeholder="Enter subject code" {% if code %} value="{{code}}" {% endif %} />
+          </div>
+          <div class="form-group">
+            <label for="credit_hours">Credit Hours<span class="required">*</span></label>
+            <input type="number" name="credit_hours" class="form-control" id="credit_hours" placeholder="Enter credit hours" {% if credit_hours %} value ="{{credit_hours}}" {% endif %}  />
+          </div>
+
+          <div class="form-group">
+            <label for="credit_hours">Level<span class="required">*</span></label>
+            <select name="level" class="form-control w-100" id="level-select">
+                <option value="" disabled selected>Select a Level</option>
+                <option value="year">4</option>
+                <option value="Sem">5</option>
+                <option value="Sem">6</option>
+                <option value="Sem">7</option>
+              </select>
+          </div>
+
+          <div class="form-group mt-3">
+            <label for="program">Program</label>
+            <select name="program" class="form-control w-100" id="program-select">
+              <option value="" disabled selected>Select a Program</option>
+              {% for result in program %}
+                <option value="{{ result.id }}">{{ result.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group mt-3">
+            <label for="description">Description</label>
+            <textarea name="description" class="form-control tinymce" id="description" placeholder="Description..."></textarea>
+          </div>
+          <div class="flex mb-5 ms-3">
+            <button type="submit" class="btn btn-success mt-3">Submit</button>
+            <a href="{% url "dashboard:maduleslist" %} " class="btn btn-secondary mt-3">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src="{% static 'js/menu.js' %}"></script>
+{% endblock %}
