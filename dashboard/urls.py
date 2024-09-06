@@ -17,6 +17,7 @@ urlpatterns = [
 
     path('department/add', DepartmentView.as_view(), name = 'department'),
     path('department/list', DepartmentList.as_view(), name = 'departmentlist'),
+    path('department/<int:campus_id>', DepartmentSelect.as_view(), name = 'departmentselect'),
     # path('department/edit/<id>', DepartmentEdit.as_view(), name = 'departmentedit'),
     # path('department/ajax', DepartmentAjax.as_view(), name = 'departmentajax'),
 

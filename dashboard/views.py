@@ -29,9 +29,9 @@ class CampusView(View):
         if form.is_valid():
             form.save()
             messages.success(request, 'Campus added successfully.')
-            return redirect('dashboard:campus-list')
+            return redirect('dashboard:campuslist')
         else:
-            messages.error(request, forms.errors)
+            messages.error(request, "Form input is not valid")
             return render(request, 'dashboard/campus/add.html', {'form': form})
         
     def get(self, request, *args, **kwargs):
@@ -101,13 +101,30 @@ class CampusAjax(View):
 
         
 class DepartmentView(View):
+    def post(self, request, *args, **kwargs):
+        form = DepartmentForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Department added successfully.')
+            return redirect('dashboard:departmentlist')
+        else:
+            campus = Campus.objects.all()
+            messages.error(request, "Form input is not valid")
+            return render(request, 'dashboard/department/add.html', {'form': form , 'campus':campus})
     def get(self, request, *args, **kwargs):
-        return render(request, 'dashboard/department/add.html')
+        form  = DepartmentForm
+        campus = Campus.objects.all()
+        return render(request, 'dashboard/department/add.html',{'form': form , 'campus':campus})
 
 class DepartmentList(View):
     def get(self, request, *args, **kwargs):
         departments = Department.objects.all()
         return render(request, 'dashboard/department/list.html', {'department': departments})
+    
+class DepartmentSelect(View):
+    def get(self, request, campus_id ):
+        departments = Department.objects.filter(campus_id = campus_id).values("id", "name" )
+        return JsonResponse(list(departments), safe = False)
     
 class DepartmentEdit(View):
     def get(self, request, id, *args, **kwargs):
@@ -172,14 +189,16 @@ class ProgramView(View):
         if form.is_valid():
             form.save()
             messages.success(request, 'Program added successfully.')
-            return redirect('dashboard:program-list')
+            return redirect('dashboard:programlist')
         else:
-            messages.error(request, forms.errors)
-            return render(request, 'dashboard/program/add.html', {'form': form})
+            campus = Campus.objects.all()
+            messages.error(request, "The form is not valid")
+            return render(request, 'dashboard/program/add.html', {'form': form, 'campus':campus})
         
     def get(self, request, *args, **kwargs):
         form = ProgramForm
-        return render(request, 'dashboard/program/add.html', {'form': form})
+        campus = Campus.objects.all()
+        return render(request, 'dashboard/program/add.html', {'form': form, 'campus':campus})
     
 class ProgramList(View):
     def get(self, request, *args, **kwargs):
