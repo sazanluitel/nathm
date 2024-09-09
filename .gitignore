@@ -2,3 +2,7 @@ env/
 venv/
 .venv/
 __pycache__/
+
+reload.sh
+
+/assets
