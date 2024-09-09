@@ -41,7 +41,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1 ms-3 me-2">
-                                <h6 class="mb-0">ISMT College - Admin</h6>
+                                <h6 class="mb-0">ISMT College - {{request.user.username}}</h6>
                             </div>
                         </div>
                     </div>
@@ -204,7 +204,7 @@
                                     <div class="d-flex mb-1">
                                         <div class="flex-grow-1 ms-3">
                                             <h6 class="mb-1">ISMT College</h6>
-                                            <span>Admin</span>
+                                            <span>{{request.user.username}}</span>
                                         </div>
                                     </div>
                                     <hr class="border-secondary border-opacity-50" />

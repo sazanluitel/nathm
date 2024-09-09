@@ -10,6 +10,8 @@ from django.core.paginator import Paginator
 from django.db.models import Prefetch, Count
 from .forms import *
 from .models import *
+from userauth.models import *
+from userauth.forms import *
 from django.http import JsonResponse
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.views import LoginView
@@ -19,7 +21,7 @@ from django.db.models import Q
 class DashboardView(View):
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
-        return render(request, 'dashboard/parts/index.html')
+        return render(request, 'dashboard/parts/index.html') 
 
 class CampusView(View):
     def post(self, request, *args, **kwargs):
@@ -42,15 +44,26 @@ class CampusEdit(View):
     def get(self, request, id):
         campus = get_object_or_404(Campus, id=id)
         form = CampusForm(instance=campus)
-        return render(request, 'dashboard/campus/edit.html', {'form': form, 'campus_id': id})
+        return render(request, 'dashboard/campus/edit.html', {
+            'form': form,
+            'campus_id': id
+        })
 
     def post(self, request, id):
         campus = get_object_or_404(Campus, id=id)
         form = CampusForm(request.POST, request.FILES, instance=campus)
         if form.is_valid():
             form.save()
-            messages.success(request, "Campus saved successfully")
-        return redirect('dashboard:campuslist')
+            messages.success(request, "Campus updated successfully")
+            return redirect('dashboard:campuslist')
+        else:
+            messages.error(request, "Please correct the errors below.")
+        
+        return render(request, 'dashboard/campus/edit.html', {
+            'form': form,
+            'campus_id': id
+        })
+
 
 class CampusList(View):
     def get(self, request, *args, **kwargs):
