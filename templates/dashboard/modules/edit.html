@@ -1,13 +1,13 @@
 {% extends 'dashboard/admin-base.html' %}
 {% load static %}
 {% block title %}
-  Add Modules
+  Edit Modules
 {% endblock %}
 {% block breadcrumb %}
-  Add Modules
+  Edit Modules
 {% endblock %}
 {% block maintitle %}
-  Add Modules
+  Edit Modules
 {% endblock %}
 
 {% block content %}
@@ -18,9 +18,10 @@
           {% include 'dashboard/alert.html' %}
         {% endwith %}
 
-        <form method="post" enctype="multipart/form-data" action="{% url 'dashboard:modulesedit' id=modules_id %}"
+        <form method="post" enctype="multipart/form-data" action="{% url 'dashboard:modulesedit' id=moduleid %}"
         >
           {% csrf_token %}
+          
 
           <!-- Use the fields with explicit IDs -->
           <div class="form-group">
@@ -59,11 +60,11 @@
 
           <div class="form-group mt-3">
             <label for="description">Description</label>
-            <textarea name="description" class="form-control tinymce" id="description" placeholder="Description..."></textarea>
+            <textarea name="description" class="form-control tinymce" id="description" placeholder="Description...">{{description}}</textarea>
           </div>
           <div class="flex mb-5 ms-3">
             <button type="submit" class="btn btn-success mt-3">Submit</button>
-            <a href="{% url "dashboard:maduleslist" %} " class="btn btn-secondary mt-3">Cancel</a>
+            <a href="{% url "dashboard:moduleslist" %} " class="btn btn-secondary mt-3">Cancel</a>
           </div>
         </form>
       </div>

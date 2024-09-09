@@ -17,42 +17,45 @@
         {% with messages=messages %}
           {% include 'dashboard/alert.html' %}
         {% endwith %}
-
         <form method="post" enctype="multipart/form-data" action="{% url 'dashboard:campus' %}">
           {% csrf_token %}
-
-          <!-- Use the fields with explicit IDs -->
+          
           <div class="form-group">
-            <label for="id_name">Name<span class="required">*</span></label>
-            <input type="text" name="name" class="form-control" id="id_name" placeholder="Enter Campus name" />
+              <label for="id_name">Name<span class="required ms-1">*</span></label>
+              {{ form.name }}
           </div>
+          
           <div class="form-group">
-            <label for="code">Campus Code<span class="required">*</span></label>
-            <input type="number" name="code" class="form-control" id="code" placeholder="Enter campus code" />
+              <label for="code">Campus Code<span class="required ms-1">*</span></label>
+              {{ form.code }}
           </div>
+          
           <div class="form-group">
-            <label for="location">Location<span class="required">*</span></label>
-            <input type="text" name="location" class="form-control" id="location" placeholder="Enter Location" />
+              <label for="location">Location<span class="required ms-1">*</span></label>
+              {{ form.location }}
           </div>
+          
           <div class="form-group">
-            <label for="contact">Contact Num<span class="required">*</span></label>
-            <input type="number" name="contact" class="form-control" id="contact" placeholder="Enter contact num" />
+              <label for="contact">Contact Num<span class="required ms-1">*</span></label>
+              {{ form.contact }}
           </div>
-
+          
           <div class="form-group mt-3">
-            <label for="image">Image</label>
-            <input type="file" name="image" class="form-control" id="image" placeholder="Enter price" />
+              <label for="image">Image</label>
+              {{ form.image }}
           </div>
-
+          
           <div class="form-group mt-3">
-            <label for="description">Description</label>
-            <textarea name="description" class="form-control tinymce" id="description" placeholder="Description..."></textarea>
+              <label for="description">Description</label>
+              {{ form.description }}
           </div>
+          
           <div class="flex mb-5 ms-3">
-            <button type="submit" class="btn btn-success mt-3">Submit</button>
-            <a href="{% url 'dashboard:campuslist' %} " class="btn btn-secondary mt-3">Cancel</a>
+              <button type="submit" class="btn btn-success mt-3">Submit</button>
+              <a href="{% url 'dashboard:campuslist' %}" class="btn btn-secondary mt-3">Cancel</a>
           </div>
-        </form>
+      </form>   
+      
       </div>
     </div>
   </div>

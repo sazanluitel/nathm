@@ -35,61 +35,25 @@ class CampusView(View):
             return render(request, 'dashboard/campus/add.html', {'form': form})
         
     def get(self, request, *args, **kwargs):
-        return render(request, 'dashboard/campus/add.html')
+        form = CampusForm()
+        return render(request, 'dashboard/campus/add.html', {
+            "form": form
+        })
     
 class CampusEdit(View):
-    def get(self, request, *args, **kwargs):
-        campus_id = kwargs.get('id')
+    def get(self, request, id):
+        campus = get_object_or_404(Campus, id=id)
+        form = CampusForm(instance=campus)
+        return render(request, 'dashboard/campus/edit.html', {'form': form, 'campus_id': id})
 
-        try:
-            campus = get_object_or_404(Campus, id=campus_id)
-            return render(request, 'dashboard/campus/edit.html', context={
-                "campus_id": campus.id,
-                "name": campus.name,
-                "code": campus.code,
-                "location": campus.location,
-                "contact": campus.contact,
-                "image": campus.image,
-                "description": campus.description
-            })
-        except Exception as e:
-            messages.error(request, str(e))
-
+            
+    def post(self, request, id):
+        campus = get_object_or_404(Campus, id=id)
+        form = CampusForm(request.POST, request.FILES, instance=campus)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Campus saved successfully")
         return redirect('dashboard:campuslist')
-
-    def post(self, request, *args, **kwargs):
-        campus_id = kwargs.get('id')
-        name = request.POST.get('name')
-        code = request.POST.get('code')
-        location = request.POST.get('location')
-        contact = request.POST.get('contact')
-        image = request.FILES.get('image')  # Handling image upload
-        description = request.POST.get('description')
-
-        try:
-            campus = get_object_or_404(Campus, id=campus_id)
-
-            # Validate required fields
-            if not name or not code or not location or not contact or not description:
-                raise Exception("Name, Code, Location, Contact, and Description are required")
-
-            # Update campus fields
-            campus.name = name
-            campus.code = code
-            campus.location = location
-            campus.contact = contact
-
-            if image:
-                campus.image = image
-
-            campus.description = description
-            campus.save()
-
-            messages.success(request, "Campus updated successfully")
-        except Exception as e:
-            messages.error(request, str(e))
-
-        return redirect('dashboard:campusedit', id=campus_id)
 
 class CampusList(View):
     def get(self, request, *args, **kwargs):
@@ -453,6 +417,7 @@ class ModulesList(View):
 class ModulesEdit(View):
     def get(self, request, *args, **kwargs):
         itemid = kwargs.get('id')
+        program = Program.objects.all() 
 
         try:
             module = get_object_or_404(Modules, id=itemid)
@@ -462,7 +427,7 @@ class ModulesEdit(View):
                 "code": module.code,
                 "credit_hours": module.credit_hours,
                 "level": module.level,
-                "program": module.program  # Assuming you need the program as well
+                "program": program 
             })
         except Exception as e:
             messages.error(request, str(e))
