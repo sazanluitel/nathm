@@ -28,7 +28,7 @@ SECRET_KEY = "django-insecure-%r2boke79mj99w9@0cz=#dm!#&3gc28^=axx)z(69o=euby=)a
 DEBUG = True
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 AUTH_USER_MODEL = "userauth.User"
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
