@@ -21,35 +21,24 @@
           {% csrf_token %}
           
           <div class="form-group">
-              <label for="id_name">Name<span class="required ms-1">*</span></label>
-              {{ form.name }}
-          </div>
-          
-          <div class="form-group">
-              <label for="code">Campus Code<span class="required ms-1">*</span></label>
-              {{ form.code }}
-          </div>
-          
-          <div class="form-group">
-              <label for="location">Location<span class="required ms-1">*</span></label>
-              {{ form.location }}
-          </div>
-          
-          <div class="form-group">
-              <label for="contact">Contact Num<span class="required ms-1">*</span></label>
-              {{ form.contact }}
-          </div>
-          
-          <div class="form-group mt-3">
-              <label for="image">Image</label>
-              {{ form.image }}
-          </div>
-          
-          <div class="form-group mt-3">
-              <label for="description">Description</label>
-              {{ form.description }}
-          </div>
-          
+            {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if field.field.required %}
+                            <span class="required ms-1">*</span>
+                        {% endif %}
+                    </label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>            
           <div class="flex mb-5 ms-3">
               <button type="submit" class="btn btn-success mt-3">Submit</button>
               <a href="{% url 'dashboard:campuslist' %}" class="btn btn-secondary mt-3">Cancel</a>

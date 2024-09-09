@@ -29,6 +29,11 @@
                             <span class="required ms-1">*</span>
                         {% endif %}
                     </label>
+                    {% if field.name == 'image' and form.instance.image %}
+                        <div class="mb-3">
+                            <img src="{{ form.instance.image.url }}" alt="Current Image" class="img-fluid mb-3" style="max-width: 200px;">
+                        </div>
+                    {% endif %}
                     {{ field }}
                     {% if field.help_text %}
                         <small class="form-text text-muted">{{ field.help_text }}</small>

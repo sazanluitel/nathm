@@ -90,21 +90,106 @@ class CampusForm(forms.ModelForm):
         model = Campus
         fields = ['name', 'code', 'location', 'contact', 'image', 'description']
 
-
 class DepartmentForm(forms.ModelForm):
-    image = forms.ImageField(required=False)
+    image = forms.ImageField(
+    required=False, 
+    widget=forms.FileInput(attrs={
+        'class': 'form-control', 
+        'id': 'image', 
+        'placeholder': 'Choose the image'
+    }))
+
     class Meta:
         model = Department
         fields = ['name', 'image', 'campus', 'description']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'name', 
+                'placeholder': 'Enter department name'
+            }),
+            'campus': forms.Select(attrs={
+                'class': 'form-control w-100', 
+                'id': 'campus-select'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control tinymce', 
+                'id': 'description', 
+                'placeholder': 'Description...'
+            }),
+        }
 
 class ProgramForm(forms.ModelForm):
-    image = forms.ImageField(required=False)
     class Meta:
         model = Program
-        fields = ['name', 'tenure', 'academic_plan', 'image', 'department', 'description']
+        fields = ['name', 'tenure', 'academic_plan', 'image', 'campus', 'department', 'description']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'name', 
+                'placeholder': 'Enter program name'
+            }),
+            'tenure': forms.NumberInput(attrs={
+                'class': 'form-control', 
+                'id': 'tenure', 
+                'placeholder': 'Enter program year'
+            }),
+            'academic_plan': forms.Select(attrs={
+                'class': 'form-control w-100', 
+                'id': 'academic_plan'
+            }),
+            'image': forms.FileInput(attrs={
+                'class': 'form-control', 
+                'id': 'image'
+            }),
+            'campus': forms.Select(attrs={
+                'class': 'form-control w-100', 
+                'id': 'campus-select', 
+                'onchange': 'fetchdepartment()'  # Assuming this is for JS handling
+            }),
+            'department': forms.Select(attrs={
+                'class': 'form-control w-100', 
+                'id': 'department-select'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control tinymce', 
+                'id': 'description', 
+                'placeholder': 'Description...'
+            }),
+        }
+
 
 class ModulesForm(forms.ModelForm):
-    image = forms.ImageField(required=False)
     class Meta:
         model = Modules
-        fields = ['name', 'code', 'credit_hours', 'level', 'program']
+        fields = ['name', 'code', 'credit_hours', 'level', 'program', 'description']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'name', 
+                'placeholder': 'Enter module name'
+            }),
+            'code': forms.NumberInput(attrs={
+                'class': 'form-control', 
+                'id': 'code', 
+                'placeholder': 'Enter subject code'
+            }),
+            'credit_hours': forms.NumberInput(attrs={
+                'class': 'form-control', 
+                'id': 'credit_hours', 
+                'placeholder': 'Enter credit hours'
+            }),
+            'level': forms.Select(attrs={
+                'class': 'form-control w-100', 
+                'id': 'level-select'
+            }),
+            'program': forms.Select(attrs={
+                'class': 'form-control w-100', 
+                'id': 'program-select'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control tinymce', 
+                'id': 'description', 
+                'placeholder': 'Description...'
+            }),
+        }

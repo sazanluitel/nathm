@@ -16,8 +16,6 @@ from django.contrib.auth.views import LoginView
 from django.db.models import Q
 
 
-
-
 class DashboardView(View):
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
@@ -46,7 +44,6 @@ class CampusEdit(View):
         form = CampusForm(instance=campus)
         return render(request, 'dashboard/campus/edit.html', {'form': form, 'campus_id': id})
 
-            
     def post(self, request, id):
         campus = get_object_or_404(Campus, id=id)
         form = CampusForm(request.POST, request.FILES, instance=campus)
@@ -129,11 +126,12 @@ class DepartmentView(View):
         else:
             campus = Campus.objects.all()
             messages.error(request, "Form input is not valid")
-            return render(request, 'dashboard/department/add.html', {'form': form , 'campus':campus})
+            return render(request, 'dashboard/department/add.html', {'form': form, 'campus': campus})
+
     def get(self, request, *args, **kwargs):
-        form  = DepartmentForm
+        form = DepartmentForm()
         campus = Campus.objects.all()
-        return render(request, 'dashboard/department/add.html',{'form': form , 'campus':campus})
+        return render(request, 'dashboard/department/add.html', {'form': form, 'campus': campus})
 
 class DepartmentList(View):
     def get(self, request, *args, **kwargs):
@@ -141,58 +139,34 @@ class DepartmentList(View):
         return render(request, 'dashboard/department/list.html', {'department': departments})
     
 class DepartmentSelect(View):
-    def get(self, request, campus_id ):
-        departments = Department.objects.filter(campus_id = campus_id).values("id", "name" )
+    def get(self, request,id ):
+        departments = Department.objects.filter(campus_id = id).values("id", "name" )
         return JsonResponse(list(departments), safe = False)
     
 class DepartmentEdit(View):
-    def get(self, request, *args, **kwargs):
-        department_id = kwargs.get('id')
-        campus = Campus.objects.all()
+    def get(self, request, id):
+        department = get_object_or_404(Department, id=id)
+        form = DepartmentForm(instance=department)
+        return render(request, 'dashboard/department/edit.html', {
+            'form': form,
+            'department_id': id
+        })
 
-        try:
-            department = get_object_or_404(Department, id=department_id)
-            return render(request, 'dashboard/department/edit.html', context={
-                "department_id": department.id,
-                "name": department.name,
-                "image": department.image,
-                "description": department.description,
-                "campus":campus,
-            })
-        except Exception as e:
-            messages.error(request, str(e))
-
-        return redirect('dashboard:departmentlist')
-
-    def post(self, request, *args, **kwargs):
-        department_id = kwargs.get('id')
-        name = request.POST.get('name')
-        image = request.FILES.get('image')  # Handling file upload for image
-        campus = request.POST.get('campus')
-        description = request.POST.get('description')
-
-        try:
-            department = get_object_or_404(Department, id=department_id)
-
-            # Validate required fields
-            if not name or not campus or not description:
-                raise Exception("Name, Campus, and Description are required")
-
-            # Update department fields
-            department.name = name
-
-            if image:
-                department.image = image
-
-            department.campus_id = campus  # Assuming campus is passed as an ID
-            department.description = description
-            department.save()
-
+    def post(self, request, id):
+        department = get_object_or_404(Department, id=id)
+        form = DepartmentForm(request.POST, request.FILES, instance=department)
+        
+        if form.is_valid():
+            form.save()
             messages.success(request, "Department updated successfully")
-        except Exception as e:
-            messages.error(request, str(e))
-
-        return redirect('dashboard:departmentedit', id=department_id)
+            return redirect('dashboard:departmentlist')
+        else:
+            messages.error(request, "Please correct the errors below.")
+        
+        return render(request, 'dashboard/department/edit.html', {
+            'form': form,
+            'department_id': id
+        })
     
 class DepartmentAjax(View):
     def get(self, request, *args, **kwargs):
@@ -263,12 +237,12 @@ class ProgramView(View):
         else:
             campus = Campus.objects.all()
             messages.error(request, "The form is not valid")
-            return render(request, 'dashboard/program/add.html', {'form': form, 'campus':campus})
+            return render(request, 'dashboard/program/add.html', {'form': form, 'campus': campus})
         
     def get(self, request, *args, **kwargs):
-        form = ProgramForm
+        form = ProgramForm()
         campus = Campus.objects.all()
-        return render(request, 'dashboard/program/add.html', {'form': form, 'campus':campus})
+        return render(request, 'dashboard/program/add.html', {'form': form, 'campus': campus})
     
 class ProgramList(View):
     def get(self, request, *args, **kwargs):
@@ -276,61 +250,30 @@ class ProgramList(View):
         return render(request, 'dashboard/program/list.html', {'program': programs})
 
 class ProgramEdit(View):
-    def get(self, request, *args, **kwargs):
-        program_id = kwargs.get('id')
-        campus =Campus.objects.all()
+    def get(self, request, id):
+        program = get_object_or_404(Program, id=id)
+        form = ProgramForm(instance=program)
+        return render(request, 'dashboard/program/edit.html', {
+            'form': form,
+            'program_id': id
+        })
 
-        try:
-            program = get_object_or_404(Program, id=program_id)
-            return render(request, 'dashboard/program/edit.html', context={
-                "program_id": program.id,
-                "name": program.name,
-                "tenure": program.tenure,
-                "academic_plan": program.academic_plan,
-                "image": program.image,
-                "department": program.department,
-                "description": program.description,
-                "campus": campus,
-            })
-        except Exception as e:
-            messages.error(request, str(e))
-
-        return redirect('dashboard:program_list')
-
-    def post(self, request, *args, **kwargs):
-        program_id = kwargs.get('id')
-        name = request.POST.get('name')
-        tenure = request.POST.get('tenure')
-        academic_plan = request.POST.get('academic_plan')
-        image = request.FILES.get('image')  # For handling image upload
-        department = request.POST.get('department')
-        description = request.POST.get('description')
-
-        try:
-            program = get_object_or_404(Program, id=program_id)
-
-            # Validate required fields
-            if not name or not tenure or not academic_plan or not description:
-                raise Exception("Name, Tenure, Academic Plan, and Description are required")
-
-            # Update the program fields
-            program.name = name
-            program.tenure = tenure
-            program.academic_plan = academic_plan
-
-            if image:
-                program.image = image
-
-            program.department_id = department  # Assuming department is passed as an ID
-            program.description = description
-            program.save()
-
+    def post(self, request, id):
+        program = get_object_or_404(Program, id=id)
+        form = ProgramForm(request.POST, request.FILES, instance=program)
+        
+        if form.is_valid():
+            form.save()
             messages.success(request, "Program updated successfully")
-        except Exception as e:
-            messages.error(request, str(e))
-
-        return redirect('dashboard:programedit', id=program_id)
-    
+            return redirect('dashboard:programlist')
+        else:
+            messages.error(request, "Please correct the errors below.")
+        
+        return render(request, 'dashboard/program/edit.html', {
+            'form': form,
+            'program_id': id
+        })
+ 
 class ProgramAjax(View):
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
@@ -339,7 +282,10 @@ class ProgramAjax(View):
         search_value = request.GET.get("search[value]", None)
         page_number = (start // length) + 1
 
-        programs= Program.objects.all()
+        programs = Program.objects.all()
+        campus = Campus.objects.all()
+        department = Department.objects.all()
+
         if search_value:
             programs = programs.filter(
                 Q(name__icontains=search_value) | Q(description__icontains=search_value)
@@ -352,13 +298,16 @@ class ProgramAjax(View):
 
         data = []
         for program in page_menu_items:
+            campus_name = program.campus.name if program.campus else "N/A"
+            department_name = program.department.name if program.department else "N/A"
+
             data.append(
                 [
                     program.name,
                     program.tenure,
                     program.academic_plan,
-                    program.campus,
-                    program.department.name,
+                    campus_name,
+                    department_name,
                     self.get_action(program.id),
                 ]
             )
@@ -382,7 +331,8 @@ class ProgramAjax(View):
                 <input type="hidden" name="_method" value="delete">
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
-        """    
+        """
+
 @method_decorator(csrf_exempt, name="dispatch")
 class ProgramDelete(View):
     def post(self, request, *args, **kwargs):
@@ -415,54 +365,29 @@ class ModulesList(View):
         return render(request, 'dashboard/modules/list.html', {'module': modules})
       
 class ModulesEdit(View):
-    def get(self, request, *args, **kwargs):
-        itemid = kwargs.get('id')
-        program = Program.objects.all() 
+    def get(self, request, id):
+        module = get_object_or_404(Modules, id=id)
+        form = ModulesForm(instance=module)
+        return render(request, 'dashboard/modules/edit.html', {
+            'form': form,
+            'module_id': id
+        })
 
-        try:
-            module = get_object_or_404(Modules, id=itemid)
-            return render(request, 'dashboard/modules/edit.html', context={
-                "moduleid": module.id,
-                "name": module.name,
-                "code": module.code,
-                "credit_hours": module.credit_hours,
-                "level": module.level,
-                "program": program 
-            })
-        except Exception as e:
-            messages.error(request, str(e))
-
-        return redirect('dashboard:moduleslist')
-
-    def post(self, request, *args, **kwargs):
-        moduleid = kwargs.get('id')
-        name = request.POST.get('name')
-        code = request.POST.get('code')
-        credit_hours = request.POST.get('credit_hours')
-        level = request.POST.get('level')
-        program = request.POST.get('program')
-
-        try:
-            module = get_object_or_404(Modules, id=moduleid)
-
-            # Validate required fields
-            if not name or not code or not credit_hours:
-                raise Exception("Name, Code, and Credit Hours are required")
-
-            # Update the module
-            module.name = name
-            module.code = code
-            module.credit_hours = credit_hours
-            module.level = level
-            module.program_id = program  # Assuming program is passed as an ID
-
-            module.save()
-
+    def post(self, request, id):
+        module = get_object_or_404(Modules, id=id)
+        form = ModulesForm(request.POST, instance=module)
+        
+        if form.is_valid():
+            form.save()
             messages.success(request, "Module updated successfully")
-        except Exception as e:
-            messages.error(request, str(e))
-
-        return redirect('dashboard:modulesedit', id=moduleid)
+            return redirect('dashboard:moduleslist')
+        else:
+            messages.error(request, "Please correct the errors below.")
+        
+        return render(request, 'dashboard/modules/edit.html', {
+            'form': form,
+            'module_id': id
+        })
     
 class ModulesAjax(View):
     def get(self, request, *args, **kwargs):
