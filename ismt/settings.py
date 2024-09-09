@@ -28,7 +28,7 @@ SECRET_KEY = "django-insecure-%r2boke79mj99w9@0cz=#dm!#&3gc28^=axx)z(69o=euby=)a
 DEBUG = True
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 AUTH_USER_MODEL = "userauth.User"
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
@@ -84,10 +84,21 @@ WSGI_APPLICATION = "ismt.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ismt', 
+        'USER': 'ismt',
+        'PASSWORD': 'ISMTdatabase', 
+        'HOST': '93.127.194.205',
+        'PORT': '5432',
     }
 }
 
