@@ -84,6 +84,7 @@ class DepartmentForm(forms.ModelForm):
             }),
             'campus': forms.Select(attrs={
                 'class': 'form-control w-100', 
+                'data-placeholder': 'Select the campus',
                 'id': 'campus-select'
             }),
             'description': forms.Textarea(attrs={
@@ -110,6 +111,7 @@ class ProgramForm(forms.ModelForm):
             }),
             'academic_plan': forms.Select(attrs={
                 'class': 'form-control w-100', 
+                'data-placeholder': 'Select the academic Plan',
                 'id': 'academic_plan'
             }),
             'image': forms.FileInput(attrs={
@@ -119,10 +121,12 @@ class ProgramForm(forms.ModelForm):
             'campus': forms.Select(attrs={
                 'class': 'form-control w-100', 
                 'id': 'campus-select', 
+                'data-placeholder': 'Select the campus',
                 'onchange': 'fetchdepartment()'  # Assuming this is for JS handling
             }),
             'department': forms.Select(attrs={
                 'class': 'form-control w-100', 
+                'data-placeholder': 'Select the department',
                 'id': 'department-select'
             }),
             'description': forms.Textarea(attrs={
@@ -155,10 +159,12 @@ class ModulesForm(forms.ModelForm):
             }),
             'level': forms.Select(attrs={
                 'class': 'form-control w-100', 
+                'data-placeholder': 'Select the level',
                 'id': 'level-select'
             }),
             'program': forms.Select(attrs={
                 'class': 'form-control w-100', 
+                'data-placeholder': 'Select the program',
                 'id': 'program-select'
             }),
             'description': forms.Textarea(attrs={

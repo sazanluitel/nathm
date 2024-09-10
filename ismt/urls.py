@@ -26,6 +26,7 @@ urlpatterns = [
 
     path("", include("userauth.urls", namespace="userauth")),
     path("", include("dashboard.urls", namespace="dashboard")),
+    path("", include("students.urls", namespace="students")),
 ]
 
 if settings.DEBUG:

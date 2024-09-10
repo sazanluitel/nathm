@@ -7,7 +7,7 @@ class Campus(models.Model):
     name = models.CharField(max_length=100)
     code = models.IntegerField(blank=False)
     location = models.CharField(max_length=50)
-    contact = models.CharField(blank=False)
+    contact = models.CharField(blank=False, max_length=15)
     image = models.ImageField(upload_to="Campus/")
     description = models.TextField(blank=True, null=True)
 
