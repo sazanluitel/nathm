@@ -19,31 +19,46 @@
         {% endwith %}
         <form method="post" enctype="multipart/form-data" action="{% url 'dashboard:campusedit' id=campus_id %}">
           {% csrf_token %}
+            <div class="form-group mb-3">
+              <label for="{{ form.name.id_for_label }}" class="form-label">Name</label>
+              {{ form.name }}
+              {% if form.name.errors %}
+                <div class="invalid-feedback d-block">{{ form.name.errors }}</div>
+              {% endif %}
+            </div>
 
-          <div class="form-group">
-            {% for field in form %}
-                <div class="mb-3">
-                    <label for="{{ field.id_for_label }}">
-                        {{ field.label }}
-                        {% if field.field.required %}
-                            <span class="required ms-1">*</span>
-                        {% endif %}
-                    </label>
-                    {% if field.name == 'image' and form.instance.image %}
-                        <div class="mb-3">
-                            <img src="{{ form.instance.image.url }}" alt="Current Image" class="img-fluid mb-3" style="max-width: 200px;">
-                        </div>
-                    {% endif %}
-                    {{ field }}
-                    {% if field.help_text %}
-                        <small class="form-text text-muted">{{ field.help_text }}</small>
-                    {% endif %}
-                    {% for error in field.errors %}
-                        <div class="text-danger">{{ error }}</div>
-                    {% endfor %}
-                </div>
-            {% endfor %}
-        </div>        
+            <div class="form-group mb-3">
+              <label for="{{ form.code.id_for_label }}" class="form-label">Campus Code</label>
+              {{ form.code }}
+              {% if form.code.errors %}
+                <div class="invalid-feedback d-block">{{ form.code.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="{{ form.location.id_for_label }}" class="form-label">Location</label>
+              {{ form.location }}
+              {% if form.location.errors %}
+                <div class="invalid-feedback d-block">{{ form.location.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="{{ form.contact.id_for_label }}" class="form-label">Contact Number</label>
+              {{ form.contact }}
+              {% if form.contact.errors %}
+                <div class="invalid-feedback d-block">{{ form.contact.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group mt-3">
+              <label for="id_items_image">Image</label>
+              {% include 'dashboard/image-picker.html' with name="items_image" %}
+
+              {% if form.image.errors %}
+                  <div class="invalid-feedback d-block">{{ form.image.errors }}</div>
+              {% endif %}
+          </div>
           <div class="flex mb-5 ms-3">
             <button type="submit" class="btn btn-success mt-3">Submit</button>
             <a href="{% url 'dashboard:campuslist' %}" class="btn btn-secondary mt-3">Cancel</a>

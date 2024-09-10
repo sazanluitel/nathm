@@ -22,6 +22,11 @@ class DashboardView(View):
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         return render(request, 'dashboard/parts/index.html') 
+    
+
+class FileManagerView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'dashboard/parts/filemanager.html')
 
 class CampusView(View):
     def post(self, request, *args, **kwargs):

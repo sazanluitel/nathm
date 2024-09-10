@@ -8,6 +8,7 @@ app_name = "dashboard"
 
 urlpatterns = [
     path('admin/',DashboardView.as_view(), name='index'), 
+    path("filemanager/", FileManagerView.as_view(), name="filemanager"),
 
     path('campus/add', CampusView.as_view(), name='campus'),
     path('campus/list',CampusList.as_view(),name='campuslist'),
