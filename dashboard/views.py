@@ -110,24 +110,21 @@ class CampusAjax(View):
             status=200,
         )
 
-    def get_action(self, item_id):
-        edit_url = reverse("dashboard:campusedit", kwargs={"id": item_id})
-        delete_url = reverse("dashboard:campusdelete", kwargs={"id": item_id})
-        return f"""
-            <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
-            <form method="post" action="{delete_url}" style="display:inline;">
-                <input type="hidden" name="_method" value="delete">
+    def get_action(self, post_id):
+        edit_url = reverse('dashboard:campusedit', kwargs={'id': post_id})
+        delete_url = reverse('dashboard:delete')
+        backurl = reverse('dashboard:campuslist')
+        return f'''
+            <form method="post" action="{delete_url}" class="button-group">
+                <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
+
+                <input type="hidden" name="_selected_id" value="{post_id}" />
+                <input type="hidden" name="_selected_type" value="campus" />
+                <input type="hidden" name="_back_url" value="{backurl}" />
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
-        """    
-@method_decorator(csrf_exempt, name="dispatch")
-class CampusDelete(View):
-    def post(self, request, *args, **kwargs):
-        campus_id = kwargs.get("id")
-        campus_item = get_object_or_404(Campus, id=campus_id)
-        campus_item.delete()
-        messages.success(request, "Item deleted successfully")
-        return redirect("dashboard:campuslist") 
+        '''
+
         
 class DepartmentView(View):
     def post(self, request, *args, **kwargs):
@@ -220,25 +217,21 @@ class DepartmentAjax(View):
             status=200,
         )
 
-    def get_action(self, item_id):
-        edit_url = reverse("dashboard:departmentedit", kwargs={"id": item_id})
-        delete_url = reverse("dashboard:departmentdelete", kwargs={"id": item_id})
-        return f"""
-            <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
-            <form method="post" action="{delete_url}" style="display:inline;">
-                <input type="hidden" name="_method" value="delete">
+    def get_action(self, post_id):
+        edit_url = reverse('dashboard:departmentedit', kwargs={'id': post_id})
+        delete_url = reverse('dashboard:delete')
+        backurl = reverse('dashboard:departmentlist')
+        return f'''
+            <form method="post" action="{delete_url}" class="button-group">
+                <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
+
+                <input type="hidden" name="_selected_id" value="{post_id}" />
+                <input type="hidden" name="_selected_type" value="department" />
+                <input type="hidden" name="_back_url" value="{backurl}" />
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
-        """    
-@method_decorator(csrf_exempt, name="dispatch")
-class DepartmentDelete(View):
-    def post(self, request, *args, **kwargs):
-        department_id = kwargs.get("id")
-        department_item = get_object_or_404(Department, id=department_id)
-        department_item.delete()
-        messages.success(request, "Item deleted successfully")
-        return redirect("dashboard:departmentlist") 
-    
+        '''
+
 
 class ProgramView(View):
     def post(self, request, *args, **kwargs):
@@ -335,26 +328,20 @@ class ProgramAjax(View):
             status=200,
         )
 
-    def get_action(self, item_id):
-        edit_url = reverse("dashboard:programedit", kwargs={"id": item_id})
-        delete_url = reverse("dashboard:programdelete", kwargs={"id": item_id})
-        return f"""
-            <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
-            <form method="post" action="{delete_url}" style="display:inline;">
-                <input type="hidden" name="_method" value="delete">
+    def get_action(self, post_id):
+        edit_url = reverse('dashboard:programedit', kwargs={'id': post_id})
+        delete_url = reverse('dashboard:delete')
+        backurl = reverse('dashboard:programlist')
+        return f'''
+            <form method="post" action="{delete_url}" class="button-group">
+                <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
+
+                <input type="hidden" name="_selected_id" value="{post_id}" />
+                <input type="hidden" name="_selected_type" value="program" />
+                <input type="hidden" name="_back_url" value="{backurl}" />
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
-        """
-
-@method_decorator(csrf_exempt, name="dispatch")
-class ProgramDelete(View):
-    def post(self, request, *args, **kwargs):
-        program_id = kwargs.get("id")
-        program_item = get_object_or_404(Program, id=program_id)
-        program_item.delete()
-        messages.success(request, "Item deleted successfully")
-        return redirect("dashboard:programlist")  # Make sure 'itemView' is the correct URL name
-
+        '''
 
 class ModulesView(View):
     def post(self, request, *args, **kwargs):
@@ -443,21 +430,145 @@ class ModulesAjax(View):
             status=200,
         )
 
-    def get_action(self, item_id):
-        edit_url = reverse("dashboard:modulesedit", kwargs={"id": item_id})
-        delete_url = reverse("dashboard:modulesdelete", kwargs={"id": item_id})
-        return f"""
-            <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
-            <form method="post" action="{delete_url}" style="display:inline;">
-                <input type="hidden" name="_method" value="delete">
+    def get_action(self, post_id):
+        edit_url = reverse('dashboard:modulesedit', kwargs={'id': post_id})
+        delete_url = reverse('dashboard:delete')
+        backurl = reverse('dashboard:moduleslist')
+        return f'''
+            <form method="post" action="{delete_url}" class="button-group">
+                <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
+
+                <input type="hidden" name="_selected_id" value="{post_id}" />
+                <input type="hidden" name="_selected_type" value="modules" />
+                <input type="hidden" name="_back_url" value="{backurl}" />
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
-        """    
-@method_decorator(csrf_exempt, name="dispatch")
-class ModulesDelete(View):
+        '''
+
+class DeleteHelper:
+    def get_objects(self, ids, model, type_title, reverse_name, title_generator, kwargs_generator):
+        objects = []
+        objects_org = []
+        try:
+            for obj_id in ids:
+                try:
+                    obj = model.objects.get(id=obj_id)
+                    title = title_generator(obj)
+                    url = reverse(reverse_name, kwargs=kwargs_generator(obj))
+                    objects_org.append(obj)
+                    objects.append({
+                        "id": obj.id,
+                        "type": type_title,
+                        "title": title,
+                        "url": url
+                    })
+                except model.DoesNotExist:
+                    pass
+        except Exception as e:
+            print(e)
+            pass
+        return objects, objects_org
+    def get_campus(self, ids):
+        def campus_title(campus):
+            return campus.name
+
+        def campus_kwargs(campus):
+            return {"id": campus.id}
+
+        return self.get_objects(ids, Campus, "Campus", "dashboard:campusedit", campus_title, campus_kwargs)
+    def get_department(self, ids):
+        def department_title(department):
+            return department.name
+
+        def department_kwargs(department):
+            return {"id": department.id}
+
+        return self.get_objects(ids, Department, "Department", "dashboard:departmentedit", department_title, department_kwargs)
+    def get_program(self, ids):
+        def program_title(program):
+            return program.name
+
+        def program_kwargs(program):
+            return {"id": program.id}
+
+        return self.get_objects(ids, Program, "Program", "dashboard:programedit", program_title, program_kwargs)
+    def get_modules(self, ids):
+        def modules_title(module):
+            return module.name
+
+        def modules_kwargs(module):
+            return {"id": module.id}
+
+        return self.get_objects(ids, Modules, "Module", "dashboard:modulesedit", modules_title, modules_kwargs)
+    
+    def get_titles(self, post_type: str, total):
+        if post_type == "program":
+            return "Programs" if total > 1 else "Program"
+        elif post_type == "department":
+            return "Departments" if total > 1 else "Department"
+        elif post_type == "campus":
+            return "Campuses" if total > 1 else "Campus"
+        elif post_type == "modules":
+            return "Modules" if total > 1 else "Module"
+        return "Objects"
+
+    def get_delete_objects(self, delete_type, selected_ids=None):
+        if selected_ids is None:
+            selected_ids = []
+
+        objects = []
+        originals = []
+
+        if selected_ids:
+            if delete_type == "program":
+                objects, originals = self.get_program(selected_ids)
+            elif delete_type == "department":
+                objects, originals = self.get_department(selected_ids)
+            elif delete_type == "campus":
+                objects, originals = self.get_campus(selected_ids)
+            elif delete_type == "module":
+                objects, originals = self.get_modules(selected_ids)
+
+        return objects, originals
+
+class DeleteFinalView(View, DeleteHelper):
+    def get(self, request, *args, **kwargs):
+        return redirect("dashboard:index")
+
     def post(self, request, *args, **kwargs):
-        modules_id = kwargs.get("id")
-        modules_item = get_object_or_404(Modules, id=modules_id)
-        modules_item.delete()
-        messages.success(request, "Item deleted successfully")
-        return redirect("dashboard:moduleslist") 
+        delete_type = request.POST.get("_selected_type", None)
+        selected_ids = request.POST.getlist("_selected_id", [])
+        back = request.POST.get("_back_url", None)
+        objects, originals = self.get_delete_objects(delete_type, selected_ids)
+
+        for original in originals:
+            try:
+                object_title = original.id
+                original.delete()
+                messages.success(request, f"Successfully deleted #{object_title}")
+            except Exception as e:
+                messages.error(request, str(e))
+
+        if back:
+            return redirect(back)
+        return redirect("dashboard:index")
+    
+@method_decorator(csrf_exempt, name='dispatch')
+class DeleteView(View, DeleteHelper):
+    def post(self, request, *args, **kwargs):
+        selected_ids = request.POST.getlist("_selected_id", [])
+        delete_type = request.POST.get("_selected_type", None)
+        back = request.POST.get("_back_url", None)
+        objects, originals = self.get_delete_objects(delete_type, selected_ids)
+
+        # if not objects:
+        #     raise Exception("No objects to delete")
+
+        total_objects = len(objects)
+        return render(request, 'dashboard/parts/delete.html', context={
+            "objects": objects,
+            "type_title": self.get_titles(delete_type, total_objects),
+            "back": back,
+            "type": delete_type,
+            "total": total_objects
+        })
