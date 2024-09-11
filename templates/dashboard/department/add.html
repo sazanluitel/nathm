@@ -38,15 +38,6 @@
               <div class="invalid-feedback d-block">{{ form.campus.errors }}</div>
           {% endif %}
       </div>
-
-      <div class="form-group mb-3">
-          <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
-          {{ form.description }}
-          {% if form.description.errors %}
-              <div class="invalid-feedback d-block">{{ form.description.errors }}</div>
-          {% endif %}
-      </div>
-
       <div class="form-group mt-3">
           <label for="id_items_image">Image</label>
           {% include 'dashboard/image-picker.html' with name="items_image" %}
@@ -61,6 +52,14 @@
               </div>
           {% endif %}
       </div>
+      <div class="form-group mb-3">
+          <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+          {{ form.description }}
+          {% if form.description.errors %}
+              <div class="invalid-feedback d-block">{{ form.description.errors }}</div>
+          {% endif %}
+      </div>
+      
 
           <div class="flex mb-5 ms-3">
             <button type="submit" class="btn btn-success mt-3">Submit</button>
