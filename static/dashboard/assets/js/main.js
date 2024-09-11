@@ -179,21 +179,17 @@
 
     window.onFileHubCallback = (file, id) => {
         try {
-            if (id === "tour_gallery_select") {
-                hanlde_tour_gallery_image(file);
-            } else {
-                const findImageEle = $(document).find(`[name="${id}"]`);
-                if (findImageEle.length > 0) {
-                    findImageEle.val(file.uri).trigger("change");
+            const findImageEle = $(document).find(`[name="${id}"]`);
+            if (findImageEle.length > 0) {
+                findImageEle.val(file.uri).trigger("change");
 
-                    const container = findImageEle.closest(".image_picker_container");
-                    if (container) {
-                        container.addClass("added");
-                        container.append(`<div class="image_fill_placeholder">   
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M368 368L144 144M368 144L144 368"/></svg>
-                                    <img src="${file.uri}" alt="PreView Image" />
-                                </div>`);
-                    }
+                const container = findImageEle.closest(".image_picker_container");
+                if (container) {
+                    container.addClass("added");
+                    container.append(`<div class="image_fill_placeholder">   
+                                <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M368 368L144 144M368 144L144 368"/></svg>
+                                <img src="${file.uri}" alt="PreView Image" />
+                            </div>`);
                 }
             }
         } catch (error) {
@@ -202,15 +198,19 @@
         $.fancybox.close();
     }
 
-    const fancyboxfile = $(document).find(".openImagePicker");
-    if (fancyboxfile.length > 0) {
-        fancyboxfile.fancybox({
-            width: 900,
-            height: 300,
-            type: 'iframe',
-            autoScale: false
-        });
+    function init_fancybox() {
+        const fancyboxfile = $(document).find(".openImagePicker");
+        if (fancyboxfile.length > 0) {
+            fancyboxfile.fancybox({
+                width: 900,
+                height: 300,
+                type: 'iframe',
+                autoScale: false
+            });
+        }
     }
+
+    init_fancybox();
 
     $(document).on("click", ".image_picker_container svg", function () {
         const container = $(this).closest(".image_picker_container");
@@ -219,20 +219,3 @@
         container.find("input").val("");
     });
 })(jQuery);
-
-$(document).ready(function () {
-    $('#subcategoryTable').DataTable({
-        "processing": true,
-        "serverSide": true,
-        "ajax": {
-            "url": "{% url 'menu:sub-category' %}",  // Ensure this matches your view's URL
-            "type": "GET",
-            "dataSrc": "data"
-        },
-        "columns": [
-            { "data": "id" },
-            { "data": "name" },
-            { "data": "actions", "orderable": false, "searchable": false }  // Actions column, not sortable or searchable
-        ]
-    });
-});
