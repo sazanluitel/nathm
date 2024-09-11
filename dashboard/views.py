@@ -414,14 +414,14 @@ class ModulesAjax(View):
         page_menu_items = paginator.page(page_number)
 
         data = []
-        for item in page_menu_items:
+        for modules in page_menu_items:
             data.append(
                 [
-                    item.name,
-                    item.code,
-                    item.credit_hours,
-                    item.level,
-                    self.get_action(item.id),
+                    modules.name,
+                    modules.code,
+                    modules.credit_hours,
+                    modules.level,
+                    self.get_action(modules.id),
                 ]
             )
 
@@ -498,13 +498,13 @@ class DeleteHelper:
 
         return self.get_objects(ids, Program, "Program", "dashboard:programedit", program_title, program_kwargs)
     def get_modules(self, ids):
-        def modules_title(module):
-            return module.name
+        def modules_title(modules):
+            return modules.name
 
-        def modules_kwargs(module):
-            return {"id": module.id}
+        def modules_kwargs(modules):
+            return {"id": modules.id}
 
-        return self.get_objects(ids, Modules, "Module", "dashboard:modulesedit", modules_title, modules_kwargs)
+        return self.get_objects(ids, Modules, "Modules", "dashboard:modulesedit", modules_title, modules_kwargs)
     
     def get_titles(self, post_type: str, total):
         if post_type == "program":
@@ -531,7 +531,7 @@ class DeleteHelper:
                 objects, originals = self.get_department(selected_ids)
             elif delete_type == "campus":
                 objects, originals = self.get_campus(selected_ids)
-            elif delete_type == "module":
+            elif delete_type == "modules":
                 objects, originals = self.get_modules(selected_ids)
 
         return objects, originals
