@@ -38,7 +38,7 @@ class CampusForm(forms.ModelForm):
             'id': 'contact', 
             'placeholder': 'Enter contact num'
         }),
-        label='Contact Num'
+        label='Contact Number'
     )
     
     image = forms.ImageField(
