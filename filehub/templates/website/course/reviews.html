@@ -1,0 +1,43 @@
+{% load fnc_args %}
+
+<div class="reviews_container my-4">
+    <div class="row mb-3">
+        <div class="col-sm-3">
+            <div class="rating-block text-center">
+                <h2 class="bold mb-0">{{ reviews.total }}</h2>
+                {% include "parts/rating.html" with rating=reviews.total %}
+                <p class="text-center mb-0">{{ reviews.count }} reviews</p>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            {% for label, value in reviews.single.items %}
+                <div class="review_overview_single">
+                    <div class="pull-left">{{ label }}</div>
+                    <div class="pull-left" style="width:85%;">
+                        <div class="progress" style="height:5px;">
+                            {% with percentage=value|divide:reviews.count|multiply:100 %}
+                                <div class="progress-bar bg-black"
+                                     role="progressbar"
+                                     style="width: {{ percentage|floatformat:2 }}%;"
+                                     aria-valuenow="{{ percentage|floatformat:2 }}"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100"
+                                >
+                                    <span class="sr-only">{{ percentage|floatformat:2 }}% Complete (danger)</span>
+                                </div>
+                            {% endwith %}
+                        </div>
+                    </div>
+                    <div class="pull-right">({{ value }})</div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+
+        </div>
+    </div>
+</div>

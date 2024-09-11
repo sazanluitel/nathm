@@ -1,30 +1,32 @@
 from django import forms
-from .models import Admission
+from .models import *
 
-class AdmissionForm(forms.ModelForm):
+
+class StudentForm(forms.ModelForm):
     class Meta:
-        model = Admission
-        fields = [
-            'name', 'age', 'gender', 'email', 'contact',
-            'campus', 'department', 'program', 'modules',
-            'father_name', 'father_occupation', 'mother_name', 
-            'mother_contact', 'address', 'city', 'state'
-        ]
+        model = Students
+        fields = ['subject', 'institute', 'grade', 'passed_year', 'country_studied','date_of_admission', 'commencing_term', 'shift','admission_officer', 'campus', 'department', 'program', 'modules', 'gender', 'date_of_birth_in_bs', 'date_of_birth_in_ad', 'address', 'province', 'country', 'postcode', 'citizenship_number'
+            ]
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your name'}),
-            'age': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your age'}),
-            'gender': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter gender'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter email'}),
-            'contact': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter contact number'}),
-            'campus': forms.Select(attrs={'class': 'form-control', 'data-placeholder': 'Select the Campus' , 'style': 'width: 32%;'}),
-            'department': forms.Select(attrs={'class': 'form-control', 'data-placeholder':'Select the department', 'style': 'width: 32%;'}),
-            'program': forms.Select(attrs={'class': 'form-control', 'data-placeholder':'Select the program' ,'style': 'width: 32%;'}),
-            'modules': forms.Select(attrs={'class': 'form-control', 'data-placeholder': 'Select the modules'}),
-            'father_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter father\'s name'}),
-            'father_occupation': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter father\'s occupation'}),
-            'mother_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter mother\'s name'}),
-            'mother_contact': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter mother\'s contact number'}),
-            'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter address'}),
-            'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter city'}),
-            'state': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter state'}),
+            'subject': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter subject'}),
+            'institute': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter institute'}),
+            'grade': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter grade'}),
+            'passed_year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter passed year'}),
+            'country_studied': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter country studied'}),
+            'campus': forms.Select(attrs={'class': 'form-control'}),
+            'department': forms.Select(attrs={'class': 'form-control'}),
+            'program': forms.Select(attrs={'class': 'form-control'}),
+            'modules': forms.Select(attrs={'class': 'form-control'}),
+            'date_of_admission': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'commencing_term': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Commencing Term'}),
+            'shift': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Shift'}),
+            'admission_officer': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Admission Officer'}),
+            'gender': forms.Select(attrs={'class': 'form-control'}),
+            'date_of_birth_in_bs': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'BS Date'}),
+            'date_of_birth_in_ad': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'AD Date', 'type': 'date'}),
+            'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Address'}),
+            'province': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Province'}),
+            'country': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Country'}),
+            'postcode': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Postcode'}),
+            'citizenship_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Citizenship Number'}),
         }

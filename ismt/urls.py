@@ -27,6 +27,7 @@ urlpatterns = [
     path("", include("userauth.urls", namespace="userauth")),
     path("", include("dashboard.urls", namespace="dashboard")),
     path("", include("students.urls", namespace="students")),
+    path('', include ('filehub.urls', namespace="filehub")),
 ]
 
 if settings.DEBUG:
