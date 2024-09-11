@@ -1,42 +1,67 @@
 from django.db import models
-from dashboard.models import Campus, Department, Program, Modules
+from dashboard.models import Campus
 from userauth.models import *
 
-class Students(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE) 
-    GENDER_CHOICES = (
-        ('M', 'Male'),
-        ('F', 'Female'),
-        ('O', 'Other'),
-    )
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    
-    date_of_birth_in_bs = models.CharField(max_length=20)
-    date_of_birth_in_ad = models.DateField()
-    citizenship_number = models.CharField(max_length=20)
-    
-    address = models.CharField(max_length=200, blank=True, null=True)  # Set as nullable
-    province = models.CharField(max_length=50)
-    country = models.CharField(max_length=50)
-    postcode = models.CharField(max_length=10)
+class Students(PersonalInfo, EducationHistory, EnglishTest, EmploymentHistory, EmergencyContact):
+    user = models.OneToOneField(User, on_delete=models.CASCADE) 
 
-    subject = models.CharField(max_length=100)
-    institute = models.CharField(max_length=200)
-    grade = models.CharField(max_length=10)
-    passed_year = models.IntegerField()
-    country_studied = models.CharField(max_length=100)
+    class PaymentBy(models.TextChoices):
+        STUDENT = 'student', 'Student'
+        PARENT = 'parent', 'Parent/Guardian'
+        COMPANY = 'company', 'Company'
+        OTHER = 'other', 'Government/International Agency'
 
+    class WhyUs(models.TextChoices):
+        REPUTATION = 'reputation', 'Good brand Reputation'
+        LOCATION = 'location', 'Location'
+        COURSE = 'course', 'Course/Mode/Flexibility'
+        VALUE = 'value', 'Value of Money'
+        OTHER = 'other', 'Other'
+
+    class AboutUs(models.TextChoices):
+        ADVERTISING = 'advertising', 'Advertising'
+        EVENT = 'event', 'Event'
+        FRIENDS = 'friends', 'Friend/Family/Colleague'
+        INTERNET = 'internet', 'Internet Search'
+        MEDIAS = 'medias', 'Social Media'
+        NEWS = 'news', 'News'
+        ALUMNI = 'alumni', 'Alumni'
+        OTHER = 'other', 'Other'
+
+    # Details
+    campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
+    student_id = models.CharField(max_length=100)
+    commencing_term = models.CharField(max_length=100)
     date_of_admission = models.DateField()
     shift = models.CharField(max_length=50)
-    admission_officer = models.CharField(max_length=100)
-    commencing_term = models.CharField(max_length=100)
+    admission_officer = models.CharField(max_length=100, blank=True, null=True)
+    scholarship_details = models.CharField(max_length=100, blank=True, null=True)
+    referred_by = models.CharField(max_length=100, blank=True, null=True)
 
-    campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
-    program = models.ForeignKey(Program, on_delete=models.CASCADE)
-    modules = models.ForeignKey(Modules, on_delete=models.CASCADE)
+    # Payment of fees
+    payment_by = models.CharField(choices=PaymentBy.choices, max_length=20)
+    organization = models.CharField(max_length=255, blank=True, null=True)
+    authorize_person = models.CharField(max_length=255, blank=True, null=True)
+    address = models.CharField(max_length=100, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    province = models.CharField(max_length=100, blank=True, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
+    email = models.EmailField(max_length=100, blank=True, null=True)
+    contact_number = models.CharField(max_length=100, blank=True, null=True)
 
+    # Financial capacity
+    annual_income = models.CharField(max_length=100)
+    members_in_family = models.IntegerField()
+    father_occupation = models.CharField(max_length=100)
+    mother_occupation = models.CharField(max_length=100)
+
+    # Reasons for choosing the institution
+    why_us = models.CharField(choices=WhyUs.choices, max_length=20)
+    why_us_other = models.CharField(max_length=255, blank=True, null=True)
+
+    # How the student learned about the course
+    about_us = models.CharField(choices=AboutUs.choices, max_length=20)
+    about_us_other = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.subject} - {self.institute}"
-
+        return f"Student: {self.user.email} - {self.student_id}"
