@@ -21,52 +21,34 @@
         <form method="post" enctype="multipart/form-data" action="{% url 'dashboard:modulesedit' id=module_id %}"
         >
           {% csrf_token %}
-            <div class="form-group mb-3">
+          <div class="form-group mb-3">
               <label for="{{ form.name.id_for_label }}" class="form-label">Module Name</label>
               {{ form.name }}
-              {% if form.name.errors %}
-                  <div class="invalid-feedback d-block">{{ form.name.errors }}</div>
-              {% endif %}
           </div>
 
           <div class="form-group mb-3">
               <label for="{{ form.code.id_for_label }}" class="form-label">Subject Code</label>
               {{ form.code }}
-              {% if form.code.errors %}
-                  <div class="invalid-feedback d-block">{{ form.code.errors }}</div>
-              {% endif %}
           </div>
 
           <div class="form-group mb-3">
               <label for="{{ form.credit_hours.id_for_label }}" class="form-label">Credit Hours</label>
               {{ form.credit_hours }}
-              {% if form.credit_hours.errors %}
-                  <div class="invalid-feedback d-block">{{ form.credit_hours.errors }}</div>
-              {% endif %}
           </div>
 
           <div class="form-group mb-3">
               <label for="{{ form.level.id_for_label }}" class="form-label">Level</label>
               {{ form.level }}
-              {% if form.level.errors %}
-                  <div class="invalid-feedback d-block">{{ form.level.errors }}</div>
-              {% endif %}
           </div>
 
           <div class="form-group mb-3">
               <label for="{{ form.program.id_for_label }}" class="form-label">Program</label>
-              {{ form.program }}
-              {% if form.program.errors %}
-                  <div class="invalid-feedback d-block">{{ form.program.errors }}</div>
-              {% endif %}
+              {{form.program}}
           </div>
 
           <div class="form-group mb-3">
               <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
               {{ form.description }}
-              {% if form.description.errors %}
-                  <div class="invalid-feedback d-block">{{ form.description.errors }}</div>
-              {% endif %}
           </div>
 
           <div class="flex mb-5 ms-3">
@@ -77,5 +59,4 @@
       </div>
     </div>
   </div>
-  <script src="{% static 'js/menu.js' %}"></script>
 {% endblock %}

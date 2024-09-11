@@ -8,7 +8,7 @@ class Campus(models.Model):
     code = models.IntegerField(blank=False)
     location = models.CharField(max_length=50)
     contact = models.CharField(blank=False, max_length=15)
-    image = models.ImageField(upload_to="Campus/")
+    image = models.TextField()
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):
@@ -17,7 +17,7 @@ class Campus(models.Model):
 
 class Department(models.Model):
     name = models.CharField(max_length=100)
-    image = models.ImageField(upload_to="Department/")
+    image = models.TextField()
     campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
     description = models.TextField(blank=True, null=True)
 
@@ -34,7 +34,7 @@ class Program(models.Model):
     name = models.CharField(max_length=100)
     tenure = models.IntegerField(default=3)
     academic_plan = models.CharField(max_length=20, choices=ACADEMIC_PLAN)
-    image = models.ImageField(upload_to="Program/", blank=True, null=True)
+    image = models.TextField()
     campus = models.ForeignKey(Campus, on_delete=models.CASCADE, null= True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     description = models.TextField(blank=True, null=True)

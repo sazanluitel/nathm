@@ -41,13 +41,13 @@ class CampusForm(forms.ModelForm):
         label='Contact Number'
     )
     
-    image = forms.ImageField(
+    image = forms.CharField(
         required=False,
-        widget=forms.FileInput(attrs={
+        widget=forms.TextInput(attrs={
             'class': 'form-control', 
-            'id': 'image'
-        }),
-        label='Image'
+            'id': 'image',
+            'placeholder': 'Choose the image'
+        })
     )
     
     description = forms.CharField(
@@ -65,13 +65,13 @@ class CampusForm(forms.ModelForm):
         fields = ['name', 'code', 'location', 'contact', 'image', 'description']
 
 class DepartmentForm(forms.ModelForm):
-    image = forms.ImageField(
-    required=False, 
-    widget=forms.FileInput(attrs={
-        'class': 'form-control', 
-        'id': 'image', 
-        'placeholder': 'Choose the image'
-    }))
+    image = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control', 
+            'id': 'image',
+            'placeholder': 'Choose the image'
+        }))
 
     class Meta:
         model = Department
@@ -95,6 +95,14 @@ class DepartmentForm(forms.ModelForm):
         }
 
 class ProgramForm(forms.ModelForm):
+    image = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control', 
+            'id': 'image',
+            'placeholder': 'Choose the image'
+        })
+    )
     class Meta:
         model = Program
         fields = ['name', 'tenure', 'academic_plan', 'image', 'campus', 'department', 'description']
@@ -113,10 +121,6 @@ class ProgramForm(forms.ModelForm):
                 'class': 'form-control w-100', 
                 'data-placeholder': 'Select the academic Plan',
                 'id': 'academic_plan'
-            }),
-            'image': forms.FileInput(attrs={
-                'class': 'form-control', 
-                'id': 'image'
             }),
             'campus': forms.Select(attrs={
                 'class': 'form-control w-100', 

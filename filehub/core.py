@@ -224,7 +224,7 @@ class FolderManager:
         original_file_name = original_file_name.replace('-', '_')
         original_file_name = re.sub(r'[^\w\s.-]', '', original_file_name)
         original_file_name = re.sub(r'[\[\](){}]', '', original_file_name)
-        return "mr_" + original_file_name + file_extension
+        return "ismt_" + original_file_name + file_extension
 
     @staticmethod
     @transaction.atomic
