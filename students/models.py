@@ -1,9 +1,9 @@
 from django.db import models
-from dashboard.models import Campus
+from dashboard.models import Campus, Program, Department, Modules
 from userauth.models import *
 
 class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE) 
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     class PaymentBy(models.TextChoices):
         STUDENT = 'student', 'Student'
@@ -36,7 +36,7 @@ class Student(models.Model):
 
     # Details
     campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
-    student_id = models.CharField(max_length=255)
+    student_id = models.CharField(max_length=255, unique=True)
     commencing_term = models.TextField()
     date_of_admission = models.DateField()
     shift = models.CharField(max_length=50, choices=SHIFT)
@@ -49,7 +49,7 @@ class Student(models.Model):
     organization = models.CharField(max_length=255, blank=True, null=True)
     authorize_person = models.CharField(max_length=255, blank=True, null=True)
     email = models.EmailField(max_length=100, blank=True, null=True)
-    payment_address = models.ForeignKey("userauth.AddressInfo", on_delete=models.CASCADE)
+    payment_address = models.ForeignKey("userauth.AddressInfo", on_delete=models.CASCADE, blank=True, null=True)
 
     # Financial capacity
     annual_income = models.CharField(max_length=100)
@@ -57,7 +57,6 @@ class Student(models.Model):
     father_occupation = models.TextField(max_length=100)
     mother_occupation = models.TextField(max_length=100)
 
-    
     # Reasons for choosing the institution
     why_us = models.CharField(choices=WhyUs.choices, max_length=20)
     why_us_other = models.TextField(blank=True, null=True)
@@ -67,4 +66,4 @@ class Student(models.Model):
     about_us_other = models.TextField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return self.email
+        return self.user.email
