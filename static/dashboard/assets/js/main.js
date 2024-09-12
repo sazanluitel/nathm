@@ -1,7 +1,12 @@
 (function ($) {
     /* 
-        Toggle 'open' class on click of element with class 'ps-hasmenu'
+        Toggle
+         'open' class on click of element with class 'ps-hasmenu'
     */
+    $.fn.hasAttr = function(name) {  
+        return this.attr(name) !== undefined;
+    };
+
     $(document).on("click", ".ps-hasmenu>.ps-link", function (e) {
         e.preventDefault();
 
@@ -64,7 +69,10 @@
     $(document).ready(function () {
         try {
             $(document).find('select:not(.noselect2):not(.inmodal)').each(function () {
-                $(this).select2();
+                const isMultiple = $(this).hasAttr("multiple")
+                $(this).select2({
+                    multiple: isMultiple
+                });
             });
 
             $(document).find('select.inmodal:not(.noselect2)').each(function () {
