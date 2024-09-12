@@ -54,7 +54,7 @@ def get_folders(parent_folder=None, sortby="name", sortorder="asc", search=None)
 def get_files(page=1, folder=None, sortby="name", sortorder="asc", search=None, filter_by=None):
     sortorderFinal = '' if sortorder == 'asc' else '-'
 
-    items_per_page = 10
+    items_per_page = 1000
     all_files = MediaFile.objects.filter(folder=folder)
 
     if filter_by is not None:

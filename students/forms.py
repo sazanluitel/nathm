@@ -1,32 +1,146 @@
-# from django import forms
-# from .models import *
+from django import forms
+from userauth.models import AddressInfo
+from dashboard.models import Campus
+from userauth.models import User
+from .models import Student
 
-
-# class StudentForm(forms.ModelForm):
-#     class Meta:
-#         model = Students
-#         fields = ['subject', 'institute', 'grade', 'passed_year', 'country_studied','date_of_admission', 'commencing_term', 'shift','admission_officer', 'campus', 'department', 'program', 'modules', 'gender', 'date_of_birth_in_bs', 'date_of_birth_in_ad', 'address', 'province', 'country', 'postcode', 'citizenship_number'
-#             ]
-#         widgets = {
-#             'subject': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter subject'}),
-#             'institute': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter institute'}),
-#             'grade': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter grade'}),
-#             'passed_year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter passed year'}),
-#             'country_studied': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter country studied'}),
-#             'campus': forms.Select(attrs={'class': 'form-control'}),
-#             'department': forms.Select(attrs={'class': 'form-control'}),
-#             'program': forms.Select(attrs={'class': 'form-control'}),
-#             'modules': forms.Select(attrs={'class': 'form-control'}),
-#             'date_of_admission': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-#             'commencing_term': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Commencing Term'}),
-#             'shift': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Shift'}),
-#             'admission_officer': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Admission Officer'}),
-#             'gender': forms.Select(attrs={'class': 'form-control'}),
-#             'date_of_birth_in_bs': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'BS Date'}),
-#             'date_of_birth_in_ad': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'AD Date', 'type': 'date'}),
-#             'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Address'}),
-#             'province': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Province'}),
-#             'country': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Country'}),
-#             'postcode': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Postcode'}),
-#             'citizenship_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Citizenship Number'}),
-#         }
+class StudentForm(forms.ModelForm):
+    class Meta:
+        model = Student, AddressInfo, Campus, User
+        fields = [
+            'user', 'campus', 'student_id', 'commencing_term', 'date_of_admission', 'shift',
+            'admission_officer', 'scholarship_details', 'referred_by', 'payment_by', 'organization',
+            'authorize_person', 'email', 'payment_address', 'annual_income', 'members_in_family',
+            'father_occupation', 'mother_occupation', 'why_us', 'why_us_other', 'about_us', 'about_us_other'
+        ]
+        widgets = {
+            'user': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'user',
+                'name': 'user',
+            }),
+            'campus': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'campus',
+                'name': 'campus',
+            }),
+            'student_id': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'student_id',
+                'name': 'student_id',
+                'placeholder': 'Student ID',
+            }),
+            'commencing_term': forms.Textarea(attrs={
+                'class': 'form-control',
+                'id': 'commencing_term',
+                'name': 'commencing_term',
+                'rows': 2,
+                'placeholder': 'Commencing Term',
+            }),
+            'date_of_admission': forms.DateInput(attrs={
+                'class': 'form-control',
+                'id': 'date_of_admission',
+                'name': 'date_of_admission',
+                'type': 'date',
+                'placeholder': 'Date of Admission',
+            }),
+            'shift': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'shift',
+                'name': 'shift',
+            }),
+            'admission_officer': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'admission_officer',
+                'name': 'admission_officer',
+                'placeholder': 'Admission Officer',
+            }),
+            'scholarship_details': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'scholarship_details',
+                'name': 'scholarship_details',
+                'placeholder': 'Scholarship Details',
+            }),
+            'referred_by': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'referred_by',
+                'name': 'referred_by',
+                'placeholder': 'Referred By',
+            }),
+            'payment_by': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'payment_by',
+                'name': 'payment_by',
+            }),
+            'organization': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'organization',
+                'name': 'organization',
+                'placeholder': 'Organization',
+            }),
+            'authorize_person': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'authorize_person',
+                'name': 'authorize_person',
+                'placeholder': 'Authorized Person',
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'id': 'email',
+                'name': 'email',
+                'placeholder': 'Email',
+            }),
+            'payment_address': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'payment_address',
+                'name': 'payment_address',
+            }),
+            'annual_income': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'annual_income',
+                'name': 'annual_income',
+                'placeholder': 'Annual Income',
+            }),
+            'members_in_family': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'id': 'members_in_family',
+                'name': 'members_in_family',
+                'placeholder': 'Number of Family Members',
+            }),
+            'father_occupation': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'father_occupation',
+                'name': 'father_occupation',
+                'placeholder': 'Father\'s Occupation',
+            }),
+            'mother_occupation': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'mother_occupation',
+                'name': 'mother_occupation',
+                'placeholder': 'Mother\'s Occupation',
+            }),
+            'why_us': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'why_us',
+                'name': 'why_us',
+            }),
+            'why_us_other': forms.Textarea(attrs={
+                'class': 'form-control',
+                'id': 'why_us_other',
+                'name': 'why_us_other',
+                'rows': 2,
+                'placeholder': 'If Other, specify...',
+            }),
+            'about_us': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'about_us',
+                'name': 'about_us',
+            }),
+            'about_us_other': forms.Textarea(attrs={
+                'class': 'form-control',
+                'id': 'about_us_other',
+                'name': 'about_us_other',
+                'rows': 2,
+                'placeholder': 'If Other, specify...',
+            }),
+        }
