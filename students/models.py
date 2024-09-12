@@ -4,7 +4,6 @@ from userauth.models import AddressInfo, User
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     # Define the choices
     PAYMENT_BY = [
