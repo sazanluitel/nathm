@@ -18,7 +18,7 @@ class Campus(models.Model):
 class Department(models.Model):
     name = models.CharField(max_length=100)
     image = models.TextField()
-    campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
+    campus = models.ManyToManyField(Campus)
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):
@@ -35,8 +35,8 @@ class Program(models.Model):
     tenure = models.IntegerField(default=3)
     academic_plan = models.CharField(max_length=20, choices=ACADEMIC_PLAN)
     image = models.TextField()
-    campus = models.ForeignKey(Campus, on_delete=models.CASCADE, null= True)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    campus = models.ManyToManyField(Campus)
+    department = models.ManyToManyField(Department)
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):
@@ -52,10 +52,10 @@ class Modules(models.Model):
     ]
 
     name = models.CharField(max_length=100)
-    code = models.IntegerField(blank=False)
+    code = models.CharField(blank=False,  max_length=300)
     credit_hours = models.IntegerField(blank=False)
     level = models.CharField(max_length=1, choices=LEVEL_CHOICES, blank=False)
-    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    program = models.ManyToManyField(Program)
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):

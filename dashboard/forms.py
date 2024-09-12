@@ -73,7 +73,16 @@ class DepartmentForm(forms.ModelForm):
             'class': 'form-control', 
             'id': 'image',
             'placeholder': 'Choose the image'
-        }))
+        })
+    )
+    campus = forms.ModelMultipleChoiceField(
+    queryset=Campus.objects.all(),
+    widget=forms.SelectMultiple(attrs={
+        'class': 'form-control w-100',
+        'id': 'campus-select',
+        'data-placeholder': 'Select the campus',
+    })
+    )
 
     class Meta:
         model = Department
@@ -83,11 +92,6 @@ class DepartmentForm(forms.ModelForm):
                 'class': 'form-control', 
                 'id': 'name', 
                 'placeholder': 'Enter department name'
-            }),
-            'campus': forms.Select(attrs={
-                'class': 'form-control w-100', 
-                'data-placeholder': 'Select the campus',
-                'id': 'campus-select'
             }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control tinymce', 
@@ -105,6 +109,27 @@ class ProgramForm(forms.ModelForm):
             'placeholder': 'Choose the image'
         })
     )
+
+    campus = forms.ModelMultipleChoiceField(
+        queryset=Campus.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-control w-100',
+            'id': 'campus-select',
+            'data-placeholder': 'Select the campus',
+            # 'onchange': 'fetchdepartment()'  # Assuming this is for JS handling
+        })
+    )
+
+    department = forms.ModelMultipleChoiceField(
+        queryset=Department.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-control w-100',
+            'id': 'department-select',
+            'data-placeholder': 'Select the campus',
+            # 'onchange': 'fetchdepartment()'  # Assuming this is for JS handling
+        })
+    )
+
     class Meta:
         model = Program
         fields = ['name', 'tenure', 'academic_plan', 'image', 'campus', 'department', 'description']
@@ -124,17 +149,6 @@ class ProgramForm(forms.ModelForm):
                 'data-placeholder': 'Select the academic Plan',
                 'id': 'academic_plan'
             }),
-            'campus': forms.Select(attrs={
-                'class': 'form-control w-100', 
-                'id': 'campus-select', 
-                'data-placeholder': 'Select the campus',
-                'onchange': 'fetchdepartment()'  # Assuming this is for JS handling
-            }),
-            'department': forms.Select(attrs={
-                'class': 'form-control w-100', 
-                'data-placeholder': 'Select the department',
-                'id': 'department-select'
-            }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control tinymce', 
                 'id': 'description', 
@@ -144,6 +158,16 @@ class ProgramForm(forms.ModelForm):
 
 
 class ModulesForm(forms.ModelForm):
+
+    program = forms.ModelMultipleChoiceField(
+        queryset=Program.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-control w-100',
+            'id': 'program-select',
+            'data-placeholder': 'Select the campus',
+            # 'onchange': 'fetchdepartment()'  # Assuming this is for JS handling
+        })
+    )
     class Meta:
         model = Modules
         fields = ['name', 'code', 'credit_hours', 'level', 'program', 'description']
@@ -153,10 +177,13 @@ class ModulesForm(forms.ModelForm):
                 'id': 'name', 
                 'placeholder': 'Enter module name'
             }),
-            'code': forms.NumberInput(attrs={
+            'code': forms.TextInput(attrs={
                 'class': 'form-control', 
                 'id': 'code', 
-                'placeholder': 'Enter subject code'
+                'placeholder': 'Enter subject code',
+                'oninput': "this.value = this.value.toUpperCase()"
+
+
             }),
             'credit_hours': forms.NumberInput(attrs={
                 'class': 'form-control', 
@@ -168,11 +195,7 @@ class ModulesForm(forms.ModelForm):
                 'data-placeholder': 'Select the level',
                 'id': 'level-select'
             }),
-            'program': forms.Select(attrs={
-                'class': 'form-control w-100', 
-                'data-placeholder': 'Select the program',
-                'id': 'program-select'
-            }),
+
             'description': forms.Textarea(attrs={
                 'class': 'form-control tinymce', 
                 'id': 'description', 

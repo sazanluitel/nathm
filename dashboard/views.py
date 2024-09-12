@@ -184,6 +184,12 @@ class DepartmentEdit(View):
         })
     
 class DepartmentAjax(View):
+    def get_campuses(self, obj):
+        output = []
+        for campus in obj.campus.all():
+            output.append(campus.name)
+        return ", ".join(output)
+
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
         start = int(request.GET.get("start", 0))
@@ -207,7 +213,7 @@ class DepartmentAjax(View):
             data.append(
                 [
                     department.name,
-                    department.campus.name,
+                    self.get_campuses(department),
                     self.get_action(department.id),
                 ]
             )
@@ -286,6 +292,19 @@ class ProgramEdit(View):
         })
  
 class ProgramAjax(View):
+    def get_campuses(self, obj):
+        output = []
+        for campus in obj.campus.all():
+            output.append(campus.name)
+        return ", ".join(output)
+    
+    def get_department(self, obj):
+        output = []
+        for department in obj.department.all():
+            output.append(department.name)
+        return ", ".join(output)
+
+        
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
         start = int(request.GET.get("start", 0))
@@ -294,8 +313,8 @@ class ProgramAjax(View):
         page_number = (start // length) + 1
 
         programs = Program.objects.all()
-        campus = Campus.objects.all()
-        department = Department.objects.all()
+        # campus = Campus.objects.all()
+        # department = Department.objects.all()
 
         if search_value:
             programs = programs.filter(
@@ -317,8 +336,8 @@ class ProgramAjax(View):
                     program.name,
                     program.tenure,
                     program.academic_plan,
-                    campus_name,
-                    department_name,
+                    self.get_campuses(program),
+                    self.get_department(program),
                     self.get_action(program.id),
                 ]
             )
