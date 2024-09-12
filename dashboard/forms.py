@@ -10,14 +10,16 @@ class CampusForm(forms.ModelForm):
             'id': 'id_name', 
             'placeholder': 'Enter Campus name'
         }),
-        label='Name'
+        label='Name',
+        required=True
     )
     
-    code = forms.IntegerField(
-        widget=forms.NumberInput(attrs={
+    code = forms.CharField(
+        widget=forms.TextInput(attrs={
             'class': 'form-control', 
             'id': 'code', 
-            'placeholder': 'Enter campus code'
+            'placeholder': 'Enter campus code',
+            'oninput': "this.value = this.value.toUpperCase()"
         }),
         label='Campus Code'
     )
