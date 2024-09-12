@@ -1,152 +1,101 @@
-{% comment %} {% extends 'dashboard/admin-base.html' %}
+{% extends 'dashboard/admin-base.html' %}
 {% load static %}
 {% block title %}
-  Add Students
+  Add Student
 {% endblock %}
 {% block breadcrumb %}
-  Add Students
+  Add Student
 {% endblock %}
 {% block maintitle %}
-  Add Students
+  Add Student
 {% endblock %}
 
 {% block content %}
-<div class="container">
-  <form method="post">
-    {% csrf_token %}
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-body">
+        {% with messages=messages %}
+          {% include 'dashboard/alert.html' %}
+        {% endwith %}
 
-    <div class="form-group mb-3">
-      <label for="{{ form.name.id_for_label }}" class="form-label">Name</label>
-      {{ form.name }}
-      {% if form.name.errors %}
-        <div class="invalid-feedback d-block">{{ form.name.errors }}</div>
-      {% endif %}
-    </div>
+        <form method="post" enctype="multipart/form-data" action="{% url 'students:student' %}">
+          {% csrf_token %}
 
-    <div class="form-group mb-3">
-      <label for="{{ form.age.id_for_label }}" class="form-label">Age</label>
-      {{ form.age }}
-      {% if form.age.errors %}
-        <div class="invalid-feedback d-block">{{ form.age.errors }}</div>
-      {% endif %}
-    </div>
+              <!-- User Form -->
+              <div class="form-group mb-3">
+                  <label for="{{ user_form.email.id_for_label }}" class="form-label">Email</label>
+                  {{ StudentForm.campus }}
+              </div>
 
-    <div class="form-group mb-3">
-      <label for="{{ form.gender.id_for_label }}" class="form-label">Gender</label>
-      {{ form.gender }}
-      {% if form.gender.errors %}
-        <div class="invalid-feedback d-block">{{ form.gender.errors }}</div>
-      {% endif %}
-    </div>
+              <div class="form-group mb-3">
+                  <label for="{{ user_form.first_name.id_for_label }}" class="form-label">First Name</label>
+                  {{ user_form.first_name }}
+              </div>
 
-    <div class="d-flex">
-      <div class="form-group mb-3">
-      <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
-      {{ form.email }}
-      {% if form.email.errors %}
-        <div class="invalid-feedback d-block">{{ form.email.errors }}</div>
-      {% endif %}
-    </div>
+              <div class="form-group mb-3">
+                  <label for="{{ user_form.middle_name.id_for_label }}" class="form-label">Middle Name</label>
+                  {{ user_form.middle_name }}
+              </div>
 
-    <div class="form-group mb-3">
-      <label for="{{ form.contact.id_for_label }}" class="form-label">Contact</label>
-      {{ form.contact }}
-      {% if form.contact.errors %}
-        <div class="invalid-feedback d-block">{{ form.contact.errors }}</div>
-      {% endif %}
-    </div>
-    </div>
-    <div class="d-flex row">
-      <div class="form-group col-md-4 mb-3">
-        <label for="{{ form.campus.id_for_label }}" class="form-label">Campus</label>
-        {{ form.campus }}
-        {% if form.campus.errors %}
-          <div class="invalid-feedback d-block">{{ form.campus.errors }}</div>
-        {% endif %}
+              <div class="form-group mb-3">
+                  <label for="{{ user_form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                  {{ user_form.last_name }}
+              </div>
+
+              <div class="form-group mb-3">
+                  <label for="{{ user_form.profile_image.id_for_label }}" class="form-label">Profile Image</label>
+                  {% include 'dashboard/image-picker.html' with name="user_profile_image" %}
+              </div>
+
+              <!-- Personal Info Form -->
+              <div class="form-group mb-3">
+                  <label for="{{ personal_info_form.citizenship_number.id_for_label }}" class="form-label">Citizenship Number</label>
+                  {{ personal_info_form.citizenship_number }}
+              </div>
+
+              <div class="form-group mb-3">
+                  <label for="{{ personal_info_form.gender.id_for_label }}" class="form-label">Gender</label>
+                  {{ personal_info_form.gender }}
+              </div>
+
+              <div class="form-group mb-3">
+                  <label for="{{ personal_info_form.date_of_birth_in_ad.id_for_label }}" class="form-label">Date of Birth (AD)</label>
+                  {{ personal_info_form.date_of_birth_in_ad }}
+              </div>
+
+              <!-- Address Info Form -->
+              <div class="form-group mb-3">
+                  <label for="{{ address_form.address.id_for_label }}" class="form-label">Permanent Address</label>
+                  {{ address_form.address }}
+              </div>
+
+              <div class="form-group mb-3">
+                  <label for="{{ address_form.city.id_for_label }}" class="form-label">City</label>
+                  {{ address_form.city }}
+              </div>
+
+              <div class="form-group mb-3">
+                  <label for="{{ address_form.province.id_for_label }}" class="form-label">Province</label>
+                  {{ address_form.province }}
+              </div>
+
+              <div class="form-group mb-3">
+                  <label for="{{ address_form.country.id_for_label }}" class="form-label">Country</label>
+                  {{ address_form.country }}
+              </div>
+
+              <div class="form-group mb-3">
+                  <label for="{{ address_form.postcode.id_for_label }}" class="form-label">Postcode</label>
+                  {{ address_form.postcode }}
+              </div>
+
+          <div class="flex mb-5 ms-3">
+            <button type="submit" class="btn btn-success mt-3">Submit</button>
+            <a href="{% url 'students:studentlist' %}" class="btn btn-secondary mt-3">Cancel</a>
+          </div>
+
+        </form>
       </div>
-
-      <div class="form-group col-md-4 mb-3">
-        <label for="{{ form.department.id_for_label }}" class="form-label">Department</label>
-        {{ form.department }}
-        {% if form.department.errors %}
-          <div class="invalid-feedback d-block">{{ form.department.errors }}</div>
-        {% endif %}
-      </div>
-
-      <div class="form-group col-md-4 mb-3">
-        <label for="{{ form.program.id_for_label }}" class="form-label">Program</label>
-        {{ form.program }}
-        {% if form.program.errors %}
-          <div class="invalid-feedback d-block">{{ form.program.errors }}</div>
-        {% endif %}
-      </div>
     </div>
-
-    <div class="form-group mb-3">
-      <label for="{{ form.modules.id_for_label }}" class="form-label">Modules</label>
-      {{ form.modules }}
-      {% if form.modules.errors %}
-        <div class="invalid-feedback d-block">{{ form.modules.errors }}</div>
-      {% endif %}
-    </div>
-
-    <div class="form-group mb-3">
-      <label for="{{ form.father_name.id_for_label }}" class="form-label">Father's Name</label>
-      {{ form.father_name }}
-      {% if form.father_name.errors %}
-        <div class="invalid-feedback d-block">{{ form.father_name.errors }}</div>
-      {% endif %}
-    </div>
-
-    <div class="form-group mb-3">
-      <label for="{{ form.father_occupation.id_for_label }}" class="form-label">Father's Occupation</label>
-      {{ form.father_occupation }}
-      {% if form.father_occupation.errors %}
-        <div class="invalid-feedback d-block">{{ form.father_occupation.errors }}</div>
-      {% endif %}
-    </div>
-
-    <div class="form-group mb-3">
-      <label for="{{ form.mother_name.id_for_label }}" class="form-label">Mother's Name</label>
-      {{ form.mother_name }}
-      {% if form.mother_name.errors %}
-        <div class="invalid-feedback d-block">{{ form.mother_name.errors }}</div>
-      {% endif %}
-    </div>
-
-    <div class="form-group mb-3">
-      <label for="{{ form.mother_contact.id_for_label }}" class="form-label">Mother's Contact</label>
-      {{ form.gurdian_contact }}
-      {% if form.gurdian_contact.errors %}
-        <div class="invalid-feedback d-block">{{ form.gurdian_contact.errors }}</div>
-      {% endif %}
-    </div>
-
-    <div class="form-group mb-3">
-      <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
-      {{ form.address }}
-      {% if form.address.errors %}
-        <div class="invalid-feedback d-block">{{ form.address.errors }}</div>
-      {% endif %}
-    </div>
-
-    <div class="form-group mb-3">
-      <label for="{{ form.city.id_for_label }}" class="form-label">City</label>
-      {{ form.city }}
-      {% if form.city.errors %}
-        <div class="invalid-feedback d-block">{{ form.city.errors }}</div>
-      {% endif %}
-    </div>
-
-    <div class="form-group mb-3">
-      <label for="{{ form.state.id_for_label }}" class="form-label">State</label>
-      {{ form.state }}
-      {% if form.state.errors %}
-        <div class="invalid-feedback d-block">{{ form.state.errors }}</div>
-      {% endif %}
-    </div>
-
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
-</div>
-{% endblock %} {% endcomment %}
+  </div>
+{% endblock %}
