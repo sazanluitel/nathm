@@ -20,75 +20,162 @@
 
         <form method="post" enctype="multipart/form-data" action="{% url 'students:student' %}">
           {% csrf_token %}
+          <div class="form-group mb-3">
+            <label for="{{ form.campus.id_for_label }}" class="form-label">Campus</label>
+              {{ form.campus }}
+          </div>
+          <div class="form-group mb-3">
+              <label for="{{ form.department.id_for_label }}" class="form-label">Department</label>
+              {{ form.department }}
+          </div>
+          <div class="form-group mb-3">
+            <label for="{{ form.date_of_admission.id_for_label }}" class="form-label">Date of Admission</label>
+              {{ form.date_of_admission }}
+          </div>
+          <div class="form-group mb-3">
+            <label for="{{ form.commencing_term.id_for_label }}" class="form-label">Commencing Term</label>
+            {{ form.commencing_term }}
+          </div>  
+          <div class="form-group mb-3">
+              <label for="{{ form.shift.id_for_label }}" class="form-label">Shift</label>
+              {{ form.shift }}
+          </div> 
+          <div class="form-group mb-3">
+              <label for="{{ form.admission_officer.id_for_label }}" class="form-label">Admission Officer</label>
+              {{ form.admission_officer }}
+          </div>
+          <div class="form-group mb-3">
+              <label for="{{ form.scholarship_details.id_for_label }}" class="form-label">Scholarship Details</label>
+              {{ form.scholarship_details }}
+          </div>
+          <div class="form-group mb-3">
+              <label for="{{ form.referred_by.id_for_label }}" class="form-label">Referred By</label>
+              {{ form.referred_by }}
+          </div>
+          <div class="form-group mb-3">
+              <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
+              {{ form.title }}
+          </div>
+          <div class="form-group mb-3">
+              <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+              {{ form.first_name }}
+          </div>
 
-              <!-- User Form -->
-              <div class="form-group mb-3">
-                  <label for="{{ user_form.email.id_for_label }}" class="form-label">Email</label>
-                  {{ StudentForm.campus }}
-              </div>
+          <div class="form-group mb-3">
+              <label for="{{ form.middle_name.id_for_label }}" class="form-label">Middle Name</label>
+              {{ form.middle_name }}
+          </div>
 
-              <div class="form-group mb-3">
-                  <label for="{{ user_form.first_name.id_for_label }}" class="form-label">First Name</label>
-                  {{ user_form.first_name }}
-              </div>
+          <div class="form-group mb-3">
+              <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+              {{ form.last_name }}
+          </div>
+          <div class="form-group mb-3">
+              <label for="{{ form.profile_image.id_for_label }}" class="form-label">Profile Image</label>
+              {{ form.profile_image }}
+          </div>
+          <div class="form-group mb-3">
+              <label for="{{ form.citizenship_number.id_for_label }}" class="form-label">Citizenship Number</label>
+              {{ form.citizenship_number }}
+          </div>
 
-              <div class="form-group mb-3">
-                  <label for="{{ user_form.middle_name.id_for_label }}" class="form-label">Middle Name</label>
-                  {{ user_form.middle_name }}
-              </div>
+          <div class="form-group mb-3">
+              <label for="{{ form.gender.id_for_label }}" class="form-label">Gender</label>
+              {{ form.gender }}
+          </div>
 
-              <div class="form-group mb-3">
-                  <label for="{{ user_form.last_name.id_for_label }}" class="form-label">Last Name</label>
-                  {{ user_form.last_name }}
-              </div>
+          <div class="form-group mb-3">
+              <label for="{{ form.date_of_birth_in_ad.id_for_label }}" class="form-label">Date of Birth (AD)</label>
+              {{ form.date_of_birth_in_ad }}
+          </div>
 
-              <div class="form-group mb-3">
-                  <label for="{{ user_form.profile_image.id_for_label }}" class="form-label">Profile Image</label>
-                  {% include 'dashboard/image-picker.html' with name="user_profile_image" %}
-              </div>
+          <div class="form-group mb-3">
+              <label for="{{ form.citizenship_img.id_for_label }}" class="form-label">Citizenship Image</label>
+              {{ form.citizenship_img }}
+          </div>
+          <div class="form-group mb-3">
+              <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+              {{ form.email }}
+          </div>
+          <div class="form-group mb-3">
+              <label for="{{ form.contact_number.id_for_label }}" class="form-label">Contact Number</label>
+              {{ form.contact_number }}
+          </div>
+          <div class="row">
+            <h2>Parmanent Address</h2>
+            <div class="form-group mb-3">
+                <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
+                {{ form.permanent_address .address }}
+            </div>
 
-              <!-- Personal Info Form -->
-              <div class="form-group mb-3">
-                  <label for="{{ personal_info_form.citizenship_number.id_for_label }}" class="form-label">Citizenship Number</label>
-                  {{ personal_info_form.citizenship_number }}
-              </div>
+            <div class="form-group mb-3">
+                <label for="{{ form.city.id_for_label }}" class="form-label">City</label>
+                {{ form.permanent_address .city }}
+            </div>
 
-              <div class="form-group mb-3">
-                  <label for="{{ personal_info_form.gender.id_for_label }}" class="form-label">Gender</label>
-                  {{ personal_info_form.gender }}
-              </div>
+            <div class="form-group mb-3">
+                <label for="{{ form.province.id_for_label }}" class="form-label">Province</label>
+                {{ form.permanent_address .province }}
+            </div>
 
-              <div class="form-group mb-3">
-                  <label for="{{ personal_info_form.date_of_birth_in_ad.id_for_label }}" class="form-label">Date of Birth (AD)</label>
-                  {{ personal_info_form.date_of_birth_in_ad }}
-              </div>
+            <div class="form-group mb-3">
+                <label for="{{ form.country.id_for_label }}" class="form-label">Country</label>
+                {{ form.permanent_address .country }}
+            </div>
 
-              <!-- Address Info Form -->
-              <div class="form-group mb-3">
-                  <label for="{{ address_form.address.id_for_label }}" class="form-label">Permanent Address</label>
-                  {{ address_form.address }}
-              </div>
+            <div class="form-group mb-3">
+                <label for="{{ form.postcode.id_for_label }}" class="form-label">Postal Code</label>
+                {{ form.permanent_address .postcode }}
+            </div>
+          </div>
+          <div class="row">
+            <h2>Temporary Address</h2>
+            <div class="form-group mb-3">
+                <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
+                {{ form.address }}
+            </div>
 
-              <div class="form-group mb-3">
-                  <label for="{{ address_form.city.id_for_label }}" class="form-label">City</label>
-                  {{ address_form.city }}
-              </div>
+            <div class="form-group mb-3">
+                <label for="{{ form.city.id_for_label }}" class="form-label">City</label>
+                {{ form.city }}
+            </div>
 
-              <div class="form-group mb-3">
-                  <label for="{{ address_form.province.id_for_label }}" class="form-label">Province</label>
-                  {{ address_form.province }}
-              </div>
+            <div class="form-group mb-3">
+                <label for="{{ form.province.id_for_label }}" class="form-label">Province</label>
+                {{ form.province }}
+            </div>
 
-              <div class="form-group mb-3">
-                  <label for="{{ address_form.country.id_for_label }}" class="form-label">Country</label>
-                  {{ address_form.country }}
-              </div>
+            <div class="form-group mb-3">
+                <label for="{{ form.country.id_for_label }}" class="form-label">Country</label>
+                {{ form.country }}
+            </div>
 
-              <div class="form-group mb-3">
-                  <label for="{{ address_form.postcode.id_for_label }}" class="form-label">Postcode</label>
-                  {{ address_form.postcode }}
-              </div>
+            <div class="form-group mb-3">
+                <label for="{{ form.postcode.id_for_label }}" class="form-label">Postal Code</label>
+                {{ form.postcode }}
+            </div>
+          </div>
+          <div class="form-group mb-3">
+              <label for="{{ form.educational_history.id_for_label }}" class="form-label">Educational History</label>
+              {{ form.educational_history }}
+          </div>
 
+          <div class="form-group mb-3">
+              <label for="{{ form.english_test.id_for_label }}" class="form-label">English Test</label>
+              {{ form.english_test }}
+          </div>
+
+          <div class="form-group mb-3">
+              <label for="{{ form.employment_history.id_for_label }}" class="form-label">Employment History</label>
+              {{ form.employment_history }}
+          </div>
+
+          <div class="form-group mb-3">
+              <label for="{{ form.emergency_contact.id_for_label }}" class="form-label">Emergency Contact</label>
+              {{ form.emergency_contact }}
+          </div>
+
+          
           <div class="flex mb-5 ms-3">
             <button type="submit" class="btn btn-success mt-3">Submit</button>
             <a href="{% url 'students:studentlist' %}" class="btn btn-secondary mt-3">Cancel</a>
