@@ -4,6 +4,7 @@ from userauth.models import AddressInfo, User
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     # Define the choices
     PAYMENT_BY = [
@@ -40,7 +41,7 @@ class Student(models.Model):
 
     # Details
     campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
-    student_id = models.CharField(max_length=255)
+    student_id = models.CharField(max_length=255, unique=True)
     commencing_term = models.TextField()
     date_of_admission = models.DateField()
     shift = models.CharField(max_length=50, choices=SHIFT)
