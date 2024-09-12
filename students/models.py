@@ -1,32 +1,36 @@
 from django.db import models
 from dashboard.models import Campus
-from userauth.models import *
+from userauth.models import AddressInfo, User
 
 class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE) 
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    class PaymentBy(models.TextChoices):
-        STUDENT = 'student', 'Student'
-        PARENT = 'parent', 'Parent/Guardian'
-        COMPANY = 'company', 'Company'
-        OTHER = 'other', 'Government/International Agency'
+    # Define the choices
+    PAYMENT_BY = [
+        ('STUDENT', 'Student'),
+        ('PARENT', 'Parent/Guardian'),
+        ('COMPANY', 'Company'),
+        ('OTHER', 'Government/International Agency'),
+    ]
 
-    class WhyUs(models.TextChoices):
-        REPUTATION = 'reputation', 'Good brand Reputation'
-        LOCATION = 'location', 'Location'
-        COURSE = 'course', 'Course/Mode/Flexibility'
-        VALUE = 'value', 'Value of Money'
-        OTHER = 'other', 'Other'
+    WHY_US = [
+        ('REPUTATION', 'Good brand Reputation'),
+        ('LOCATION', 'Location'),
+        ('COURSE', 'Course/Mode/Flexibility'),
+        ('VALUE', 'Value of Money'),
+        ('OTHER', 'Other'),
+    ]
 
-    class AboutUs(models.TextChoices):
-        ADVERTISING = 'advertising', 'Advertising'
-        EVENT = 'event', 'Event'
-        FRIENDS = 'friends', 'Friend/Family/Colleague'
-        INTERNET = 'internet', 'Internet Search'
-        MEDIAS = 'medias', 'Social Media'
-        NEWS = 'news', 'News'
-        ALUMNI = 'alumni', 'Alumni'
-        OTHER = 'other', 'Other'
+    ABOUT_US = [
+        ('ADVERTISING', 'Advertising'),
+        ('EVENT', 'Event'),
+        ('FRIENDS', 'Friend/Family/Colleague'),
+        ('INTERNET', 'Internet Search'),
+        ('MEDIAS', 'Social Media'),
+        ('NEWS', 'News'),
+        ('ALUMNI', 'Alumni'),
+        ('OTHER', 'Other'),
+    ]
 
     SHIFT = [
         ('MORNING', 'Morning'),
@@ -41,29 +45,28 @@ class Student(models.Model):
     date_of_admission = models.DateField()
     shift = models.CharField(max_length=50, choices=SHIFT)
     admission_officer = models.TextField(blank=True, null=True)
-    scholarship_details = models.TextField(max_length=100, blank=True, null=True)
-    referred_by = models.TextField(max_length=100, blank=True, null=True)
+    scholarship_details = models.CharField(max_length=100, blank=True, null=True)
+    referred_by = models.CharField(max_length=100, blank=True, null=True)
 
     # Payment of fees
-    payment_by = models.CharField(choices=PaymentBy.choices, max_length=20)
+    payment_by = models.CharField(choices=PAYMENT_BY, max_length=20)
     organization = models.CharField(max_length=255, blank=True, null=True)
     authorize_person = models.CharField(max_length=255, blank=True, null=True)
     email = models.EmailField(max_length=100, blank=True, null=True)
-    payment_address = models.ForeignKey("userauth.AddressInfo", on_delete=models.CASCADE)
+    payment_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE)
 
     # Financial capacity
     annual_income = models.CharField(max_length=100)
     members_in_family = models.IntegerField(default=1)
-    father_occupation = models.TextField(max_length=100)
-    mother_occupation = models.TextField(max_length=100)
+    father_occupation = models.CharField(max_length=100)
+    mother_occupation = models.CharField(max_length=100)
 
-    
     # Reasons for choosing the institution
-    why_us = models.CharField(choices=WhyUs.choices, max_length=20)
+    why_us = models.CharField(choices=WHY_US, max_length=20)
     why_us_other = models.TextField(blank=True, null=True)
 
     # How the student learned about the course
-    about_us = models.CharField(choices=AboutUs.choices, max_length=20)
+    about_us = models.CharField(choices=ABOUT_US, max_length=20)
     about_us_other = models.TextField(max_length=255, blank=True, null=True)
 
     def __str__(self):
