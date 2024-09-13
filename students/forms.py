@@ -183,7 +183,8 @@ class StudentAddForm(forms.Form):
         Check if all forms and formsets are valid.
         """
         return (self.user_form.is_valid() and
-                self.address_info_form.is_valid() and
+                self.permanent_address_form.is_valid() and
+                self.temporary_address_form.is_valid() and
                 self.personal_info_form.is_valid() and
                 self.student_form.is_valid() and
                 self.emergency_contact_form.is_valid() and
@@ -196,7 +197,12 @@ class StudentAddForm(forms.Form):
         Save the data for each form and formset.
         """
         user = self.user_form.save(commit=commit)
-        address_info = self.address_info_form.save(commit=False)
+        address_info = self.permanent_address_form.save(commit=False)
+        address_info.user = user
+        if commit:
+            address_info.save()
+        
+        address_info = self.temporary_address_form.save(commit=False)
         address_info.user = user
         if commit:
             address_info.save()

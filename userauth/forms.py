@@ -114,6 +114,6 @@ class EmergencyContactForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control', 'id': 'name', 'placeholder': 'Name'}),
             'relationship': forms.TextInput(attrs={'class': 'form-control', 'id': 'relationship', 'placeholder': 'Relationship'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'id': 'email', 'placeholder': 'Email'}),
-            'address': forms.TextInput(attrs={'class': 'form-control', 'id': 'address','placeholder':'Gaurdians Full Address'}),
+            'address': forms.Select(attrs={'class': 'form-control', 'id': 'address','placeholder':'Gaurdians Full Address'}),
         }
 
