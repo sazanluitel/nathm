@@ -10,24 +10,25 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.urls import reverse
 
-# Create your views here.
 
 class StudentView(View):
-        template_name = 'dashboard/students/add.html'
+    template_name = 'dashboard/students/add.html'
 
-        def get(self, request, *args, **kwargs):
-            form = StudentAddForm()
-            return render(request, self.template_name, {'form': form})
+    def get(self, request, *args, **kwargs):
+        form = StudentAddForm()
+        return render(request, self.template_name, {'form': form})
 
-        def post(self, request, *args, **kwargs):
-            form = StudentAddForm(data=request.POST)
+    def post(self, request, *args, **kwargs):
+        # Handle both POST and FILES (for any file uploads)
+        form = StudentAddForm(data=request.POST, files=request.FILES)
 
-            if form.is_valid():
-                form.save()
-                messages.sucess(request, "Students added successfully")
-                return redirect('students:studentlist')  # Replace with your desired URL
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Student added successfully")
+            return redirect('students:studentlist')  # Replace with your desired URL
 
-            return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {'form': form})
+
         
 class StudentEditView(View):
         def get(self, request, id):
