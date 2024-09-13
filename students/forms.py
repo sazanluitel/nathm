@@ -156,22 +156,23 @@ class StudentForm(forms.ModelForm):
 
 
 
-
 class StudentAddForm(forms.Form):
     def __init__(self, *args, **kwargs):
-        # Pop the data passed into the form
+        # Pop the data and files passed into the form
         data = kwargs.pop('data', None)
+        files = kwargs.pop('files', None)
 
         # Initialize the parent class
         super(StudentAddForm, self).__init__(*args, **kwargs)
 
-        # Initialize individual forms
-        self.user_form = UserForm(data)
+        # Initialize individual forms with both data and files
+        self.user_form = UserForm(data, files)
         self.permanent_address_form = AddressInfoForm(data)
         self.temporary_address_form = AddressInfoForm(data)
-        self.personal_info_form = PersonalInfoForm(data)
+        self.personal_info_form = PersonalInfoForm(data, files)
         self.student_form = StudentForm(data)
         self.emergency_contact_form = EmergencyContactForm(data)
+        self.emergency_address_form = AddressInfoForm(data)
 
         # Initialize formsets
         self.educational_history_formset = formset_factory(EducationHistoryForm, extra=1)(data)
@@ -188,6 +189,7 @@ class StudentAddForm(forms.Form):
                 self.personal_info_form.is_valid() and
                 self.student_form.is_valid() and
                 self.emergency_contact_form.is_valid() and
+                self.emergency_address_form.is_valid() and
                 self.educational_history_formset.is_valid() and
                 self.english_test_formset.is_valid() and
                 self.employment_history_formset.is_valid())
@@ -197,15 +199,17 @@ class StudentAddForm(forms.Form):
         Save the data for each form and formset.
         """
         user = self.user_form.save(commit=commit)
-        address_info = self.permanent_address_form.save(commit=False)
-        address_info.user = user
+
+        # Save permanent and temporary addresses
+        permanent_address = self.permanent_address_form.save(commit=False)
+        permanent_address.user = user
         if commit:
-            address_info.save()
-        
-        address_info = self.temporary_address_form.save(commit=False)
-        address_info.user = user
+            permanent_address.save()
+
+        temporary_address = self.temporary_address_form.save(commit=False)
+        temporary_address.user = user
         if commit:
-            address_info.save()
+            temporary_address.save()
 
         personal_info = self.personal_info_form.save(commit=False)
         personal_info.user = user
@@ -216,11 +220,16 @@ class StudentAddForm(forms.Form):
         student.user = user
         if commit:
             student.save()
-        
+
         emergency_contact = self.emergency_contact_form.save(commit=False)
         emergency_contact.user = user
         if commit:
             emergency_contact.save()
+
+        emergency_address = self.emergency_address_form.save(commit=False)
+        emergency_address.user = user
+        if commit:
+            emergency_address.save()
 
         # Save each educational history form
         for form in self.educational_history_formset:
