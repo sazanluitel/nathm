@@ -228,34 +228,46 @@
     });
 
     $(document).ready(function () {
-        let formCount = $('#id_form-TOTAL_FORMS').val(); // Track the number of forms
+        // Add more educational history form
+        $('.add_more_education').click(function () {
+            var totalForms = $('#id_form-TOTAL_FORMS').val();
+            var template = $('#empty-education-form-template').html();
+            template = template.replace(/__prefix__/g, totalForms);
+            $('#educational-history-forms').append(template);
+            $('#id_form-TOTAL_FORMS').val(parseInt(totalForms) + 1);
+        });
 
-        // Function to update form indexes for a given form container
-        function updateFormIndexes(containerId) {
-            $(containerId + ' .form-row').each(function (index) {
-                $(this).find(':input').each(function () {
-                    const name = $(this).attr('name').replace(/form-\d+-/, `form-${index}-`);
-                    const id = $(this).attr('id').replace(/form-\d+-/, `form-${index}-`);
-                    $(this).attr({ 'name': name, 'id': id });
-                });
-            });
-            $('#id_form-TOTAL_FORMS').val(formCount); // Update management form's total forms count
-        }
+        // Add more work experience form
+        $('.add-more').click(function () {
+            var totalForms = $('#id_form-TOTAL_FORMS').val();
+            var template = $('#empty-work-form-template').html();
+            template = template.replace(/__prefix__/g, totalForms);
+            $('#work-experience-forms').append(template);
+            $('#id_form-TOTAL_FORMS').val(parseInt(totalForms) + 1);
+        });
 
-        // Function to add more forms dynamically
-        function addMoreForms(buttonClass, containerId, templateId) {
-            $(buttonClass).click(function () {
-                const newForm = $(templateId).html().replace(/__prefix__/g, formCount); // Clone and update prefix
-                $(containerId).append(newForm);
-                formCount++; // Increment form count
-                updateFormIndexes(containerId); // Update indexes for all forms
-            });
-        }
+        // Add more test score form
+        $('.add-more-test').click(function () {
+            var totalForms = $('#id_form-TOTAL_FORMS').val();
+            var template = $('#empty-test-form-template').html();
+            template = template.replace(/__prefix__/g, totalForms);
+            $('#form-container').append(template);
+            $('#id_form-TOTAL_FORMS').val(parseInt(totalForms) + 1);
+        });
 
-        // Initialize add-more functionality for different sections
-        addMoreForms('.add-more', '#form-container', '#empty-form-template'); // For general forms
-        addMoreForms('.add-more', '#work-experience-forms', '#empty-work-form-template'); // For work experience
-        addMoreForms('.add_more_education', '#educational-history-forms', '#empty-education-form-template'); // For educational history
+        // Remove educational history form
+        $(document).on('click', '.remove-education-form', function () {
+            $(this).closest('.education-form').remove();
+        });
+
+        // Remove work experience form
+        $(document).on('click', '.remove-work-form', function () {
+            $(this).closest('.work-form').remove();
+        });
+
+        // Remove test score form
+        $(document).on('click', '.remove-test-form', function () {
+            $(this).closest('.test-form').remove();
+        });
     });
-
 })(jQuery);
