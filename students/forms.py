@@ -1,8 +1,9 @@
 from django import forms
 from userauth.models import AddressInfo
-from dashboard.models import Campus
 from userauth.models import User
 from students.models import Student
+from django.forms import formset_factory
+from userauth.forms import *
 
 class StudentForm(forms.ModelForm):
     class Meta:
@@ -144,3 +145,93 @@ class StudentForm(forms.ModelForm):
                 'placeholder': 'If Other, specify...',
             }),
         }
+
+
+
+
+class StudentAddForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        # Pop the data passed into the form
+        data = kwargs.pop('data', None)
+
+        # Initialize the parent class
+        super(StudentAddForm, self).__init__(*args, **kwargs)
+
+        # Initialize individual forms
+        self.user_form = UserForm(data)
+        self.address_info_form = AddressInfoForm(data)
+        self.personal_info_form = PersonalInfoForm(data)
+        self.student_form = StudentForm(data)
+
+        # Initialize formsets
+        self.educational_history_formset = formset_factory(EducationHistoryForm, extra=1)(data)
+        self.english_test_formset = formset_factory(EnglishTestForm, extra=1)(data)
+        self.employment_history_formset = formset_factory(EmploymentHistoryForm, extra=1)(data)
+        self.emergency_contact_formset = formset_factory(EmergencyContactForm, extra=1)(data)
+
+    def is_valid(self):
+        """
+        Check if all forms and formsets are valid.
+        """
+        return (self.user_form.is_valid() and
+                self.address_info_form.is_valid() and
+                self.personal_info_form.is_valid() and
+                self.student_form.is_valid() and
+                self.educational_history_formset.is_valid() and
+                self.english_test_formset.is_valid() and
+                self.employment_history_formset.is_valid() and
+                self.emergency_contact_formset.is_valid())
+
+    def save(self, commit=True):
+        """
+        Save the data for each form and formset.
+        """
+        user = self.user_form.save(commit=commit)
+        address_info = self.address_info_form.save(commit=False)
+        address_info.user = user
+        if commit:
+            address_info.save()
+
+        personal_info = self.personal_info_form.save(commit=False)
+        personal_info.user = user
+        if commit:
+            personal_info.save()
+
+        student = self.student_form.save(commit=False)
+        student.user = user
+        if commit:
+            student.save()
+
+        # Save each educational history form
+        for form in self.educational_history_formset:
+            if form.is_valid():
+                educational_history = form.save(commit=False)
+                educational_history.student = student
+                if commit:
+                    educational_history.save()
+
+        # Save each employment history form
+        for form in self.employment_history_formset:
+            if form.is_valid():
+                employment_history = form.save(commit=False)
+                employment_history.student = student
+                if commit:
+                    employment_history.save()
+
+        # Save each emergency contact form
+        for form in self.emergency_contact_formset:
+            if form.is_valid():
+                emergency_contact = form.save(commit=False)
+                emergency_contact.student = student
+                if commit:
+                    emergency_contact.save()
+
+        # Save each English test form
+        for form in self.english_test_formset:
+            if form.is_valid():
+                english_test = form.save(commit=False)
+                english_test.student = student
+                if commit:
+                    english_test.save()
+
+        return student

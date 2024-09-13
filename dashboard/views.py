@@ -596,3 +596,4 @@ class DeleteView(View, DeleteHelper):
             "type": delete_type,
             "total": total_objects
         })
+

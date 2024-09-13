@@ -1,6 +1,6 @@
 from django.db import models
 from dashboard.models import Campus, Department
-from userauth.models import AddressInfo, User
+from userauth.models import AddressInfo, User, PersonalInfo
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
