@@ -44,21 +44,6 @@
                   {% endif %}
               </div>
 
-              <div class="form-group mt-3">
-                  <label for="id_items_image">Image</label>
-                  {% include 'dashboard/image-picker.html' with name="items_image" %}
-
-                  {% if form.image.errors %}
-                      <div class="invalid-feedback d-block">{{ form.image.errors }}</div>
-                  {% endif %}
-
-                  {% if form.instance.image %}
-                      <div class="mt-2">
-                          <img src="{{ form.instance.image.url }}" class="img-fluid" style="max-width: 200px;" alt="Current Image">
-                      </div>
-                  {% endif %}
-              </div>
-
               <div class="form-group mb-3">
                   <label for="{{ form.campus.id_for_label }}" class="form-label">Campus <span style="color: red;">*</span></label>
                   {{ form.campus }}
@@ -74,6 +59,22 @@
                       <div class="invalid-feedback d-block">{{ form.department.errors }}</div>
                   {% endif %}
               </div>
+
+
+              <div class="form-group mt-3">
+                <label for="id_items_image">Image</label>
+                {% include 'dashboard/image-picker.html' with name="items_image" %}
+
+                {% if form.image.errors %}
+                    <div class="invalid-feedback d-block">{{ form.image.errors }}</div>
+                {% endif %}
+
+                {% if form.instance.image %}
+                    <div class="mt-2">
+                        <img src="{{ form.instance.image.url }}" class="img-fluid" style="max-width: 200px;" alt="Current Image">
+                    </div>
+                {% endif %}
+            </div>
 
               <div class="form-group mb-3">
                   <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
