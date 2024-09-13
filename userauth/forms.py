@@ -27,7 +27,7 @@ class UserForm(forms.ModelForm):
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'id': 'user_first_name', 'placeholder': 'First Name'}),
             'middle_name': forms.TextInput(attrs={'class': 'form-control', 'id': 'user_middle_name', 'placeholder': 'Middle Name'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'id': 'user_last_name', 'placeholder': 'Last Name'}),
-            'profile_image': forms.TextInput(attrs={'class': 'form-control', 'id': 'user_profile_image', 'placeholder': 'Profile Image URL'}),
+            'profile_image': forms.TextInput(attrs={'class': 'form-control', 'id': 'user_profile_image', 'placeholder': 'Profile Image'}),
         }
 
 class PersonalInfoForm(forms.ModelForm):
@@ -36,7 +36,7 @@ class PersonalInfoForm(forms.ModelForm):
         fields = ['citizenship_number', 'gender', 'date_of_birth_in_ad', 'citizenship_img', 'permanent_address', 'temporary_address', 'educational_history', 'english_test', 'employment_history', 'emergency_contact']
         widgets = {
             'citizenship_number': forms.TextInput(attrs={'class': 'form-control', 'id': 'citizenship_number', 'placeholder': 'Citizenship Number'}),
-            'gender': forms.Select(attrs={'class': 'form-control', 'id': 'gender'}),
+            'gender': forms.Select(attrs={'class': 'form-control', 'id': 'gender','data-placeholder':'Select any of Option'}),
             'date_of_birth_in_ad': forms.DateInput(attrs={'class': 'form-control', 'id': 'date_of_birth_in_ad', 'type': 'date', 'placeholder': 'Date of Birth'}),
             'citizenship_img': forms.TextInput(attrs={'class': 'form-control', 'id': 'citizenship_img', 'placeholder': 'Citizenship Image URL'}),
             'permanent_address': forms.Select(attrs={'class': 'form-control', 'id': 'permanent_address'}),
@@ -59,6 +59,17 @@ class AddressInfoForm(forms.ModelForm):
             'postcode': forms.TextInput(attrs={'class': 'form-control', 'id': 'postcode', 'placeholder': 'Postal Code'}),
             'contact_number': forms.TextInput(attrs={'class': 'form-control', 'id': 'contact_number', 'placeholder': 'Contact Number'}),
         }
+
+class PermanentAddressForm(forms.ModelForm):
+    class Meta:
+        model = AddressInfo
+        fields = ['address', 'city', 'province', 'country', 'postcode', 'contact_number']
+
+class TemporaryAddressForm(forms.ModelForm):
+    class Meta:
+        model = AddressInfo
+        fields = ['address', 'city', 'province', 'country', 'postcode', 'contact_number']
+
 
 class EducationHistoryForm(forms.ModelForm):
     class Meta:
@@ -103,5 +114,6 @@ class EmergencyContactForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control', 'id': 'name', 'placeholder': 'Name'}),
             'relationship': forms.TextInput(attrs={'class': 'form-control', 'id': 'relationship', 'placeholder': 'Relationship'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'id': 'email', 'placeholder': 'Email'}),
-            'address': forms.Select(attrs={'class': 'form-control', 'id': 'address'}),
+            'address': forms.TextInput(attrs={'class': 'form-control', 'id': 'address','placeholder':'Gaurdians Full Address'}),
         }
+
