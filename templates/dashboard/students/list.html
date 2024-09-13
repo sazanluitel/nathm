@@ -1,0 +1,41 @@
+{% extends "dashboard/admin-base.html" %}
+{% block title %}Program{% endblock title %}
+{% block breadcrumb %}Program{% endblock breadcrumb %}
+{% block maintitle %}Program{% endblock maintitle %}
+
+{% block content %}
+
+<div class="col-sm-12">
+    <div class="d-flex justify-content-end mb-2">
+         <a href="{% url 'dashboard:program' %}" class="btn btn-primary mt-3">Add New Program</a>
+    </div>
+    {% with messages=messages %}
+    {% include 'dashboard/alert.html' %}
+{% endwith %}
+    <div class="card">
+        <div class="card-body">
+            <div class="dt-responsive">
+                <table 
+                    class="ajaxdatatable table table-bordered nowrap"
+                    data-ajax=""
+                    data-nodata="No Data Found"
+                >
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Campus</th>
+                            <th>Department</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
