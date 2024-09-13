@@ -191,10 +191,10 @@
                           </div>
                           <div class="col-md-12 mb-3">
                               <label for="certificate" class="form-label">Certificate</label>
-                              {% include 'dashboard/image-picker.html' with name="form.citizenship_img" %}
-                              {% if form.citizenship_img and form.citizenship_img.value %}
+                              {% include 'dashboard/image-picker.html' with name="form.file" %}
+                              {% if form.file and form.file.value %}
                               <div class="mt-2">
-                                  <img src="{{ form.citizenship_img.url }}" class="img-fluid" style="max-width: 200px;" alt="Certificate">
+                                  <img src="{{ form.file.url }}" class="img-fluid" style="max-width: 200px;" alt="Certificate">
                               </div>
                               {% endif %}
                           </div>
