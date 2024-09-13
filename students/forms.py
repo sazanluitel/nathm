@@ -167,15 +167,16 @@ class StudentAddForm(forms.Form):
 
         # Initialize individual forms
         self.user_form = UserForm(data)
-        self.address_info_form = AddressInfoForm(data)
+        self.permanent_address_form = AddressInfoForm(data)
+        self.temporary_address_form = AddressInfoForm(data)
         self.personal_info_form = PersonalInfoForm(data)
         self.student_form = StudentForm(data)
+        self.emergency_contact_form = EmergencyContactForm(data)
 
         # Initialize formsets
         self.educational_history_formset = formset_factory(EducationHistoryForm, extra=1)(data)
         self.english_test_formset = formset_factory(EnglishTestForm, extra=1)(data)
         self.employment_history_formset = formset_factory(EmploymentHistoryForm, extra=1)(data)
-        self.emergency_contact_formset = formset_factory(EmergencyContactForm, extra=1)(data)
 
     def is_valid(self):
         """
@@ -185,10 +186,10 @@ class StudentAddForm(forms.Form):
                 self.address_info_form.is_valid() and
                 self.personal_info_form.is_valid() and
                 self.student_form.is_valid() and
+                self.emergency_contact_form.is_valid() and
                 self.educational_history_formset.is_valid() and
                 self.english_test_formset.is_valid() and
-                self.employment_history_formset.is_valid() and
-                self.emergency_contact_formset.is_valid())
+                self.employment_history_formset.is_valid())
 
     def save(self, commit=True):
         """
@@ -209,6 +210,11 @@ class StudentAddForm(forms.Form):
         student.user = user
         if commit:
             student.save()
+        
+        emergency_contact = self.emergency_contact_form.save(commit=False)
+        emergency_contact.user = user
+        if commit:
+            emergency_contact.save()
 
         # Save each educational history form
         for form in self.educational_history_formset:
@@ -225,14 +231,6 @@ class StudentAddForm(forms.Form):
                 employment_history.student = student
                 if commit:
                     employment_history.save()
-
-        # Save each emergency contact form
-        for form in self.emergency_contact_formset:
-            if form.is_valid():
-                emergency_contact = form.save(commit=False)
-                emergency_contact.student = student
-                if commit:
-                    emergency_contact.save()
 
         # Save each English test form
         for form in self.english_test_formset:
