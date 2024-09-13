@@ -60,16 +60,6 @@ class AddressInfoForm(forms.ModelForm):
             'contact_number': forms.TextInput(attrs={'class': 'form-control', 'id': 'contact_number', 'placeholder': 'Contact Number'}),
         }
 
-class PermanentAddressForm(forms.ModelForm):
-    class Meta:
-        model = AddressInfo
-        fields = ['address', 'city', 'province', 'country', 'postcode', 'contact_number']
-
-class TemporaryAddressForm(forms.ModelForm):
-    class Meta:
-        model = AddressInfo
-        fields = ['address', 'city', 'province', 'country', 'postcode', 'contact_number']
-
 
 class EducationHistoryForm(forms.ModelForm):
     class Meta:
