@@ -1,5 +1,5 @@
 from django.db import models
-from dashboard.models import Campus
+from dashboard.models import Campus, Department
 from userauth.models import AddressInfo, User
 
 class Student(models.Model):
@@ -40,6 +40,7 @@ class Student(models.Model):
 
     # Details
     campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
     student_id = models.CharField(max_length=255, unique=True)
     commencing_term = models.TextField()
     date_of_admission = models.DateField()

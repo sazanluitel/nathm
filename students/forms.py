@@ -2,13 +2,13 @@ from django import forms
 from userauth.models import AddressInfo
 from dashboard.models import Campus
 from userauth.models import User
-from .models import Student
+from students.models import Student
 
 class StudentForm(forms.ModelForm):
     class Meta:
-        model = Student, AddressInfo, Campus, User
+        model = Student
         fields = [
-            'user', 'campus', 'student_id', 'commencing_term', 'date_of_admission', 'shift',
+            'user', 'campus', 'department','student_id', 'commencing_term', 'date_of_admission', 'shift',
             'admission_officer', 'scholarship_details', 'referred_by', 'payment_by', 'organization',
             'authorize_person', 'email', 'payment_address', 'annual_income', 'members_in_family',
             'father_occupation', 'mother_occupation', 'why_us', 'why_us_other', 'about_us', 'about_us_other'
@@ -30,7 +30,7 @@ class StudentForm(forms.ModelForm):
                 'name': 'student_id',
                 'placeholder': 'Student ID',
             }),
-            'commencing_term': forms.Textarea(attrs={
+            'commencing_term': forms.TextInput(attrs={
                 'class': 'form-control',
                 'id': 'commencing_term',
                 'name': 'commencing_term',
