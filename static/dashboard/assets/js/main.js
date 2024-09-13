@@ -3,7 +3,7 @@
         Toggle
          'open' class on click of element with class 'ps-hasmenu'
     */
-    $.fn.hasAttr = function(name) {  
+    $.fn.hasAttr = function (name) {
         return this.attr(name) !== undefined;
     };
 
@@ -227,3 +227,24 @@
         container.find("input").val("");
     });
 })(jQuery);
+
+$('.add_more_work').click(function () {
+    const templateform = $(document).find("#new-form-template");
+    templateform.find("select").each(function () {
+        $(this).select2("destroy");
+    })
+    let newForm = templateform.html();
+    $('#document-forms').append(newForm);
+    formCount++;
+    updateFormIndexes();
+
+    $('#document-forms .form-row').last().find('select').each(function () {
+        $(this).select2();
+    })
+});
+
+$('#document-forms').on('click', '.remove-form', function () {
+    $(this).closest('.form-row').remove();
+    formCount--;
+    updateFormIndexes();
+});

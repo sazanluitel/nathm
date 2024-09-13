@@ -195,7 +195,7 @@
       </div>
     </div>
     <div class="card">
-      <div class="card-body work_experience">
+      <div class="card-body work_experience"id="add_new_work">
         <h5 class="mb-3 text-muted">Work Experience</h5>
           {{ form.employment_history_formset.management_form }}
           {% for form in form.employment_history_formset %}
@@ -220,7 +220,7 @@
                 {{ form.job_description}}
            </div>  
            {% endfor %}
-           <div class="btn btn-primary add_more_work">Add More Work Experience</div>         
+           <div class="btn btn-primary add_more_work" id="#new-form-template">Add More Work Experience</div>         
       </div>
     </div>
     <div class="card">
