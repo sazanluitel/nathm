@@ -20,22 +20,22 @@
         <form method="post" enctype="multipart/form-data" action="{% url 'dashboard:campusedit' id=campus_id %}">
           {% csrf_token %}
             <div class="form-group mb-3">
-              <label for="{{ form.name.id_for_label }}" class="form-label">Name</label>
+              <label for="{{ form.name.id_for_label }}" class="form-label">Name <span style="color: red;">*</span></label>
               {{ form.name }}
             </div>
 
             <div class="form-group mb-3">
-              <label for="{{ form.code.id_for_label }}" class="form-label">Campus Code</label>
+              <label for="{{ form.code.id_for_label }}" class="form-label">Campus Code <span style="color: red;">*</span></label>
               {{ form.code }}
             </div>
 
             <div class="form-group mb-3">
-              <label for="{{ form.location.id_for_label }}" class="form-label">Location</label>
+              <label for="{{ form.location.id_for_label }}" class="form-label">Location <span style="color: red;">*</span></label>
               {{ form.location }}
             </div>
 
             <div class="form-group mb-3">
-              <label for="{{ form.contact.id_for_label }}" class="form-label">Contact Number</label>
+              <label for="{{ form.contact.id_for_label }}" class="form-label">Contact Number <span style="color: red;">*</span></label>
               {{ form.contact }}
             </div>
 
