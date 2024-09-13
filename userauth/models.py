@@ -72,7 +72,7 @@ class EnglishTest(models.Model):
     test = models.CharField(max_length=50, choices=TESTS)
     score = models.FloatField(max_length=5)
     date = models.DateField()
-    files = models.FileField(upload_to='pdf/', blank=True, null=True)
+    files = models.TextField(blank=True, null=True)
 
 
 class EmploymentHistory(models.Model):
