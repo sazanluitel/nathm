@@ -1,9 +1,6 @@
 from django import forms
 from .models import Campus,Department, Program, Modules
 
-
-
-
 class CampusForm(forms.ModelForm):
     name = forms.CharField(
         max_length=100,

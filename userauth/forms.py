@@ -88,7 +88,7 @@ class EnglishTestForm(forms.ModelForm):
         model = EnglishTest
         fields = ['test', 'score', 'date', 'files']
         widgets = {
-            'test': forms.Select(attrs={'class': 'form-control', 'id': 'test', 'data-placeholder':'Select any options'}),
+            'test': forms.Select(attrs={'class': 'form-control', 'id': 'test', 'data-placeholder':'Select test type'}),
             'score': forms.NumberInput(attrs={'class': 'form-control', 'id': 'score', 'placeholder': 'Score'}),
             'date': forms.DateInput(attrs={'class': 'form-control', 'id': 'date', 'type': 'date', 'placeholder': 'Test Date'}),
             'files': forms.TextInput(attrs={'class': 'form-control', 'id': 'files', 'placeholder': 'File URL'}),
