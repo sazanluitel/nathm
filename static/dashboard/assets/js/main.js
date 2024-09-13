@@ -226,25 +226,36 @@
         container.find(".image_fill_placeholder").remove();
         container.find("input").val("");
     });
+
+    $(document).ready(function () {
+        let formCount = $('#id_form-TOTAL_FORMS').val(); // Track the number of forms
+
+        // Function to update form indexes for a given form container
+        function updateFormIndexes(containerId) {
+            $(containerId + ' .form-row').each(function (index) {
+                $(this).find(':input').each(function () {
+                    const name = $(this).attr('name').replace(/form-\d+-/, `form-${index}-`);
+                    const id = $(this).attr('id').replace(/form-\d+-/, `form-${index}-`);
+                    $(this).attr({ 'name': name, 'id': id });
+                });
+            });
+            $('#id_form-TOTAL_FORMS').val(formCount); // Update management form's total forms count
+        }
+
+        // Function to add more forms dynamically
+        function addMoreForms(buttonClass, containerId, templateId) {
+            $(buttonClass).click(function () {
+                const newForm = $(templateId).html().replace(/__prefix__/g, formCount); // Clone and update prefix
+                $(containerId).append(newForm);
+                formCount++; // Increment form count
+                updateFormIndexes(containerId); // Update indexes for all forms
+            });
+        }
+
+        // Initialize add-more functionality for different sections
+        addMoreForms('.add-more', '#form-container', '#empty-form-template'); // For general forms
+        addMoreForms('.add-more', '#work-experience-forms', '#empty-work-form-template'); // For work experience
+        addMoreForms('.add_more_education', '#educational-history-forms', '#empty-education-form-template'); // For educational history
+    });
+
 })(jQuery);
-
-$('.add_more_work').click(function () {
-    const templateform = $(document).find("#new-form-template");
-    templateform.find("select").each(function () {
-        $(this).select2("destroy");
-    })
-    let newForm = templateform.html();
-    $('#document-forms').append(newForm);
-    formCount++;
-    updateFormIndexes();
-
-    $('#document-forms .form-row').last().find('select').each(function () {
-        $(this).select2();
-    })
-});
-
-$('#document-forms').on('click', '.remove-form', function () {
-    $(this).closest('.form-row').remove();
-    formCount--;
-    updateFormIndexes();
-});
