@@ -88,7 +88,7 @@ class EnglishTestForm(forms.ModelForm):
         model = EnglishTest
         fields = ['test', 'score', 'date', 'files']
         widgets = {
-            'test': forms.Select(attrs={'class': 'form-control', 'id': 'test'}),
+            'test': forms.Select(attrs={'class': 'form-control', 'id': 'test', 'data-placeholder':'Select any options'}),
             'score': forms.NumberInput(attrs={'class': 'form-control', 'id': 'score', 'placeholder': 'Score'}),
             'date': forms.DateInput(attrs={'class': 'form-control', 'id': 'date', 'type': 'date', 'placeholder': 'Test Date'}),
             'files': forms.TextInput(attrs={'class': 'form-control', 'id': 'files', 'placeholder': 'File URL'}),
@@ -114,6 +114,6 @@ class EmergencyContactForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control', 'id': 'name', 'placeholder': 'Name'}),
             'relationship': forms.TextInput(attrs={'class': 'form-control', 'id': 'relationship', 'placeholder': 'Relationship'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'id': 'email', 'placeholder': 'Email'}),
-            'address': forms.TextInput(attrs={'class': 'form-control', 'id': 'address','placeholder':'Gaurdians Full Address'}),
+            'address': forms.Select(attrs={'class': 'form-control', 'id': 'address','placeholder':'Gaurdians Full Address'}),
         }
 

@@ -194,7 +194,7 @@
       </div>
     </div>
     <div class="card">
-      <div class="card-body work_experience">
+      <div class="card-body work_experience"id="add_new_work">
         <h5 class="mb-3 text-muted">Work Experience</h5>
           {{ form.employment_history_formset.management_form }}
           {% for form in form.employment_history_formset %}
@@ -219,7 +219,7 @@
                 {{ form.job_description}}
            </div>  
            {% endfor %}
-           <div class="btn btn-primary add_more_work">Add More Work Experience</div>         
+           <div class="btn btn-primary add_more_work" id="#new-form-template">Add More Work Experience</div>         
       </div>
     </div>
     <div class="card">
@@ -227,9 +227,23 @@
         <h5>Emergency Contacts</h5>
         {{ form.emergency_contact_formset.management_form }}
           {% for form in form.emergency_contact_formset %}
+          {{ form.as_p }}
             <div class="col-md-12 mb-3">
-                {{ form.as_p }}
-           </div> 
+                <label for="{{ form.name.id_for_label }}" class="form-label">Name:</label>
+                {{ form.name}}
+           </div>
+           <div class="col-md-12 mb-3">
+                <label for="{{ form.relationship.id_for_label }}" class="form-label">Relationship:</label>
+                {{ form.relationship}}
+           </div>
+           <div class="col-md-12 mb-3">
+                <label for="{{ form.email.id_for_label }}" class="form-label">Email:</label>
+                {{ form.email}}
+           </div>
+            <div class="col-md-12 mb-3">
+                <label for="{{ form.email.id_for_label }}" class="form-label">Email:</label>
+                {{ form.email}}
+           </div>
           {% endfor %}
       </div>
     </div>
