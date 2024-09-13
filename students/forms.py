@@ -24,6 +24,13 @@ class StudentForm(forms.ModelForm):
                 'class': 'form-control',
                 'id': 'campus',
                 'name': 'campus',
+                'data-placeholder':'Select any of options',
+            }),
+            'department': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'department',
+                'name': 'department',
+                'data-placeholder':'Select any of options'
             }),
             'student_id': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -49,6 +56,7 @@ class StudentForm(forms.ModelForm):
                 'class': 'form-control',
                 'id': 'shift',
                 'name': 'shift',
+                'data-placeholder':'Select any of options',
             }),
             'admission_officer': forms.TextInput(attrs={
                 'class': 'form-control',

@@ -12,180 +12,238 @@
 
 {% block content %}
   <div class="col-sm-12">
+    <form method="post" enctype="multipart/form-data" action="{% url 'students:student' %}">
+      {% csrf_token %}
     <div class="card">
       <div class="card-body">
         {% with messages=messages %}
           {% include 'dashboard/alert.html' %}
         {% endwith %}
-
-        {% comment %} <form method="post" enctype="multipart/form-data" action="{% url 'students:student' %}">
-          {% csrf_token %}
-          <div class="form-group mb-3">
-            <label for="{{ form.campus.id_for_label }}" class="form-label">Campus</label>
-            {{ student_form.campus }}
+          <div class="row">
+            <h5 class="mb-3 text-muted">Personal Details</h5>
+            <div class="col-md-12 mb-3">
+            <label for="{{ user_form.title.id_for_label }}" class="form-label">Title</label>
+            {{ form.user_form.title }}
           </div>
-          <div class="form-group mb-3">
-            <label for="{{ form.department.id_for_label }}" class="form-label">Department</label>
-            {{ student_form.department }}
-          </div>
-          <div class="form-group mb-3">
-            <label for="{{ form.date_of_admission.id_for_label }}" class="form-label">Date of Admission</label>
-            {{ student_form.date_of_admission }}
-          </div>
-          <div class="form-group mb-3">
-            <label for="{{ form.admission_officer.id_for_label }}" class="form-label">Admission Officer</label>
-            {{ student_form.admission_officer }}
-          </div>
-          <div class="form-group mb-3">
-            <label for="{{ form.commencing_term.id_for_label }}" class="form-label">Commencing Term</label>
-            {{ student_form.commencing_term }}
-          </div>
-          <div class="form-group mb-3">
-            <label for="{{ form.shift.id_for_label }}" class="form-label">Shift</label>
-            {{ student_form.shift }}
-          </div>
-
-          <div class="form-group mb-3">
-            <label for="{{ form.scholarship_details.id_for_label }}" class="form-label">Scholarship Details</label>
-            {{ student_form.scholarship_details }}
-          </div>
-          <div class="form-group mb-3">
-            <label for="{{ form.referred_by.id_for_label }}" class="form-label">Referred By</label>
-            {{ student_form.referred_by }}
-          </div>
-          <div class="form-group mb-3">
-            <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
-            {{ user_form.title }}
-          </div>
-          <div class="form-group mb-3">
-            <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
-            {{ user_form.first_name }}
-          </div>
-
-          <div class="form-group mb-3">
-            <label for="{{ form.middle_name.id_for_label }}" class="form-label">Middle Name</label>
-            {{ user_form.middle_name }}
-          </div>
-
-          <div class="form-group mb-3">
-            <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
-            {{ user_form.last_name }}
-          </div>
-          <div class="form-group mt-3">
-            <label for="id_items_image">Profile Image</label>
-            {% include 'dashboard/image-picker.html' with name='items_image' %}
-            {% if form.image %}
-              <div class="mt-2">
-                <img src="{{ user_form.image.url }}" class="img-fluid" style="max-width: 200px;" alt="Current Image" />
-              </div>
+          <div class="col-md-4 mb-3">
+            <label for="{{ user_form.first_name.id_for_label }}" class="form-label">First Name</label>
+            {{ form.user_form.first_name }}
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="{{ user_form.middle_name.id_for_label }}" class="form-label">Middle Name</label>
+            {{ form.user_form.middle_name }}
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="{{ user_form.last_name.id_for_label }}" class="form-label">Last Name</label>
+            {{ form.user_form.last_name }}
+        </div>
+        <div class="col-md-12 mb-3">
+            <label for="{{ form.personal_info_form.gender.id_for_label }}" class="form-label">Gender</label>
+            {{ form.personal_info_form.gender }}
+        </div>
+        <div class="col-md-12 mb-3">
+            <label for="profile_image" class="form-label">Profile Image</label>
+            
+            {% include 'dashboard/image-picker.html' with name="form.user_form.image" %}
+            
+            {% if form.user_form.image and form.user_form.image.value %}
+            <div class="mt-2">
+                <img src="{{ form.user_form.image.url }}" class="img-fluid" style="max-width: 200px;" alt="Current Image">
+            </div>
             {% endif %}
-          </div>
-          <div class="form-group mb-3">
-            <label for="{{ form.citizenship_number.id_for_label }}" class="form-label">Citizenship Number</label>
-            {{ personal_info_form.citizenship_number }}
-          </div>
+        </div>
 
-          <div class="form-group mb-3">
-            <label for="{{ form.gender.id_for_label }}" class="form-label">Gender</label>
-            {{ personal_info_form.gender }}
-          </div>
+        <div class="col-md-6 mb-3">
+            <label for="{{ student_form.campus.id_for_label }}" class="form-label">Campus</label>
+            {{ form.student_form.campus }}
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="{{ student_form.department.id_for_label }}" class="form-label">Department</label>
+            {{ form.student_form.department }}
+        </div>
+        <div class="col-md-12 mb-3">
+            <label for="{{ student_form.date_of_admission.id_for_label }}" class="form-label">Date of Admission</label>
+            {{ form.student_form.date_of_admission }}
+        </div>
+        <div class="col-md-12 mb-3">
+            <label for="{{ student_form.admission_officer.id_for_label }}" class="form-label">Admission Officer</label>
+            {{ form.student_form.admission_officer }}
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="{{ student_form.commencing_term.id_for_label }}" class="form-label">Commencing Term</label>
+            {{ form.student_form.commencing_term }}
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="{{ student_form.shift.id_for_label }}" class="form-label">Shift</label>
+            {{ form.student_form.shift }}
+        </div>
+        <div class="col-md-12 mb-3">
+            <label for="{{ student_form.scholarship_details.id_for_label }}" class="form-label">Scholarship Details</label>
+            {{ form.student_form.scholarship_details }}
+        </div>
+        <div class="col-md-12 mb-3">
+            <label for="{{ student_form.referred_by.id_for_label }}" class="form-label">Referred By</label>
+            {{ form.student_form.referred_by }}
+        </div> 
+        <div class="card">
+      <div class="card-body">
+        <h5 class="mb-3 text-muted">Parmanent Address</h5>
+        <div class="col-md-12 mb-3">
+            {{ form.address_info_form.as_p }}
+        </div>
+        <h5 class="mb-3 text-muted">Temporary Address</h5>
+        <div class="col-md-12 mb-3">
+            {{ form.address_info_form.as_p }}
+        </div>
+      </div>  
+      <div class="card">
+      <div class="card-body">
+        <div class="col-md-12 mb-3">
+            <label for="{{ form.personal_info_form.date_of_birth_in_ad.id_for_label }}" class="form-label">Date of Birth:</label>
+            {{ form.personal_info_form.date_of_birth_in_ad }}
+        </div>
+        <div class="col-md-12 mb-3">
+            <label for="{{ form.personal_info_form.citizenship_number.id_for_label }}" class="form-label">Citizenship Number</label>
+            {{ form.personal_info_form.citizenship_number }}
+        </div>
+        <div class="col-md-12 mb-3">
+            <label for="citizenship_card" class="form-label">Citizenship Card</label>
 
-          <div class="form-group mb-3">
-            <label for="{{ form.date_of_birth_in_ad.id_for_label }}" class="form-label">Date of Birth (AD)</label>
-            {{ personal_info_form.date_of_birth_in_ad }}
-          </div>
+            {% include 'dashboard/image-picker.html' with name="personal_info_form.citizenship_img" %}
 
-          <div class="form-group mt-3">
-            <label for="id_items_image">Citizenship Image</label>
-            {% include 'dashboard/image-picker.html' with name='items_image' %}
-            {% if form.image %}
-              <div class="mt-2">
-                <img src="{{ personal_info_form.image.url }}" class="img-fluid" style="max-width: 200px;" alt="Current Image" />
-              </div>
+            {% if form.personal_info_form.citizenship_img and form.personal_info_form.citizenship_img.value %}
+            <div class="mt-2">
+                <img src="{{ form.personal_info_form.citizenship_img.url }}" class="img-fluid" style="max-width: 200px;" alt="Current Citizenship Card">
+            </div>
             {% endif %}
-          </div>
-          <div class="form-group mb-3">
-            <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
-            {{ user_form.email }}
-          </div>
-          <div class="form-group mb-3">
-            <label for="{{ form.contact_number.id_for_label }}" class="form-label">Contact Number</label>
-            {{ address_info_form.contact_number }}
-          </div>
-          <div class="form-group mb-3">
-            <label for="{{ form.permanent_address.id_for_label }}" class="form-label">Permanent Address</label>
-            {{ address_info_form.permanent_address.state }}
-          </div>
-          <div class="form-group mb-3">
-            <label for="{{ form.temporary_address.id_for_label }}" class="form-label">Temporary Address</label>
-            {{ address_info_form.temporary_address }}
-          </div>
-          <div class="form-group mb-3">
-            <label for="{{ form.educational_history.id_for_label }}" class="form-label">Educational History</label>
-            {{ personal_info_form.educational_history }}
-          </div>
+        </div>
 
-          <div class="form-group mb-3">
-            <label for="{{ form.english_test.id_for_label }}" class="form-label">English Test</label>
-            {{ personal_info_form.english_test }}
-          </div>
-
-          <div class="form-group mb-3">
-            <label for="{{ form.employment_history.id_for_label }}" class="form-label">Employment History</label>
-            {{ personal_info_form.employment_history }}
-          </div>
-
-          <div class="form-group mb-3">
-            <label for="{{ form.emergency_contact.id_for_label }}" class="form-label">Emergency Contact</label>
-            {{ personal_info_form.emergency_contact }}
-          </div>
-
-          <div class="flex mb-5 ms-3">
-            <button type="submit" class="btn btn-success mt-3">Submit</button>
-            <a href="" class="btn btn-secondary mt-3">Cancel</a>
-          </div>
-        </form> {% endcomment %}
-
-        <form method="post">
-          {% csrf_token %}
-          {{ form.user_form.as_p }}
-          {{ form.address_info_form.as_p }}
-          {{ form.personal_info_form.as_p }}
-          {{ form.student_form.as_p }}
-        
-          <h3>Educational History</h3>
-          {{ form.educational_history_formset.management_form }}
-          {% for form in form.educational_history_formset %}
-            {% for field in form %}
-              {{field}}
-            {% endfor %}
-          {% endfor %}
-        
-          <h3>English Tests</h3>
-          {{ form.english_test_formset.management_form }}
-          {% for form in form.english_test_formset %}
-            {{ form.as_p }}
-          {% endfor %}
-        
-          <h3>Employment History</h3>
-          {{ form.employment_history_formset.management_form }}
-          {% for form in form.employment_history_formset %}
-            {{ form.as_p }}
-          {% endfor %}
-        
-          <h3>Emergency Contacts</h3>
-          {{ form.emergency_contact_formset.management_form }}
-          {% for form in form.emergency_contact_formset %}
-            {{ form.as_p }}
-          {% endfor %}
-        
-          <div class="flex mb-5 ms-3">
-            <button type="submit" class="btn btn-success mt-3">Submit</button>
-            <a href="" class="btn btn-secondary mt-3">Cancel</a>
-          </div>
-        </form>
-        
       </div>
     </div>
+    <div class="card">
+      <div class="card-body educational_detail">
+        <h5 class="mb-3 text-muted">Educational History</h5>
+          {{ form.educational_history_formset.management_form }}
+          {% for form in form.educational_history_formset %}
+          <div class="dataarrange">
+            <div class="col-md-12 mb-3">
+                <label for="{{ form.degree_name.id_for_label }}" class="form-label">Degree Name:</label>
+                {{ form.degree_name}}
+           </div>
+           <div class="col-md-12 mb-3">
+                <label for="{{ form.institution_name.id_for_label }}" class="form-label">Institution Name</label>
+                {{ form.institution_name}}
+           </div>
+           <div class="col-md-12 mb-3">
+                <label for="{{ form.graduation_year.id_for_label }}" class="form-label">Graduation Year</label>
+                {{ form.graduation_year}}
+           </div>
+           <div class="col-md-12 mb-3">
+                <label for="{{ form.major_subject.id_for_label }}" class="form-label">Major Subject</label>
+                {{ form.major_subject}}
+           </div>
+          <div class="col-md-12 mb-3">
+              <label for="certificate" class="form-label">Certificate</label>
+              
+              {% include 'dashboard/image-picker.html' with name="form.personal_info_form.citizenship_img" %}
+              
+              {% if form.personal_info_form.citizenship_img and form.personal_info_form.citizenship_img.value %}
+              <div class="mt-2">
+                  <img src="{{ form.personal_info_form.citizenship_img.url }}" class="img-fluid" style="max-width: 200px;" alt="Uploaded Certificate">
+              </div>
+              {% endif %}
+          </div>
+          </div>
+
+          {% endfor %}
+          <div class="btn btn-primary add_more_education">Add More Educational Detail</div>
+        </div>
+      </div>
+    </div> 
+    <div class="card">
+      <div class="card-body test_attempted">
+        <h5 class="mb-3 text-muted">Test attempted:</h5>
+          {{ form.english_test_formset.management_form }}
+          {% for form in form.english_test_formset %}
+          <div class="col-md-12 mb-3">
+                <label for="{{ form.test.id_for_label }}" class="form-label">Test Name:</label>
+                {{ form.test}}
+           </div>
+           <div class="col-md-12 mb-3">
+                <label for="{{ form.score.id_for_label }}" class="form-label">Score:</label>
+                {{ form.score}}
+           </div>
+           <div class="col-md-12 mb-3">
+                <label for="{{ form.date.id_for_label }}" class="form-label">Date:</label>
+                {{ form.date}}
+           </div>
+            <div class="col-md-12 mb-3">
+                <label for="test_certificate" class="form-label">File</label>
+
+                {% include 'dashboard/image-picker.html' with name="form.files" %}
+
+                {% if form.files and form.files.value %}
+                <div class="mt-2">
+                    <img src="{{ form.files.url }}" class="img-fluid" style="max-width: 200px;" alt="Current File">
+                </div>
+                {% endif %}
+            </div>
+
+           {% endfor %}
+           <div class="btn btn-primary add_more_work">Add More Test</div>         
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body work_experience">
+        <h5 class="mb-3 text-muted">Work Experience</h5>
+          {{ form.employment_history_formset.management_form }}
+          {% for form in form.employment_history_formset %}
+          <div class="col-md-12 mb-3">
+                <label for="{{ form.employer_name.id_for_label }}" class="form-label">Employer Name:</label>
+                {{ form.employer_name}}
+           </div>
+           <div class="col-md-12 mb-3">
+                <label for="{{ form.title.id_for_label }}" class="form-label">Job Title:</label>
+                {{ form.title}}
+           </div>
+           <div class="col-md-12 mb-3">
+                <label for="{{ form.start_date.id_for_label }}" class="form-label">Start Date:</label>
+                {{ form.start_date}}
+           </div>
+           <div class="col-md-12 mb-3">
+                <label for="{{ form.end_date.id_for_label }}" class="form-label">End Date:</label>
+                {{ form.end_date}}
+           </div>
+           <div class="col-md-12 mb-3">
+                <label for="{{ form.job_description.id_for_label }}" class="form-label">Description:</label>
+                {{ form.job_description}}
+           </div>  
+           {% endfor %}
+           <div class="btn btn-primary add_more_work">Add More Work Experience</div>         
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h5>Emergency Contacts</h5>
+        {{ form.emergency_contact_formset.management_form }}
+          {% for form in form.emergency_contact_formset %}
+            <div class="col-md-12 mb-3">
+                {{ form.as_p }}
+           </div> 
+          {% endfor %}
+      </div>
+    </div>
+          <div class="flex mb-5 ms-3">
+            <button type="submit" class="btn btn-success mt-3">Submit</button>
+            <a href="" class="btn btn-secondary mt-3">Cancel</a>
+          </div>
+            </div>
+          </div>
+    </div>
+    </div>
+    
+        </form>
+        
+
   </div>
 {% endblock %}
