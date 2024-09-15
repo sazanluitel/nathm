@@ -26,10 +26,42 @@ class StudentView(View):
             form.save()
             messages.success(request, "Student added successfully")
             return redirect('students:studentlist')  # Replace with your desired URL
+        else:
+            messages.error(request, "Please correct the errors below.")
+            self.handle_errors(form)
 
         return render(request, self.template_name, {'form': form})
 
-        
+    def handle_errors(self, form):
+        # Print errors for the main form
+        for field, errors in form.errors.items():
+            print(f"Errors for {field}: {errors}")
+
+        # Print errors for individual forms
+        for form_name, form_instance in {
+            'user_form': form.user_form,
+            'permanent_address_form': form.permanent_address_form,
+            'temporary_address_form': form.temporary_address_form,
+            'personal_info_form': form.personal_info_form,
+            'student_form': form.student_form,
+            'emergency_contact_form': form.emergency_contact_form,
+            'emergency_address_form': form.emergency_address_form,
+        }.items():
+            for field, errors in form_instance.errors.items():
+                print(f"Errors for {form_name} - {field}: {errors}")
+
+        # Print errors for formsets
+        for formset_name, formset_instance in {
+            'educational_history_formset': form.educational_history_formset,
+            'english_test_formset': form.english_test_formset,
+            'employment_history_formset': form.employment_history_formset,
+        }.items():
+            for form in formset_instance:
+                if form.errors:
+                    for field, errors in form.errors.items():
+                        print(f"Errors for {formset_name} - {field}: {errors}")
+
+
 class StudentEditView(View):
         def get(self, request, id):
             student = get_object_or_404(Student, id=id)

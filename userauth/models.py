@@ -46,18 +46,18 @@ class User(AbstractUser):
 
 class AddressInfo(models.Model):
     address = models.CharField(max_length=200)
-    city = models.CharField(max_length=200)
-    province = models.CharField(max_length=200)  # Changed to lowercase for convention
+    city = models.CharField(max_length=200, null=True, blank=True)
+    province = models.CharField(max_length=200, null=True, blank=True)  # Changed to lowercase for convention
     country = models.CharField(max_length=200)
-    postcode = models.CharField(max_length=100)
-    contact_number = models.CharField(max_length=100)
+    postcode = models.CharField(max_length=100, null=True, blank=True)
+    contact_number = models.CharField(max_length=100, null=True, blank=True)
 
 
 class EducationHistory(models.Model):
     degree_name = models.CharField(max_length=100)
     institution_name = models.CharField(max_length=100)
     graduation_year = models.IntegerField()
-    major_subject = models.CharField(max_length=100)
+    major_subject = models.CharField(max_length=100, null=True, blank=True)
     file = models.TextField(blank=True, null=True)
 
 
@@ -80,13 +80,13 @@ class EmploymentHistory(models.Model):
     title = models.CharField(max_length=100)
     start_date = models.DateField()
     end_date = models.DateField(blank=True, null=True)
-    job_description = models.TextField()
+    job_description = models.TextField(null=True, blank=True)
 
 
 class EmergencyContact(models.Model):
     name = models.CharField(max_length=100)
-    relationship = models.CharField(max_length=100)
-    email = models.EmailField()
+    relationship = models.CharField(max_length=100, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
     address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE)
 
 

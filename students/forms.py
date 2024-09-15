@@ -1,15 +1,18 @@
 from django import forms
+from django.db import transaction
+
 from userauth.models import AddressInfo
 from userauth.models import User
 from students.models import Student
 from django.forms import formset_factory
 from userauth.forms import *
 
+
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = [
-            'user', 'campus', 'department','student_id', 'commencing_term', 'date_of_admission', 'shift',
+            'user', 'campus', 'department', 'student_id', 'commencing_term', 'date_of_admission', 'shift',
             'admission_officer', 'scholarship_details', 'referred_by', 'payment_by', 'organization',
             'authorize_person', 'email', 'payment_address', 'annual_income', 'members_in_family',
             'father_occupation', 'mother_occupation', 'why_us', 'why_us_other', 'about_us', 'about_us_other'
@@ -24,13 +27,13 @@ class StudentForm(forms.ModelForm):
                 'class': 'form-control',
                 'id': 'campus',
                 'name': 'campus',
-                'data-placeholder':'Select any of options',
+                'data-placeholder': 'Select any of options',
             }),
             'department': forms.Select(attrs={
                 'class': 'form-control',
                 'id': 'department',
                 'name': 'department',
-                'data-placeholder':'Select any of options'
+                'data-placeholder': 'Select any of options'
             }),
             'student_id': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -56,7 +59,7 @@ class StudentForm(forms.ModelForm):
                 'class': 'form-control',
                 'id': 'shift',
                 'name': 'shift',
-                'data-placeholder':'Select any of options',
+                'data-placeholder': 'Select any of options',
             }),
             'admission_officer': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -155,29 +158,28 @@ class StudentForm(forms.ModelForm):
         }
 
 
-
 class StudentAddForm(forms.Form):
     def __init__(self, *args, **kwargs):
         # Pop the data and files passed into the form
         data = kwargs.pop('data', None)
-        files = kwargs.pop('files', None)
+        print(data)
 
         # Initialize the parent class
         super(StudentAddForm, self).__init__(*args, **kwargs)
 
         # Initialize individual forms with both data and files
-        self.user_form = UserForm(data, files)
-        self.permanent_address_form = AddressInfoForm(data)
-        self.temporary_address_form = AddressInfoForm(data)
-        self.personal_info_form = PersonalInfoForm(data, files)
+        self.user_form = UserForm(data)
+        self.permanent_address_form = AddressInfoForm(data, prefix="permanent")
+        self.temporary_address_form = AddressInfoForm(data, prefix="temporary")
+        self.personal_info_form = PersonalInfoForm(data)
         self.student_form = StudentForm(data)
         self.emergency_contact_form = EmergencyContactForm(data)
-        self.emergency_address_form = AddressInfoForm(data)
+        self.emergency_address_form = AddressInfoForm(data, prefix="emergency")
 
         # Initialize formsets
-        self.educational_history_formset = formset_factory(EducationHistoryForm, extra=1)(data)
-        self.english_test_formset = formset_factory(EnglishTestForm, extra=1)(data)
-        self.employment_history_formset = formset_factory(EmploymentHistoryForm, extra=1)(data)
+        self.educational_history_formset = formset_factory(EducationHistoryForm, extra=1)(data, prefix='educational_history')
+        self.english_test_formset = formset_factory(EnglishTestForm, extra=1)(data, prefix='english_test')
+        self.employment_history_formset = formset_factory(EmploymentHistoryForm, extra=1)(data, prefix='employment_history')
 
     def is_valid(self):
         """
@@ -198,61 +200,70 @@ class StudentAddForm(forms.Form):
         """
         Save the data for each form and formset.
         """
-        user = self.user_form.save(commit=commit)
+        with transaction.atomic():
+            user = self.user_form.save(commit=commit)
 
-        # Save permanent and temporary addresses
-        permanent_address = self.permanent_address_form.save(commit=False)
-        permanent_address.user = user
-        if commit:
-            permanent_address.save()
+            permanent_address = self.permanent_address_form.save(commit=False)
+            if commit:
+                permanent_address.save()
 
-        temporary_address = self.temporary_address_form.save(commit=False)
-        temporary_address.user = user
-        if commit:
-            temporary_address.save()
+            temporary_address = self.temporary_address_form.save(commit=False)
+            if commit:
+                temporary_address.save()
 
-        personal_info = self.personal_info_form.save(commit=False)
-        personal_info.user = user
-        if commit:
-            personal_info.save()
+            emergency_address = self.emergency_address_form.save(commit=False)
+            if commit:
+                emergency_address.save()
 
-        student = self.student_form.save(commit=False)
-        student.user = user
-        if commit:
-            student.save()
+            # Save user after addresses are saved
+            user = self.user_form.save(commit=False)
+            if commit:
+                user.save()
 
-        emergency_contact = self.emergency_contact_form.save(commit=False)
-        emergency_contact.user = user
-        if commit:
-            emergency_contact.save()
+            # Save personal info, linking it to the user
+            personal_info = self.personal_info_form.save(commit=False)
+            personal_info.user = user
+            personal_info.permanent_address = permanent_address
+            personal_info.temporary_address = temporary_address
+            if commit:
+                personal_info.save()
 
-        emergency_address = self.emergency_address_form.save(commit=False)
-        emergency_address.user = user
-        if commit:
-            emergency_address.save()
+            # Save emergency contact, linking it to an address
+            emergency_contact = self.emergency_contact_form.save(commit=False)
+            emergency_contact.address = emergency_address
+            if commit:
+                emergency_contact.save()
 
-        # Save each educational history form
-        for form in self.educational_history_formset:
-            if form.is_valid():
-                educational_history = form.save(commit=False)
-                educational_history.student = student
-                if commit:
+            # Save student info, linking it to the user
+            student = self.student_form.save(commit=False)
+            student.user = user
+            if commit:
+                student.save()
+
+            # Save each educational history form
+            for form in self.educational_history_formset:
+                if form.is_valid():
+                    educational_history = form.save(commit=False)
                     educational_history.save()
+                    personal_info.educational_history.add(educational_history)
 
-        # Save each employment history form
-        for form in self.employment_history_formset:
-            if form.is_valid():
-                employment_history = form.save(commit=False)
-                employment_history.student = student
-                if commit:
+            # Save each employment history form
+            for form in self.employment_history_formset:
+                if form.is_valid():
+                    employment_history = form.save(commit=False)
                     employment_history.save()
+                    personal_info.employment_history.add(employment_history)
 
-        # Save each English test form
-        for form in self.english_test_formset:
-            if form.is_valid():
-                english_test = form.save(commit=False)
-                english_test.student = student
-                if commit:
+            # Save each English test form
+            for form in self.english_test_formset:
+                if form.is_valid():
+                    english_test = form.save(commit=False)
                     english_test.save()
+                    personal_info.english_test.add(english_test)
 
-        return student
+            # Update personal info with emergency contact
+            personal_info.emergency_contact = emergency_contact
+            if commit:
+                personal_info.save()
+
+            return student
