@@ -141,9 +141,10 @@
                         </ul>
                     </li>
 
-                    {% comment %} <li class="ps-item ps-caption">
+                    <li class="ps-item ps-caption">
                         <label>Admission</label>
                     </li>
+
                     <li class="ps-item ps-hasmenu">
                         <a href="#!" class="ps-link">
                             <span class="ps-micon">
@@ -154,10 +155,10 @@
                         </a>
 
                         <ul class="ps-submenu">
-                            <li class="ps-item"><a class="ps-link" href="{% url 'students:admission' %}">Add New</a></li>
-                            <li class="ps-item"><a class="ps-link" href="{% url 'dashboard:moduleslist' %}">List Students</a></li>
+                            <li class="ps-item"><a class="ps-link" href="{% url 'students:addstudent' %}">Add New</a></li>
+                            <li class="ps-item"><a class="ps-link" href="{% url 'students:studentlist' %}">Students</a></li>
                         </ul>
-                    </li> {% endcomment %}
+                    </li>
                     <li class="ps-item">
                         <a href="{% url 'dashboard:filemanager' %}" class="ps-link">
                             <span class="ps-micon">

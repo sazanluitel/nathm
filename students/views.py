@@ -63,28 +63,28 @@ class StudentView(View):
 
 
 class StudentEditView(View):
-        def get(self, request, id):
-            student = get_object_or_404(Student, id=id)
-            form = StudentAddForm(instance=student)
-            return render(request, 'dashboard/students/edit.html', {
-                'form': form,
-                'student_id': id,
-                })
+    def get(self, request, id):
+        student = get_object_or_404(Student, id=id)
+        form = StudentAddForm(instance=student)
+        return render(request, 'dashboard/students/edit.html', {
+            'form': form,
+            'student_id': id,
+        })
 
-        def post(self, request, id):
-            student = get_object_or_404(Campus, id=id)
-            form = StudentAddForm(request.POST, request.FILES, instance=student)
-            if form.is_valid():
-                form.save()
-                messages.success(request, "Student updated successfully")
-                return redirect('students:studentlist')
-            else:
-                messages.error(request, "Please correct the errors below.")
-            
-            return render(request, 'dashboard/campus/edit.html', {
-                'form': form,
-                'student_id': id
-            })
+    def post(self, request, id):
+        student = get_object_or_404(Campus, id=id)
+        form = StudentAddForm(request.POST, request.FILES, instance=student)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Student updated successfully")
+            return redirect('students:studentlist')
+        else:
+            messages.error(request, "Please correct the errors below.")
+
+        return render(request, 'dashboard/campus/edit.html', {
+            'form': form,
+            'student_id': id
+        })
 
 
 class StudentList(View):
@@ -93,6 +93,7 @@ class StudentList(View):
     def get(self, request, *args, **kwargs):
         students = Student.objects.all()
         return render(request, self.template_name, {'students': students})
+
 
 class StudentAjax(View):
     def get(self, request, *args, **kwargs):
@@ -105,10 +106,8 @@ class StudentAjax(View):
         student = Student.objects.all()
         if search_value:
             student = student.filter(
-                Q(name__icontains=search_value) | Q(description__icontains=search_value)
+                Q(user__email__icontains=search_value) | Q(user__first_name__icontains=search_value) | Q(user__last_name__icontains=search_value)
             )
-
-        student = student.order_by("name")
 
         paginator = Paginator(student, length)
         page_menu_items = paginator.page(page_number)
@@ -117,7 +116,7 @@ class StudentAjax(View):
         for student in page_menu_items:
             data.append(
                 [
-                    student.name,
+                    student.user.get_full_name(),
                     student.location,
                     student.contact,
                     self.get_action(student.id),

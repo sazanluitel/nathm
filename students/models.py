@@ -59,16 +59,16 @@ class Student(models.Model):
 
     # Financial capacity
     annual_income = models.CharField(max_length=100, blank=True, null=True)
-    members_in_family = models.IntegerField(default=1)
+    members_in_family = models.IntegerField(default=1, blank=True)
     father_occupation = models.CharField(max_length=100, blank=True, null=True)
     mother_occupation = models.CharField(max_length=100, blank=True, null=True)
 
     # Reasons for choosing the institution
-    why_us = models.CharField(choices=WHY_US, max_length=20, default="REPUTATION")
+    why_us = models.CharField(choices=WHY_US, max_length=20, default="REPUTATION", blank=True)
     why_us_other = models.TextField(blank=True, null=True)
 
     # How the student learned about the course
-    about_us = models.CharField(choices=ABOUT_US, max_length=20, default="FRIENDS")
+    about_us = models.CharField(choices=ABOUT_US, max_length=20, default="FRIENDS", blank=True)
     about_us_other = models.TextField(max_length=255, blank=True, null=True)
 
     def __str__(self):

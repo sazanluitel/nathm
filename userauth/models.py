@@ -87,7 +87,7 @@ class EmergencyContact(models.Model):
     name = models.CharField(max_length=100)
     relationship = models.CharField(max_length=100, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
-    address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE)
+    address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, null=True, blank=True)
 
 
 class PersonalInfo(models.Model):
@@ -101,9 +101,9 @@ class PersonalInfo(models.Model):
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES)  # Adjusted max_length to fit values
     date_of_birth_in_ad = models.DateField()
     citizenship_img = models.TextField()  # Fixed typo in field name
-    permanent_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='permanent_address')
-    temporary_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='temporary_address')
-    educational_history = models.ManyToManyField(EducationHistory)  # Removed `on_delete`
-    english_test = models.ManyToManyField(EnglishTest)  # Removed `on_delete`
-    employment_history = models.ManyToManyField(EmploymentHistory)  # Removed `on_delete`
-    emergency_contact = models.ForeignKey(EmergencyContact, on_delete=models.CASCADE)
+    permanent_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='permanent_address', null=True, blank=True)
+    temporary_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='temporary_address', null=True, blank=True)
+    educational_history = models.ManyToManyField(EducationHistory, blank=True)  # Removed `on_delete`
+    english_test = models.ManyToManyField(EnglishTest, blank=True)  # Removed `on_delete`
+    employment_history = models.ManyToManyField(EmploymentHistory, blank=True)  # Removed `on_delete`
+    emergency_contact = models.ForeignKey(EmergencyContact, on_delete=models.CASCADE, null=True, blank=True)
