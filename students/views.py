@@ -91,8 +91,7 @@ class StudentList(View):
     template_name = 'dashboard/students/list.html'
 
     def get(self, request, *args, **kwargs):
-        students = Student.objects.all()
-        return render(request, self.template_name, {'students': students})
+        return render(request, self.template_name)
 
 
 class StudentAjax(View):
@@ -117,8 +116,9 @@ class StudentAjax(View):
             data.append(
                 [
                     student.user.get_full_name(),
-                    student.location,
-                    student.contact,
+                    student.user.email,
+                    student.campus.name if student.campus else "",
+                    student.department.name if student.department else "",
                     self.get_action(student.id),
                 ]
             )

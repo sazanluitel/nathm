@@ -41,8 +41,9 @@ class Student(models.Model):
 
     # Details
     campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
     student_id = models.CharField(max_length=255, unique=True)
+
     commencing_term = models.TextField(null=True, blank=True)
     date_of_admission = models.DateField()
     shift = models.CharField(max_length=50, choices=SHIFT)
@@ -51,7 +52,7 @@ class Student(models.Model):
     referred_by = models.CharField(max_length=100, blank=True, null=True)
 
     # Payment of fees
-    payment_by = models.CharField(choices=PAYMENT_BY, max_length=20)
+    payment_by = models.CharField(choices=PAYMENT_BY, max_length=20, null=True)
     organization = models.CharField(max_length=255, blank=True, null=True)
     authorize_person = models.CharField(max_length=255, blank=True, null=True)
     email = models.EmailField(max_length=100, blank=True, null=True)
@@ -73,3 +74,6 @@ class Student(models.Model):
 
     def __str__(self):
         return self.email
+
+
+

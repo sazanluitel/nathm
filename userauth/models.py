@@ -69,9 +69,9 @@ class EnglishTest(models.Model):
         ('CAMBRIDGE', 'Cambridge'),
         ('OTHER', 'Other'),
     ]
-    test = models.CharField(max_length=50, choices=TESTS)
-    score = models.FloatField(max_length=5)
-    date = models.DateField()
+    test = models.CharField(max_length=50, choices=TESTS, null=True, blank=True)
+    score = models.FloatField(max_length=5, default=0)
+    date = models.DateField(null=True, blank=True)
     files = models.TextField(blank=True, null=True)
 
 
@@ -107,3 +107,5 @@ class PersonalInfo(models.Model):
     english_test = models.ManyToManyField(EnglishTest, blank=True)  # Removed `on_delete`
     employment_history = models.ManyToManyField(EmploymentHistory, blank=True)  # Removed `on_delete`
     emergency_contact = models.ForeignKey(EmergencyContact, on_delete=models.CASCADE, null=True, blank=True)
+
+
