@@ -2,6 +2,7 @@ from django.db import models
 from dashboard.models import Campus, Department
 from userauth.models import AddressInfo, User, PersonalInfo
 
+
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
@@ -40,9 +41,10 @@ class Student(models.Model):
 
     # Details
     campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
     student_id = models.CharField(max_length=255, unique=True)
-    commencing_term = models.TextField()
+
+    commencing_term = models.TextField(null=True, blank=True)
     date_of_admission = models.DateField()
     shift = models.CharField(max_length=50, choices=SHIFT)
     admission_officer = models.TextField(blank=True, null=True)
@@ -50,25 +52,28 @@ class Student(models.Model):
     referred_by = models.CharField(max_length=100, blank=True, null=True)
 
     # Payment of fees
-    payment_by = models.CharField(choices=PAYMENT_BY, max_length=20)
+    payment_by = models.CharField(choices=PAYMENT_BY, max_length=20, null=True)
     organization = models.CharField(max_length=255, blank=True, null=True)
     authorize_person = models.CharField(max_length=255, blank=True, null=True)
     email = models.EmailField(max_length=100, blank=True, null=True)
     payment_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE)
 
     # Financial capacity
-    annual_income = models.CharField(max_length=100)
-    members_in_family = models.IntegerField(default=1)
-    father_occupation = models.CharField(max_length=100)
-    mother_occupation = models.CharField(max_length=100)
+    annual_income = models.CharField(max_length=100, blank=True, null=True)
+    members_in_family = models.IntegerField(default=1, blank=True)
+    father_occupation = models.CharField(max_length=100, blank=True, null=True)
+    mother_occupation = models.CharField(max_length=100, blank=True, null=True)
 
     # Reasons for choosing the institution
-    why_us = models.CharField(choices=WHY_US, max_length=20)
+    why_us = models.CharField(choices=WHY_US, max_length=20, default="REPUTATION", blank=True)
     why_us_other = models.TextField(blank=True, null=True)
 
     # How the student learned about the course
-    about_us = models.CharField(choices=ABOUT_US, max_length=20)
+    about_us = models.CharField(choices=ABOUT_US, max_length=20, default="FRIENDS", blank=True)
     about_us_other = models.TextField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.email
+
+
+

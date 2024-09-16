@@ -26,41 +26,73 @@ class StudentView(View):
             form.save()
             messages.success(request, "Student added successfully")
             return redirect('students:studentlist')  # Replace with your desired URL
+        else:
+            messages.error(request, "Please correct the errors below.")
+            self.handle_errors(form)
 
         return render(request, self.template_name, {'form': form})
 
-        
-class StudentEditView(View):
-        def get(self, request, id):
-            student = get_object_or_404(Student, id=id)
-            form = StudentAddForm(instance=student)
-            return render(request, 'dashboard/students/edit.html', {
-                'form': form,
-                'student_id': id,
-                })
+    def handle_errors(self, form):
+        # Print errors for the main form
+        for field, errors in form.errors.items():
+            print(f"Errors for {field}: {errors}")
 
-        def post(self, request, id):
-            student = get_object_or_404(Campus, id=id)
-            form = StudentAddForm(request.POST, request.FILES, instance=student)
-            if form.is_valid():
-                form.save()
-                messages.success(request, "Student updated successfully")
-                return redirect('students:studentlist')
-            else:
-                messages.error(request, "Please correct the errors below.")
-            
-            return render(request, 'dashboard/campus/edit.html', {
-                'form': form,
-                'student_id': id
-            })
+        # Print errors for individual forms
+        for form_name, form_instance in {
+            'user_form': form.user_form,
+            'permanent_address_form': form.permanent_address_form,
+            'temporary_address_form': form.temporary_address_form,
+            'personal_info_form': form.personal_info_form,
+            'student_form': form.student_form,
+            'emergency_contact_form': form.emergency_contact_form,
+            'emergency_address_form': form.emergency_address_form,
+        }.items():
+            for field, errors in form_instance.errors.items():
+                print(f"Errors for {form_name} - {field}: {errors}")
+
+        # Print errors for formsets
+        for formset_name, formset_instance in {
+            'educational_history_formset': form.educational_history_formset,
+            'english_test_formset': form.english_test_formset,
+            'employment_history_formset': form.employment_history_formset,
+        }.items():
+            for form in formset_instance:
+                if form.errors:
+                    for field, errors in form.errors.items():
+                        print(f"Errors for {formset_name} - {field}: {errors}")
+
+
+class StudentEditView(View):
+    def get(self, request, id):
+        student = get_object_or_404(Student, id=id)
+        form = StudentAddForm(instance=student)
+        return render(request, 'dashboard/students/edit.html', {
+            'form': form,
+            'student_id': id,
+        })
+
+    def post(self, request, id):
+        student = get_object_or_404(Campus, id=id)
+        form = StudentAddForm(request.POST, request.FILES, instance=student)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Student updated successfully")
+            return redirect('students:studentlist')
+        else:
+            messages.error(request, "Please correct the errors below.")
+
+        return render(request, 'dashboard/campus/edit.html', {
+            'form': form,
+            'student_id': id
+        })
 
 
 class StudentList(View):
     template_name = 'dashboard/students/list.html'
 
     def get(self, request, *args, **kwargs):
-        students = Student.objects.all()
-        return render(request, self.template_name, {'students': students})
+        return render(request, self.template_name)
+
 
 class StudentAjax(View):
     def get(self, request, *args, **kwargs):
@@ -73,10 +105,8 @@ class StudentAjax(View):
         student = Student.objects.all()
         if search_value:
             student = student.filter(
-                Q(name__icontains=search_value) | Q(description__icontains=search_value)
+                Q(user__email__icontains=search_value) | Q(user__first_name__icontains=search_value) | Q(user__last_name__icontains=search_value)
             )
-
-        student = student.order_by("name")
 
         paginator = Paginator(student, length)
         page_menu_items = paginator.page(page_number)
@@ -85,9 +115,10 @@ class StudentAjax(View):
         for student in page_menu_items:
             data.append(
                 [
-                    student.name,
-                    student.location,
-                    student.contact,
+                    student.user.get_full_name(),
+                    student.user.email,
+                    student.campus.name if student.campus else "",
+                    student.department.name if student.department else "",
                     self.get_action(student.id),
                 ]
             )

@@ -46,18 +46,18 @@ class User(AbstractUser):
 
 class AddressInfo(models.Model):
     address = models.CharField(max_length=200)
-    city = models.CharField(max_length=200)
-    province = models.CharField(max_length=200)  # Changed to lowercase for convention
+    city = models.CharField(max_length=200, null=True, blank=True)
+    province = models.CharField(max_length=200, null=True, blank=True)  # Changed to lowercase for convention
     country = models.CharField(max_length=200)
-    postcode = models.CharField(max_length=100)
-    contact_number = models.CharField(max_length=100)
+    postcode = models.CharField(max_length=100, null=True, blank=True)
+    contact_number = models.CharField(max_length=100, null=True, blank=True)
 
 
 class EducationHistory(models.Model):
     degree_name = models.CharField(max_length=100)
     institution_name = models.CharField(max_length=100)
     graduation_year = models.IntegerField()
-    major_subject = models.CharField(max_length=100)
+    major_subject = models.CharField(max_length=100, null=True, blank=True)
     file = models.TextField(blank=True, null=True)
 
 
@@ -69,9 +69,9 @@ class EnglishTest(models.Model):
         ('CAMBRIDGE', 'Cambridge'),
         ('OTHER', 'Other'),
     ]
-    test = models.CharField(max_length=50, choices=TESTS)
-    score = models.FloatField(max_length=5)
-    date = models.DateField()
+    test = models.CharField(max_length=50, choices=TESTS, null=True, blank=True)
+    score = models.FloatField(max_length=5, default=0)
+    date = models.DateField(null=True, blank=True)
     files = models.TextField(blank=True, null=True)
 
 
@@ -80,14 +80,14 @@ class EmploymentHistory(models.Model):
     title = models.CharField(max_length=100)
     start_date = models.DateField()
     end_date = models.DateField(blank=True, null=True)
-    job_description = models.TextField()
+    job_description = models.TextField(null=True, blank=True)
 
 
 class EmergencyContact(models.Model):
     name = models.CharField(max_length=100)
-    relationship = models.CharField(max_length=100)
-    email = models.EmailField()
-    address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE)
+    relationship = models.CharField(max_length=100, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, null=True, blank=True)
 
 
 class PersonalInfo(models.Model):
@@ -101,9 +101,11 @@ class PersonalInfo(models.Model):
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES)  # Adjusted max_length to fit values
     date_of_birth_in_ad = models.DateField()
     citizenship_img = models.TextField()  # Fixed typo in field name
-    permanent_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='permanent_address')
-    temporary_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='temporary_address')
-    educational_history = models.ManyToManyField(EducationHistory)  # Removed `on_delete`
-    english_test = models.ManyToManyField(EnglishTest)  # Removed `on_delete`
-    employment_history = models.ManyToManyField(EmploymentHistory)  # Removed `on_delete`
-    emergency_contact = models.ForeignKey(EmergencyContact, on_delete=models.CASCADE)
+    permanent_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='permanent_address', null=True, blank=True)
+    temporary_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='temporary_address', null=True, blank=True)
+    educational_history = models.ManyToManyField(EducationHistory, blank=True)  # Removed `on_delete`
+    english_test = models.ManyToManyField(EnglishTest, blank=True)  # Removed `on_delete`
+    employment_history = models.ManyToManyField(EmploymentHistory, blank=True)  # Removed `on_delete`
+    emergency_contact = models.ForeignKey(EmergencyContact, on_delete=models.CASCADE, null=True, blank=True)
+
+
