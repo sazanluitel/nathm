@@ -14,7 +14,7 @@ class StudentForm(forms.ModelForm):
         fields = [
             'campus','department', 'commencing_term', 'date_of_admission', 'shift',
             'admission_officer', 'scholarship_details', 'referred_by', 'organization',
-            'authorize_person', 'email', 'annual_income', 'members_in_family',
+            'authorize_person', 'email', 'annual_income', 'members_in_family','payment_by','payment_address',
             'father_occupation', 'mother_occupation', 'why_us', 'why_us_other', 'about_us', 'about_us_other'
         ]
         widgets = {
@@ -151,6 +151,7 @@ class StudentAddForm(forms.Form):
         self.user_form = UserForm(data, files)
         self.permanent_address_form = AddressInfoForm(data, files, prefix="permanent")
         self.temporary_address_form = AddressInfoForm(data, files, prefix="temporary")
+        self.payment_address_form = AddressInfoForm(data, files, prefix="payment")
         self.personal_info_form = PersonalInfoForm(data, files)
         self.student_form = StudentForm(data, files)
         self.emergency_contact_form = EmergencyContactForm(data, files)
@@ -170,6 +171,7 @@ class StudentAddForm(forms.Form):
         return (self.user_form.is_valid() and
                 self.permanent_address_form.is_valid() and
                 self.temporary_address_form.is_valid() and
+                self.payment_address_form.is_valid() and
                 self.personal_info_form.is_valid() and
                 self.student_form.is_valid() and
                 self.emergency_contact_form.is_valid() and
@@ -188,6 +190,9 @@ class StudentAddForm(forms.Form):
             temporary_address = self.temporary_address_form.save(commit=False)
             if commit:
                 temporary_address.save()
+            payment_address = self.payment_address_form.save(commit=False)
+            if commit:
+                payment_address.save()
 
             emergency_address = self.emergency_address_form.save(commit=False)
             if commit:
@@ -203,6 +208,7 @@ class StudentAddForm(forms.Form):
             personal_info.user = user
             personal_info.permanent_address = permanent_address
             personal_info.temporary_address = temporary_address
+            personal_info.payment_address = payment_address
             if commit:
                 personal_info.save()
 

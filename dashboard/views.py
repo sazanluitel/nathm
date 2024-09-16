@@ -16,6 +16,7 @@ from django.http import JsonResponse
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.views import LoginView
 from django.db.models import Q
+from students.models import *
 
 
 class DashboardView(View):
@@ -525,6 +526,15 @@ class DeleteHelper:
 
         return self.get_objects(ids, Modules, "Modules", "dashboard:modulesedit", modules_title, modules_kwargs)
     
+    def get_student(self, ids):
+        def student_title(student):
+            return student.first_name
+
+        def student_kwargs(student):
+            return {"id": student.id}
+
+        return self.get_objects(ids, Student, "Student", "dashboard:studentedit", student_title, student_kwargs)
+    
     def get_titles(self, post_type: str, total):
         if post_type == "program":
             return "Programs" if total > 1 else "Program"
@@ -534,6 +544,8 @@ class DeleteHelper:
             return "Campuses" if total > 1 else "Campus"
         elif post_type == "modules":
             return "Modules" if total > 1 else "Module"
+        elif post_type == "student":
+            return "Students" if total > 1 else "Student"
         return "Objects"
 
     def get_delete_objects(self, delete_type, selected_ids=None):
@@ -552,7 +564,9 @@ class DeleteHelper:
                 objects, originals = self.get_campus(selected_ids)
             elif delete_type == "modules":
                 objects, originals = self.get_modules(selected_ids)
-
+            elif delete_type == "student":
+                objects, originals = self.get_student(selected_ids)
+            
         return objects, originals
 
 class DeleteFinalView(View, DeleteHelper):
