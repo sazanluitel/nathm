@@ -134,9 +134,9 @@ class StudentAjax(View):
         )
 
     def get_action(self, post_id):
-        edit_url = reverse('dashboard:campusedit', kwargs={'id': post_id})
+        edit_url = reverse('dashboard:studentedit', kwargs={'id': student_id})
         delete_url = reverse('dashboard:delete')
-        backurl = reverse('dashboard:campuslist')
+        backurl = reverse('dashboard:studentlist')
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
                 <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
