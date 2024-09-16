@@ -498,6 +498,28 @@
             </div>
          </div>
          {% endcomment %}
+         <div class="card mb-4">
+            <div class="card-body">
+                <div class="col-md-12 mb-3">
+                    <label for="{{ form.student_form.about_us.id_for_label }}" class="form-label">How Did Know About Us</label>
+                    {{ form.student_form.about_us }}
+                    {% include "parts/error.html" with errors=form.student_form.about_us.errors %}
+                </div>
+                <div class="col-md-12 mb-3">
+                    {{ form.student_form.about_us_other }}
+                    {% include "parts/error.html" with errors=form.student_form.about_us_other.errors %}
+                </div>
+                <div class="col-md-12 mb-3">
+                    <label for="{{ form.student_form.why_us.id_for_label }}" class="form-label">Why You Choose Us</label>
+                    {{ form.student_form.why_us }}
+                    {% include "parts/error.html" with errors=form.student_form.why_us.errors %}
+                </div>
+                <div class="col-md-12 mb-3">
+                    {{ form.student_form.why_us_other }}
+                    {% include "parts/error.html" with errors=form.student_form.why_us_other.errors %}
+                </div>
+            </div>
+         </div>
          <div class="flex mb-5 ms-3">
             <button type="submit" class="btn btn-success mt-3">Submit</button>
             <a href="" class="btn btn-secondary mt-3">Cancel</a>
