@@ -126,6 +126,7 @@ class StudentForm(forms.ModelForm):
                 'class': 'form-control',
                 'id': 'why_us',
                 'name': 'why_us',
+                'data-placeholder': 'Select any of options',
             }),
             'why_us_other': forms.Textarea(attrs={
                 'class': 'form-control',
@@ -138,6 +139,7 @@ class StudentForm(forms.ModelForm):
                 'class': 'form-control',
                 'id': 'about_us',
                 'name': 'about_us',
+                'data-placeholder': 'Select any of options',
             }),
             'about_us_other': forms.Textarea(attrs={
                 'class': 'form-control',
