@@ -12,7 +12,7 @@ class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = [
-            'campus', 'commencing_term', 'date_of_admission', 'shift',
+            'campus','department', 'commencing_term', 'date_of_admission', 'shift',
             'admission_officer', 'scholarship_details', 'referred_by', 'organization',
             'authorize_person', 'email', 'annual_income', 'members_in_family',
             'father_occupation', 'mother_occupation', 'why_us', 'why_us_other', 'about_us', 'about_us_other'
@@ -22,14 +22,14 @@ class StudentForm(forms.ModelForm):
                 'class': 'form-control',
                 'id': 'campus',
                 'name': 'campus',
-                'data-placeholder': 'Select any of options',
+                'data-placeholder': 'Select any of campus',
             }),
-            # 'department': forms.Select(attrs={
-            #     'class': 'form-control',
-            #     'id': 'department',
-            #     'name': 'department',
-            #     'data-placeholder': 'Select any of options'
-            # }),
+            'department': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'department',
+                'name': 'department',
+                'data-placeholder': 'Select any of department'
+            }),
             'commencing_term': forms.TextInput(attrs={
                 'class': 'form-control',
                 'id': 'commencing_term',

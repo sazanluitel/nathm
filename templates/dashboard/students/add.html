@@ -234,7 +234,7 @@
                                     <label for="certificate" class="form-label">Certificate</label>
                                     {% include 'dashboard/image-picker.html' with name=form.prefix|add:'-file' image=form.file.value %}
                                 </div>
-                                <button type="button" class="btn btn-danger remove-education-form m-2">Remove
+                                <button type="button" class="btn btn-danger remove-education-form my-2">Remove
                                 </button>
                             </div>
                         {% endfor %}
@@ -281,7 +281,7 @@
                                     {{ form.job_description }}
                                     {% include "parts/error.html" with errors=form.job_description.errors %}
                                 </div>
-                                <button type="button" class="btn btn-danger remove-work-form m-2">Remove
+                                <button type="button" class="btn btn-danger remove-work-form my-2">Remove
                                 </button>
                             </div>
                         {% endfor %}
@@ -319,7 +319,7 @@
                                     {% include 'dashboard/image-picker.html' with name=form.prefix|add:'-files' image=form.files.value %}
                                     {% include "parts/error.html" with errors=form.files.errors %}
                                 </div>
-                                <button type="button" class="btn btn-danger remove-test-form m-2">Remove
+                                <button type="button" class="btn btn-danger remove-test-form my-2">Remove
                                 </button>
                             </div>
                         {% endfor %}
@@ -434,7 +434,7 @@
                             </div>
                         {% endif %}
                     </div>
-                    <button type="button" class="btn btn-danger remove-education-form m-2">Remove
+                    <button type="button" class="btn btn-danger remove-education-form my-2">Remove
                     </button>
                 </div>
             {% endwith %}
@@ -492,7 +492,7 @@
                         <label for="test_certificate" class="form-label">File</label>
                         {% include 'dashboard/image-picker.html' with name=form.prefix|add:'-files' %}
                     </div>
-                    <button type="button" class="btn btn-danger remove-test-form m-2">Remove
+                    <button type="button" class="btn btn-danger remove-test-form my-2">Remove
                     </button>
                 </div>
             {% endwith %}
