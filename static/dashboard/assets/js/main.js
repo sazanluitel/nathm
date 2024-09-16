@@ -226,48 +226,4 @@
         container.find(".image_fill_placeholder").remove();
         container.find("input").val("");
     });
-
-    $(document).ready(function () {
-        // Add more educational history form
-        // $('.add_more_education').click(function () {
-        //     var totalForms = $('#id_form-TOTAL_FORMS').val();
-        //     var template = $('#empty-education-form-template').html();
-        //     template = template.replace(/__prefix__/g, totalForms);
-        //     $('#educational-history-forms').append(template);
-        //     $('#id_form-TOTAL_FORMS').val(parseInt(totalForms) + 1);
-        // });
-        //
-        // // Add more work experience form
-        // $('.add-more').click(function () {
-        //     var totalForms = $('#id_form-TOTAL_FORMS').val();
-        //     var template = $('#empty-work-form-template').html();
-        //     template = template.replace(/__prefix__/g, totalForms);
-        //     $('#work-experience-forms').append(template);
-        //     $('#id_form-TOTAL_FORMS').val(parseInt(totalForms) + 1);
-        // });
-
-        // // Add more test score form
-        // $('.add-more-test').click(function () {
-        //     var totalForms = $('#id_form-TOTAL_FORMS').val();
-        //     var template = $('#empty-test-form-template').html();
-        //     template = template.replace(/__prefix__/g, totalForms);
-        //     $('#form-container').append(template);
-        //     $('#id_form-TOTAL_FORMS').val(parseInt(totalForms) + 1);
-        // });
-
-        // Remove educational history form
-        // $(document).on('click', '.remove-education-form', function () {
-        //     $(this).closest('.education-form').remove();
-        // });
-        //
-        // // Remove work experience form
-        // $(document).on('click', '.remove-work-form', function () {
-        //     $(this).closest('.work-form').remove();
-        // });
-
-        // // Remove test score form
-        // $(document).on('click', '.remove-test-form', function () {
-        //     $(this).closest('.test-form').remove();
-        // });
-    });
 })(jQuery);
