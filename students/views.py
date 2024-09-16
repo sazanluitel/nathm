@@ -105,7 +105,7 @@ class StudentAjax(View):
         student = Student.objects.all()
         if search_value:
             student = student.filter(
-                Q(user__email__icontains=search_value) | Q(user__first_name__icontains=search_value) | Q(user__last_name__icontains=search_value)
+                Q(user__first_name__icontains=search_value) | Q(user__last_name__icontains=search_value)
             )
 
         paginator = Paginator(student, length)
@@ -115,11 +115,10 @@ class StudentAjax(View):
         for student in page_menu_items:
             data.append(
                 [
-                    student.user.get_full_name(),
-                    student.user.email,
-                    student.campus.name if student.campus else "",
-                    student.department.name if student.department else "",
-                    self.get_action(student.id),
+                    student.user.get_full_name(),  # Name
+                    self.get_clz_email_input(student.id),  # Textbox for clz_email
+                    self.get_student_id_input(student.id),  # Textbox for student ID
+                    self.get_action(student.id),  # Action buttons
                 ]
             )
 
@@ -133,16 +132,41 @@ class StudentAjax(View):
             status=200,
         )
 
-    def get_action(self, post_id):
+    def get_clz_email_input(self, student_id):
+        """
+        Generates an HTML input field for clz_email with a button to add data.
+        """
+        return f'''
+            <form method="post" action="#">
+                <input type="email" name="clz_email_{student_id}" id="clz_email_{student_id}" class="form-control form-control-sm" placeholder="Enter email" />
+                <button type="button" class="btn btn-primary btn-sm mt-1" onclick="addEmail({student_id})">Add</button>
+            </form>
+        '''
+
+    def get_student_id_input(self, student_id):
+        """
+        Generates an HTML input field for student ID with a button to add data.
+        """
+        return f'''
+            <form method="post" action="#">
+                <input type="text" name="student_id_{student_id}" id="student_id_{student_id}" class="form-control form-control-sm" placeholder="Enter student ID" />
+                <button type="button" class="btn btn-primary btn-sm mt-1" onclick="addStudentID({student_id})">Add</button>
+            </form>
+        '''
+
+    def get_action(self, student_id):
+        """
+        Generates action buttons (Edit, Delete).
+        """
         edit_url = reverse('dashboard:studentedit', kwargs={'id': student_id})
         delete_url = reverse('dashboard:delete')
         backurl = reverse('dashboard:studentlist')
+
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
                 <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
 
-                <input type="hidden" name="_selected_id" value="{post_id}" />
-                <input type="hidden" name="_selected_type" value="campus" />
+                <input type="hidden" name="_selected_id" value="{student_id}" />
                 <input type="hidden" name="_back_url" value="{backurl}" />
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
