@@ -160,3 +160,25 @@ class StudentAddForm(forms.Form):
     student_form = StudentForm()
     emergency_contact_form = EmergencyContactForm()
     emergency_address_form = AddressInfoForm()
+
+    def save(self, commit=True):
+        user_form_instance = self.user_form.save(commit=False)
+        permanent_address_form_instance = self.permanent_address_form.save(commit=False)
+        temporary_address_form_instance = self.temporary_address_form.save(commit=False)
+        payment_address_form_instance = self.payment_address_form.save(commit=False)
+        personal_info_form_instance = self.personal_info_form.save(commit=False)
+        student_form_instance = self.student_form.save(commit=False)
+        emergency_contact_form_instance = self.emergency_contact_form.save(commit=False)
+        emergency_address_form_instance = self.emergency_address_form.save(commit=False)
+
+        if commit:
+            user_form_instance.save()
+            permanent_address_form_instance.save()
+            temporary_address_form_instance.save()
+            payment_address_form_instance.save()
+            personal_info_form_instance.save()
+            student_form_instance.save()
+            emergency_contact_form_instance.save()
+            emergency_address_form_instance.save()
+
+        return student_form_instance

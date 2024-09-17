@@ -6,7 +6,7 @@
 {% block content %}
 <div class="row">
    <div class="col-sm-12">
-      <form method="post" enctype="multipart/form-data">
+      <form method="post" enctype="multipart/form-data" action="{% url 'students:addstudent' %}">
          {% csrf_token %}
          {% with messages=messages %}
          {% include 'dashboard/alert.html' %}
@@ -370,6 +370,33 @@
                </div>
             </div>
          </div>
+         <div class="card mb-4">
+            <div class="card-header h5 py-3">Educational History</div>
+            <div class="card-body educational_detail">
+               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Add</button>
+
+               {% include "dashboard/students/modal.html" %}
+            </div>
+         </div>
+
+         <div class="card mb-4">
+            <div class="card-header h5 py-3">Work Experience</div>
+            <div class="card-body educational_detail">
+               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Add</button>
+
+               {% include "dashboard/students/modal.html" %}
+            </div>
+         </div>
+
+         <div class="card mb-4">
+            <div class="card-header h5 py-3">English Language Test</div>
+            <div class="card-body educational_detail">
+               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Add</button>
+
+               {% include "dashboard/students/modal.html" %}
+            </div>
+         </div>
+
          {% comment %} <!-- Educational History Section -->
          <div class="card mb-4">
             <div class="card-header h5 py-3">Educational History</div>
