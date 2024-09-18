@@ -38,12 +38,13 @@
                     >
                         <thead>
                         <tr>
+                            <th>Add</th>
                             <th>Name</th>
-                            <th>Email</th>  <!-- This will be the input for email -->
+                            <th>Email</th> 
                             <th>Campus</th>
                             <th>Department</th>
                             <th>Program</th>
-                            <th>Actions</th> <!-- This will hold the action buttons -->
+                            <th>Actions</th>
                             <th>Date of Admission</th>
                         </tr>
                         </thead>
@@ -63,7 +64,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="collegeIdForm">
+        <form method="post" enctype="multipart/form-data" >
+          {% csrf_token %}
           <input type="hidden" id="student_id" name="student_id" value="">
           <div class="mb-3">
             <label for="team_id" class="form-label">Teams ID</label>
@@ -80,49 +82,6 @@
   </div>
 </div>
 
-<script>
-  function openCollegeIdModal(student_id) {
-    // Set the student ID in the hidden input field
-    document.getElementById("student_id").value = student_id;
 
-    // Show the modal
-    var collegeIdModal = new bootstrap.Modal(document.getElementById('collegeIdModal'));
-    collegeIdModal.show();
-  }
-
-  // Handle the form submission
-  document.getElementById('collegeIdForm').addEventListener('submit', function(e) {
-    e.preventDefault();  // Prevent the form from refreshing the page
-
-    var student_id = document.getElementById('student_id').value;
-    var team_id = document.getElementById('team_id').value;
-    var college_email = document.getElementById('college_email').value;
-
-    // Send the data via AJAX to the server to save
-    fetch("{% url 'students:save_college_id' %}", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": "{{ csrf_token }}"
-      },
-      body: JSON.stringify({
-        student_id: student_id,
-        team_id: team_id,
-        college_email: college_email
-      })
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        alert("Data saved successfully!");
-        // Hide the modal after successful submission
-        var collegeIdModal = bootstrap.Modal.getInstance(document.getElementById('collegeIdModal'));
-        collegeIdModal.hide();
-      } else {
-        alert("There was an error saving the data.");
-      }
-    });
-  });
-</script>
 
 {% endblock %}

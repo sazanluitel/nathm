@@ -15,7 +15,7 @@ from django.contrib.auth import get_user_model
 
 
 @csrf_exempt
-def save_college_id(request):
+def save_college_id(request, id):
     if request.method == 'POST':
         data = json.loads(request.body)
         student_id = data.get('student_id')
@@ -31,7 +31,19 @@ def save_college_id(request):
             return JsonResponse({'success': True}, status=200)
         except Student.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Student not found'}, status=404)
-    return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)
+    elif request.method == 'GET':
+        college_email_filter = request.GET.get('college_email', '')
+        team_id_filter = request.GET.get('team_id', '')
+
+        students = Student.objects.all()
+
+        if college_email_filter:
+            students = students.filter(college_email__icontains=college_email_filter)
+
+        if team_id_filter:
+            students = students.filter(team_id__icontains=team_id_filter)
+
+        return render(request, 'dashboard/students/list.html', {'students': students})
 
 class StudentView(View):
     template_name = 'dashboard/students/add.html'
@@ -144,6 +156,7 @@ class StudentAjax(View):
         data = []
         for student in page_students:
             data.append([
+                self.get_checkbox_html(student.id),
                 student.user.get_full_name(),
                 student.user.email,
                 student.campus.name,  
@@ -161,6 +174,9 @@ class StudentAjax(View):
             "data": data,
         }, status=200)
 
+    def get_checkbox_html(self, student_id):
+        return f'<input type="checkbox" name="selected_students" value="{student_id}">'
+
     
     def get_action(self, student_id):
         """
@@ -173,7 +189,7 @@ class StudentAjax(View):
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
                 <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
-                <button type="button" class="btn btn-primary btn-sm" onclick="openCollegeIdModal({student_id})">Add IDs</button>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#collegeIdModal">Add IDs</button>
                 <input type="hidden" name="_selected_id" value="{student_id}" />
                 <input type="hidden" name="_selected_type" value="student" />
                 <input type="hidden" name="_back_url" value="{backurl}" />
