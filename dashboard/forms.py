@@ -124,7 +124,7 @@ class ProgramForm(forms.ModelForm):
         widget=forms.SelectMultiple(attrs={
             'class': 'form-control w-100',
             'id': 'department-select',
-            'data-placeholder': 'Select the campus',
+            'data-placeholder': 'Select the department',
             # 'onchange': 'fetchdepartment()'  # Assuming this is for JS handling
         })
     )
@@ -136,7 +136,7 @@ class ProgramForm(forms.ModelForm):
             'name': forms.TextInput(attrs={
                 'class': 'form-control', 
                 'id': 'name', 
-                'placeholder': 'Enter program name'
+                'placeholder': 'Enter program'
             }),
             'tenure': forms.NumberInput(attrs={
                 'class': 'form-control', 
@@ -163,7 +163,7 @@ class ModulesForm(forms.ModelForm):
         widget=forms.SelectMultiple(attrs={
             'class': 'form-control w-100',
             'id': 'program-select',
-            'data-placeholder': 'Select the campus',
+            'data-placeholder': 'Select the program',
             # 'onchange': 'fetchdepartment()'  # Assuming this is for JS handling
         })
     )

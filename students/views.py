@@ -80,25 +80,27 @@ class StudentEditView(View):
 
     def get(self, request, id):
         student = get_object_or_404(Student, id=id)
-
-        form = StudentAddForm(instance=student)
-        return render(request, self.template_name, {'form': form, 'student_id':id})
+        personalinfo = get_object_or_404(PersonalInfo, user=student.user)
+        form = StudentAddForm(instance=student, personalinfo_instance=personalinfo)
+        return render(request, self.template_name, {'form': form, 'student_id': id})
 
     def post(self, request, id):
         student = get_object_or_404(Student, id=id)
+        personalinfo = get_object_or_404(PersonalInfo, user=student.user)
 
-        form = StudentAddForm(data=request.POST, files=request.FILES, instance=student)
+        # Pass the personalinfo_instance during POST as well
+        form = StudentAddForm(data=request.POST, files=request.FILES, instance=student, personalinfo_instance=personalinfo)
 
         if form.is_valid():
             email = form.cleaned_data['user'].email  # Get email from user form
             User = get_user_model()
 
-            # Check if the email already exists for another user
-            if User.objects.filter(email=email).exists():
+            # Exclude the current user from the email uniqueness check
+            if User.objects.filter(email=email).exclude(id=student.user.id).exists():
                 messages.error(request, "A user with this email already exists.")
-                return render(request, self.template_name, {'form': form,})
+                return render(request, self.template_name, {'form': form, 'student_id': id})
 
-            # Save the updated student
+            # Save the updated student and related models
             form.save()
             messages.success(request, "Student updated successfully")
             return redirect('students:studentlist')
@@ -106,7 +108,13 @@ class StudentEditView(View):
             messages.error(request, "Please correct the errors below.")
             self.handle_errors(form)
 
-        return render(request, self.template_name, {'form': form, 'student_id':id})
+        return render(request, self.template_name, {'form': form, 'student_id': id})
+
+    def handle_errors(self, form):
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(self.request, f"{field}: {error}")
+
 
 class StudentList(View):
     template_name = 'dashboard/students/list.html'
