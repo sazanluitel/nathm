@@ -150,17 +150,31 @@ class StudentForm(forms.ModelForm):
             }),
         }
 
-class StudentAddForm(forms.Form):
+class StudentAddForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = '__all__'
+
     def __init__(self, *args, **kwargs):
+        instance = kwargs.get('instance', None)  # Get instance if present
+
+        # Pop the instance argument for forms that are not ModelForms
+        model_forms_kwargs = kwargs.copy()
+        if instance:
+            model_forms_kwargs.pop('instance', None)
+
+        # Initialize the main form
         super(StudentAddForm, self).__init__(*args, **kwargs)
-        self.user_form = UserForm(*args, **kwargs)
-        self.permanent_address_form = AddressInfoForm(prefix="permanent", *args, **kwargs)
-        self.temporary_address_form = AddressInfoForm(prefix="temporary", *args, **kwargs)
-        self.payment_address_form = AddressInfoForm(prefix="payment", *args, **kwargs)
-        self.personal_info_form = PersonalInfoForm(*args, **kwargs)
-        self.student_form = StudentForm(*args, **kwargs)
-        self.emergency_contact_form = EmergencyContactForm(*args, **kwargs)
-        self.emergency_address_form = AddressInfoForm(prefix="emergency", *args, **kwargs)
+
+        # Initialize nested forms
+        self.user_form = UserForm(*args, **model_forms_kwargs)  # Remove 'instance' if not required
+        self.permanent_address_form = AddressInfoForm(prefix="permanent", *args, **model_forms_kwargs)
+        self.temporary_address_form = AddressInfoForm(prefix="temporary", *args, **model_forms_kwargs)
+        self.payment_address_form = AddressInfoForm(prefix="payment", *args, **model_forms_kwargs)
+        self.personal_info_form = PersonalInfoForm(*args, **kwargs)  # Pass the instance only to ModelForms
+        self.student_form = StudentForm(*args, **kwargs)  # This should get the instance
+        self.emergency_contact_form = EmergencyContactForm(*args, **model_forms_kwargs)
+        self.emergency_address_form = AddressInfoForm(prefix="emergency", *args, **model_forms_kwargs)
 
     def is_valid(self):
         valid = True
@@ -176,7 +190,7 @@ class StudentAddForm(forms.Form):
             self.emergency_contact_form,
             self.emergency_address_form,
         ]
-        
+
         for form in forms:
             if not form.is_valid():
                 valid = False
@@ -202,7 +216,7 @@ class StudentAddForm(forms.Form):
             permanent_address_form_instance.save()
             temporary_address_form_instance.save()
             payment_address_form_instance.save()
-            
+
             personal_info_form_instance.user = user_form_instance
             personal_info_form_instance.save()
 
