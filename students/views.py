@@ -13,37 +13,45 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth import get_user_model
 
+from django.http import JsonResponse, HttpResponseRedirect
+from django.urls import reverse
 
-@csrf_exempt
-def save_college_id(request, id):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        student_id = data.get('student_id')
-        team_id = data.get('team_id')
-        college_email = data.get('college_email')
+def add_ids(request):
+    if request.method == "POST":
+        student_id = request.POST.get('student_id')
+        college_email = request.POST.get('college_email')
+        teams_id = request.POST.get('teams_id')
 
-        try:
-            student = Student.objects.get(id=student_id)
-            student.team_id = team_id
-            student.college_email = college_email
-            student.save()
+        student = get_object_or_404(Student, id=student_id)
+        student.college_email = college_email
+        student.team_id = teams_id
+        student.save()
 
-            return JsonResponse({'success': True}, status=200)
-        except Student.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Student not found'}, status=404)
-    elif request.method == 'GET':
-        college_email_filter = request.GET.get('college_email', '')
-        team_id_filter = request.GET.get('team_id', '')
+        # Redirect to the student list page
+        return HttpResponseRedirect(reverse('students:studentlist'))
 
-        students = Student.objects.all()
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
-        if college_email_filter:
-            students = students.filter(college_email__icontains=college_email_filter)
+def get_ids(request):
+    if request.method == "GET":
+        student_id = request.GET.get('student_id')
+        
+        if student_id:
+            try:
+                student = Student.objects.get(id=student_id)
+                data = {
+                    'college_email': student.college_email,  
+                    'teams_id': student.team_id,  # Safely get 'teams_id'
+                    'success': True
+                }
+            except Student.DoesNotExist:
+                data = {'success': False, 'error': 'Student not found'}
+        else:
+            data = {'success': False, 'error': 'Student ID not provided'}
 
-        if team_id_filter:
-            students = students.filter(team_id__icontains=team_id_filter)
+        return JsonResponse(data)
 
-        return render(request, 'dashboard/students/list.html', {'students': students})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 class StudentView(View):
     template_name = 'dashboard/students/add.html'
@@ -197,7 +205,7 @@ class StudentAjax(View):
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
                 <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
-                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#collegeIdModal">Add IDs</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addIdsModal" onclick="openAddIdsModal(1)">Add IDs</button>
                 <input type="hidden" name="_selected_id" value="{student_id}" />
                 <input type="hidden" name="_selected_type" value="student" />
                 <input type="hidden" name="_back_url" value="{backurl}" />
