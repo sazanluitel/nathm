@@ -8,5 +8,5 @@ urlpatterns = [
     path('student/edit/<int:id>', StudentEditView.as_view(), name='studentedit'),
     path('student/list/', StudentList.as_view(), name='studentlist'),
     path('student/ajax', StudentAjax.as_view(), name='studentajax'),
-    path('save-college-id/', save_college_id, name='save_college_id'),
+    path('save-college-id/<int:id>/', save_college_id, name='save_college_id'),
 ]
