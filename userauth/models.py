@@ -99,7 +99,7 @@ class PersonalInfo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     citizenship_number = models.CharField(max_length=20)
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES)  # Adjusted max_length to fit values
-    date_of_birth_in_ad = models.DateField()
+    date_of_birth_in_ad = models.DateField(null=True, blank=True)
     citizenship_img = models.TextField()  # Fixed typo in field name
     permanent_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='permanent_address', null=True, blank=True)
     temporary_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='temporary_address', null=True, blank=True)

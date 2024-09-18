@@ -7,7 +7,7 @@
 <div class="row">
    <div class="col-sm-12">
       <form method="post" enctype="multipart/form-data" action="{% url 'students:addstudent' %}">
-         {% csrf_token %}
+          {% csrf_token %}
          {% with messages=messages %}
          {% include 'dashboard/alert.html' %}
          {% endwith %}
@@ -214,12 +214,12 @@
                   </div>
                   <div class="col-md-4 mb-3">
                      <label for="{{ form.payment_address_form.country.id_for_label }}" class="form-label">Country:</label>
-                     {{ form.permanent_address_form.country }}
+                     {{ form.payment_address_form.country }}
                      {% include "parts/error.html" with errors=form.payment_address_form.country.errors %}
                   </div>
                   <div class="col-md-4 mb-3">
                      <label for="{{ form.payment_address_form.postcode.id_for_label }}" class="form-label">Postcode:</label>
-                     {{ form.permanent_address_form.postcode }}
+                     {{ form.payment_address_form.postcode }}
                      {% include "parts/error.html" with errors=form.payment_address_form.postcode.errors %}
                   </div>
                   <div class="col-md-4 mb-3">
@@ -370,161 +370,7 @@
                </div>
             </div>
          </div>
-         <div class="card mb-4">
-            <div class="card-header h5 py-3">Educational History</div>
-            <div class="card-body educational_detail">
-               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Add</button>
-
-               {% include "dashboard/students/modal.html" %}
-            </div>
-         </div>
-
-         <div class="card mb-4">
-            <div class="card-header h5 py-3">Work Experience</div>
-            <div class="card-body educational_detail">
-               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Add</button>
-
-               {% include "dashboard/students/modal.html" %}
-            </div>
-         </div>
-
-         <div class="card mb-4">
-            <div class="card-header h5 py-3">English Language Test</div>
-            <div class="card-body educational_detail">
-               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Add</button>
-
-               {% include "dashboard/students/modal.html" %}
-            </div>
-         </div>
-
-         {% comment %} <!-- Educational History Section -->
-         <div class="card mb-4">
-            <div class="card-header h5 py-3">Educational History</div>
-            <div class="card-body educational_detail">
-               {{ form.educational_history_formset.management_form }}
-               <div id="educational-history-forms">
-                  {% for form in form.educational_history_formset %}
-                  <div class="dataarrange row form-row education-form">
-                     <div class="col-md-6 mb-3">
-                        <label for="{{ form.degree_name.id_for_label }}" class="form-label">Degree
-                        Name</label>
-                        {{ form.degree_name }}
-                        {% include "parts/error.html" with errors=form.degree_name.errors %}
-                     </div>
-                     <div class="col-md-6 mb-3">
-                        <label for="{{ form.institution_name.id_for_label }}" class="form-label">Institution
-                        Name</label>
-                        {{ form.institution_name }}
-                        {% include "parts/error.html" with errors=form.institution_name.errors %}
-                     </div>
-                     <div class="col-md-6 mb-3">
-                        <label for="{{ form.graduation_year.id_for_label }}" class="form-label">Graduation
-                        Year</label>
-                        {{ form.graduation_year }}
-                        {% include "parts/error.html" with errors=form.graduation_year.errors %}
-                     </div>
-                     <div class="col-md-6 mb-3">
-                        <label for="{{ form.major_subject.id_for_label }}" class="form-label">Major
-                        Subject</label>
-                        {{ form.major_subject }}
-                        {% include "parts/error.html" with errors=form.major_subject.errors %}
-                     </div>
-                     <div class="col-md-12 mb-3">
-                        <label for="certificate" class="form-label">Certificate</label>
-                        {% include 'dashboard/image-picker.html' with name=form.prefix|add:'-file' image=form.file.value %}
-                     </div>
-                     <button type="button" class="btn btn-danger remove-education-form my-2">Remove
-                     </button>
-                  </div>
-                  {% endfor %}
-               </div>
-               <button type="button" class="btn btn-primary add_more_education w-100">Add More</button>
-            </div>
-         </div>
-         <!-- Work Experience Section -->
-         <div class="card mb-4">
-            <div class="card-header h5 py-3">Work Experience</div>
-            <div class="card-body work_experience" id="add_new_work">
-               {{ form.employment_history_formset.management_form }}
-               <div id="work-experience-forms">
-                  {% for form in form.employment_history_formset %}
-                  <div class="row form-row work-form">
-                     <div class="col-md-6 mb-3">
-                        <label for="{{ form.employer_name.id_for_label }}" class="form-label">Employer
-                        Name:</label>
-                        {{ form.employer_name }}
-                        {% include "parts/error.html" with errors=form.employer_name.errors %}
-                     </div>
-                     <div class="col-md-6 mb-3">
-                        <label for="{{ form.title.id_for_label }}" class="form-label">Job
-                        Title:</label>
-                        {{ form.title }}
-                        {% include "parts/error.html" with errors=form.title.errors %}
-                     </div>
-                     <div class="col-md-6 mb-3">
-                        <label for="{{ form.start_date.id_for_label }}" class="form-label">Start
-                        Date:</label>
-                        {{ form.start_date }}
-                        {% include "parts/error.html" with errors=form.start_date.errors %}
-                     </div>
-                     <div class="col-md-6 mb-3">
-                        <label for="{{ form.end_date.id_for_label }}" class="form-label">End
-                        Date:</label>
-                        {{ form.end_date }}
-                        {% include "parts/error.html" with errors=form.end_date.errors %}
-                     </div>
-                     <div class="col-md-12 mb-3">
-                        <label for="{{ form.job_description.id_for_label }}"
-                           class="form-label">Description:</label>
-                        {{ form.job_description }}
-                        {% include "parts/error.html" with errors=form.job_description.errors %}
-                     </div>
-                     <button type="button" class="btn btn-danger remove-work-form my-2">Remove
-                     </button>
-                  </div>
-                  {% endfor %}
-               </div>
-               <button type="button" class="btn btn-primary add-more w-100">Add More</button>
-            </div>
-         </div>
-         <!-- English Language Test Score Section -->
-         <div class="card mb-4">
-            <div class="card-header h5 py-3">English Language Test Score</div>
-            <div class="card-body test_attempted">
-               {{ form.english_test_formset.management_form }}
-               <div id="form-container">
-                  {% for form in form.english_test_formset %}
-                  <div class="row form-row test-form">
-                     <div class="col-md-4 mb-3">
-                        <label for="{{ form.test.id_for_label }}" class="form-label">Test
-                        Name</label>
-                        {{ form.test }}
-                        {% include "parts/error.html" with errors=form.test.errors %}
-                     </div>
-                     <div class="col-md-4 mb-3">
-                        <label for="{{ form.score.id_for_label }}" class="form-label">Score</label>
-                        {{ form.score }}
-                        {% include "parts/error.html" with errors=form.score.errors %}
-                     </div>
-                     <div class="col-md-4 mb-3">
-                        <label for="{{ form.date.id_for_label }}" class="form-label">Date</label>
-                        {{ form.date }}
-                        {% include "parts/error.html" with errors=form.date.errors %}
-                     </div>
-                     <div class="col-md-12 mb-3">
-                        <label for="test_certificate" class="form-label">File</label>
-                        {% include 'dashboard/image-picker.html' with name=form.prefix|add:'-files' image=form.files.value %}
-                        {% include "parts/error.html" with errors=form.files.errors %}
-                     </div>
-                     <button type="button" class="btn btn-danger remove-test-form my-2">Remove
-                     </button>
-                  </div>
-                  {% endfor %}
-               </div>
-               <button type="button" class="btn btn-primary add-more-test w-100">Add More</button>
-            </div>
-         </div>
-         {% endcomment %}
+         
          <div class="card mb-4">
             <div class="card-body">
                 <div class="col-md-12 mb-3">
@@ -549,108 +395,9 @@
          </div>
          <div class="flex mb-5 ms-3">
             <button type="submit" class="btn btn-success mt-3">Submit</button>
-            <a href="" class="btn btn-secondary mt-3">Cancel</a>
+            <a href="{% url "students:studentlist" %}" class="btn btn-secondary mt-3">Cancel</a>
          </div>
       </form>
    </div>
 </div>
 {% endblock %}
-{% comment %} {% block footer %}
-<div id="form-templates" style="display: none;">
-   <div class="educational_history_form">
-      {% with form=form.educational_history_formset.empty_form %}
-      <div class="dataarrange row form-row education-form">
-         <div class="col-md-6 mb-3">
-            <label for="{{ form.degree_name.id_for_label }}" class="form-label">Degree
-            Name</label>
-            {{ form.degree_name }}
-         </div>
-         <div class="col-md-6 mb-3">
-            <label for="{{ form.institution_name.id_for_label }}" class="form-label">Institution
-            Name</label>
-            {{ form.institution_name }}
-         </div>
-         <div class="col-md-6 mb-3">
-            <label for="{{ form.graduation_year.id_for_label }}" class="form-label">Graduation
-            Year</label>
-            {{ form.graduation_year }}
-         </div>
-         <div class="col-md-6 mb-3">
-            <label for="{{ form.major_subject.id_for_label }}" class="form-label">Major
-            Subject</label>
-            {{ form.major_subject }}
-         </div>
-         <div class="col-md-12 mb-3">
-            <label for="certificate" class="form-label">Certificate</label>
-            {% include 'dashboard/image-picker.html' with name="form.file" %}
-            {% if form.file and form.file.value %}
-            <div class="mt-2">
-               <img src="{{ form.file.url }}" class="img-fluid"
-                  style="max-width: 200px;" alt="Certificate">
-            </div>
-            {% endif %}
-         </div>
-         <button type="button" class="btn btn-danger remove-education-form my-2">Remove
-         </button>
-      </div>
-      {% endwith %}
-   </div>
-   <div class="employment_history_form">
-      {% with form=form.employment_history_formset.empty_form %}
-      <div class="row form-row work-form">
-         <div class="col-md-6 mb-3">
-            <label for="{{ form.employer_name.id_for_label }}" class="form-label">Employer
-            Name:</label>
-            {{ form.employer_name }}
-         </div>
-         <div class="col-md-6 mb-3">
-            <label for="{{ form.title.id_for_label }}" class="form-label">Job
-            Title:</label>
-            {{ form.title }}
-         </div>
-         <div class="col-md-6 mb-3">
-            <label for="{{ form.start_date.id_for_label }}" class="form-label">Start
-            Date:</label>
-            {{ form.start_date }}
-         </div>
-         <div class="col-md-6 mb-3">
-            <label for="{{ form.end_date.id_for_label }}" class="form-label">End
-            Date:</label>
-            {{ form.end_date }}
-         </div>
-         <div class="col-md-12 mb-3">
-            <label for="{{ form.job_description.id_for_label }}"
-               class="form-label">Description:</label>
-            {{ form.job_description }}
-         </div>
-      </div>
-      {% endwith %}
-   </div>
-   <div class="english_test_form">
-      {% with form=form.english_test_formset.empty_form %}
-      <div class="row form-row test-form">
-         <div class="col-md-4 mb-3">
-            <label for="{{ form.test.id_for_label }}" class="form-label">Test
-            Name</label>
-            {{ form.test }}
-         </div>
-         <div class="col-md-4 mb-3">
-            <label for="{{ form.score.id_for_label }}" class="form-label">Score</label>
-            {{ form.score }}
-         </div>
-         <div class="col-md-4 mb-3">
-            <label for="{{ form.date.id_for_label }}" class="form-label">Date</label>
-            {{ form.date }}
-         </div>
-         <div class="col-md-12 mb-3">
-            <label for="test_certificate" class="form-label">File</label>
-            {% include 'dashboard/image-picker.html' with name=form.prefix|add:'-files' %}
-         </div>
-         <button type="button" class="btn btn-danger remove-test-form my-2">Remove
-         </button>
-      </div>
-      {% endwith %}
-   </div>
-</div>
-<script src="{% static 'dashboard/assets/js/student.js' %}"></script>
-{% endblock %} {% endcomment %}

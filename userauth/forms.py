@@ -46,8 +46,7 @@ class UserForm(forms.ModelForm):
 class PersonalInfoForm(forms.ModelForm):
     class Meta:
         model = PersonalInfo
-        fields = ['citizenship_number', 'gender', 'date_of_birth_in_ad', 'citizenship_img', 'permanent_address',
-                  'temporary_address', 'educational_history', 'english_test', 'employment_history', 'emergency_contact']
+        fields = ['citizenship_number', 'gender', 'date_of_birth_in_ad', 'citizenship_img']
         widgets = {
             'citizenship_number': forms.TextInput(
                 attrs={'class': 'form-control', 'id': 'citizenship_number', 'placeholder': 'Citizenship Number'}),
@@ -58,12 +57,6 @@ class PersonalInfoForm(forms.ModelForm):
                        'placeholder': 'Date of Birth'}),
             'citizenship_img': forms.TextInput(
                 attrs={'class': 'form-control', 'id': 'citizenship_img', 'placeholder': 'Citizenship Image URL'}),
-            'permanent_address': forms.Select(attrs={'class': 'form-control', 'id': 'permanent_address'}),
-            'temporary_address': forms.Select(attrs={'class': 'form-control', 'id': 'temporary_address'}),
-            'educational_history': forms.SelectMultiple(attrs={'class': 'form-control', 'id': 'educational_history'}),
-            'english_test': forms.SelectMultiple(attrs={'class': 'form-control', 'id': 'english_test'}),
-            'employment_history': forms.SelectMultiple(attrs={'class': 'form-control', 'id': 'employment_history'}),
-            'emergency_contact': forms.Select(attrs={'class': 'form-control', 'id': 'emergency_contact'}),
         }
 
 
@@ -135,12 +128,10 @@ class EmploymentHistoryForm(forms.ModelForm):
 class EmergencyContactForm(forms.ModelForm):
     class Meta:
         model = EmergencyContact
-        fields = ['name', 'relationship', 'email', 'address']
+        fields = ['name', 'relationship', 'email']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'id': 'name', 'placeholder': 'Name'}),
             'relationship': forms.TextInput(
                 attrs={'class': 'form-control', 'id': 'relationship', 'placeholder': 'Relationship'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'id': 'email', 'placeholder': 'Email'}),
-            'address': forms.Select(
-                attrs={'class': 'form-control', 'id': 'address', 'placeholder': 'Gaurdians Full Address'}),
         }
