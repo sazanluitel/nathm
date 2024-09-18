@@ -6,8 +6,8 @@
 {% block content %}
 <div class="row">
    <div class="col-sm-12">
-      <form method="post" enctype="multipart/form-data">
-         {% csrf_token %}
+      <form method="post" enctype="multipart/form-data" action="{% url 'students:studentedit' id=student_id%}">
+            {% csrf_token %}
          {% with messages=messages %}
          {% include 'dashboard/alert.html' %}
          {% endwith %}
@@ -214,12 +214,12 @@
                   </div>
                   <div class="col-md-4 mb-3">
                      <label for="{{ form.payment_address_form.country.id_for_label }}" class="form-label">Country:</label>
-                     {{ form.permanent_address_form.country }}
+                     {{ form.payment_address_form.country }}
                      {% include "parts/error.html" with errors=form.payment_address_form.country.errors %}
                   </div>
                   <div class="col-md-4 mb-3">
                      <label for="{{ form.payment_address_form.postcode.id_for_label }}" class="form-label">Postcode:</label>
-                     {{ form.permanent_address_form.postcode }}
+                     {{ form.payment_address_form.postcode }}
                      {% include "parts/error.html" with errors=form.payment_address_form.postcode.errors %}
                   </div>
                   <div class="col-md-4 mb-3">
@@ -370,32 +370,7 @@
                </div>
             </div>
          </div>
-         <div class="card mb-4">
-            <div class="card-header h5 py-3">Educational History</div>
-            <div class="card-body educational_detail">
-               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Add</button>
-
-               {% include "dashboard/students/modal.html" %}
-            </div>
-         </div>
-
-         <div class="card mb-4">
-            <div class="card-header h5 py-3">Work Experience</div>
-            <div class="card-body educational_detail">
-               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Add</button>
-
-               {% include "dashboard/students/modal.html" %}
-            </div>
-         </div>
-
-         <div class="card mb-4">
-            <div class="card-header h5 py-3">English Language Test</div>
-            <div class="card-body educational_detail">
-               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Add</button>
-
-               {% include "dashboard/students/modal.html" %}
-            </div>
-         </div>
+         
          <div class="card mb-4">
             <div class="card-body">
                 <div class="col-md-12 mb-3">
@@ -420,7 +395,7 @@
          </div>
          <div class="flex mb-5 ms-3">
             <button type="submit" class="btn btn-success mt-3">Submit</button>
-            <a href="" class="btn btn-secondary mt-3">Cancel</a>
+            <a href="{% url "students:studentlist" %}" class="btn btn-secondary mt-3">Cancel</a>
          </div>
       </form>
    </div>

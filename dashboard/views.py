@@ -528,12 +528,12 @@ class DeleteHelper:
     
     def get_student(self, ids):
         def student_title(student):
-            return student.first_name
+            return student.user.get_full_name()
 
         def student_kwargs(student):
             return {"id": student.id}
 
-        return self.get_objects(ids, Student, "Student", "dashboard:studentedit", student_title, student_kwargs)
+        return self.get_objects(ids, Student, "Student", "students:studentedit", student_title, student_kwargs)
     
     def get_titles(self, post_type: str, total):
         if post_type == "program":

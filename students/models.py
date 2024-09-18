@@ -45,8 +45,11 @@ class Student(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     student_id = models.CharField(max_length=255, unique=True)
 
+    team_id = models.CharField(max_length=50, blank=True, null=True)  # Add team_id field
+    college_email = models.EmailField(blank=True, null=True)
+
     commencing_term = models.TextField(null=True, blank=True)
-    date_of_admission = models.DateField()
+    date_of_admission = models.DateField(null=True, blank=True)
     shift = models.CharField(max_length=50, choices=SHIFT)
     admission_officer = models.TextField(blank=True, null=True)
     scholarship_details = models.CharField(max_length=100, blank=True, null=True)

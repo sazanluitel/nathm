@@ -14,7 +14,7 @@ class StudentForm(forms.ModelForm):
         fields = [
             'campus','department','program','commencing_term', 'date_of_admission', 'shift',
             'admission_officer', 'scholarship_details', 'referred_by', 'organization',
-            'authorize_person', 'email', 'annual_income', 'members_in_family','payment_by','payment_address',
+            'authorize_person', 'email', 'annual_income', 'members_in_family','payment_by',
             'father_occupation', 'mother_occupation', 'why_us', 'why_us_other', 'about_us', 'about_us_other'
         ]
         widgets = {
@@ -150,18 +150,44 @@ class StudentForm(forms.ModelForm):
             }),
         }
 
-
 class StudentAddForm(forms.Form):
-    user_form = UserForm()
-    permanent_address_form = AddressInfoForm()
-    temporary_address_form = AddressInfoForm()
-    payment_address_form = AddressInfoForm()
-    personal_info_form = PersonalInfoForm()
-    student_form = StudentForm()
-    emergency_contact_form = EmergencyContactForm()
-    emergency_address_form = AddressInfoForm()
+    def __init__(self, *args, **kwargs):
+        super(StudentAddForm, self).__init__(*args, **kwargs)
+        self.user_form = UserForm(*args, **kwargs)
+        self.permanent_address_form = AddressInfoForm(prefix="permanent", *args, **kwargs)
+        self.temporary_address_form = AddressInfoForm(prefix="temporary", *args, **kwargs)
+        self.payment_address_form = AddressInfoForm(prefix="payment", *args, **kwargs)
+        self.personal_info_form = PersonalInfoForm(*args, **kwargs)
+        self.student_form = StudentForm(*args, **kwargs)
+        self.emergency_contact_form = EmergencyContactForm(*args, **kwargs)
+        self.emergency_address_form = AddressInfoForm(prefix="emergency", *args, **kwargs)
+
+    def is_valid(self):
+        valid = True
+
+        # Check if all individual forms are valid
+        forms = [
+            self.user_form,
+            self.permanent_address_form,
+            self.temporary_address_form,
+            self.payment_address_form,
+            self.personal_info_form,
+            self.student_form,
+            self.emergency_contact_form,
+            self.emergency_address_form,
+        ]
+        
+        for form in forms:
+            if not form.is_valid():
+                valid = False
+
+        return valid
 
     def save(self, commit=True):
+        if not self.is_valid():
+            raise ValueError("Cannot save invalid form data.")
+
+        # Save all forms as before
         user_form_instance = self.user_form.save(commit=False)
         permanent_address_form_instance = self.permanent_address_form.save(commit=False)
         temporary_address_form_instance = self.temporary_address_form.save(commit=False)
@@ -176,7 +202,12 @@ class StudentAddForm(forms.Form):
             permanent_address_form_instance.save()
             temporary_address_form_instance.save()
             payment_address_form_instance.save()
+            
+            personal_info_form_instance.user = user_form_instance
             personal_info_form_instance.save()
+
+            student_form_instance.payment_address = payment_address_form_instance
+            student_form_instance.user = user_form_instance
             student_form_instance.save()
             emergency_contact_form_instance.save()
             emergency_address_form_instance.save()

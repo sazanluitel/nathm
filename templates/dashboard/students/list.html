@@ -10,25 +10,41 @@
 {% endblock %}
 
 {% block content %}
+<style>
+        .dt-responsive {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .dt-responsive table th, .dt-responsive table td {
+            padding: 10px;
+            text-align: left;
+        }
+
+    </style>
     <div class="col-sm-12">
-        {% with messages=messages %}
-            {% include 'dashboard/alert.html' %}
-        {% endwith %}
-        <div class="card">
-            <div class="card-body">
-                <div class="dt-responsive">
+    {% with messages=messages %}
+        {% include 'dashboard/alert.html' %}
+    {% endwith %}
+    <div class="card">
+        <div class="card-body">
+            <div class="dt-responsive">
+                <!-- Add the scrollable container -->
+                <div style="overflow-x: auto;">
                     <table
-                            class="ajaxdatatable table table-bordered nowrap"
-                            data-ajax="{% url 'students:studentajax' %}"
-                            data-nodata="No Data Found"
+                        class="ajaxdatatable table table-bordered nowrap"
+                        data-ajax="{% url 'students:studentajax' %}"
+                        data-nodata="No Data Found"
                     >
                         <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Email</th>
+                            <th>Email</th>  <!-- This will be the input for email -->
                             <th>Campus</th>
                             <th>Department</th>
-                            <th>Actions</th>
+                            <th>Program</th>
+                            <th>Actions</th> <!-- This will hold the action buttons -->
+                            <th>Date of Admission</th>
                         </tr>
                         </thead>
                     </table>
@@ -36,4 +52,77 @@
             </div>
         </div>
     </div>
+</div>
+
+    <!-- Modal for College ID and Team ID input -->
+<div class="modal fade" id="collegeIdModal" tabindex="-1" aria-labelledby="collegeIdModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="collegeIdModalLabel">Add College ID and Team Email</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="collegeIdForm">
+          <input type="hidden" id="student_id" name="student_id" value="">
+          <div class="mb-3">
+            <label for="team_id" class="form-label">Team ID</label>
+            <input type="text" class="form-control" id="team_id" name="team_id" placeholder="Enter Team ID">
+          </div>
+          <div class="mb-3">
+            <label for="college_email" class="form-label">College Email</label>
+            <input type="email" class="form-control" id="college_email" name="college_email" placeholder="Enter College Email">
+          </div>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openCollegeIdModal(student_id) {
+    // Set the student ID in the hidden input field
+    document.getElementById("student_id").value = student_id;
+
+    // Show the modal
+    var collegeIdModal = new bootstrap.Modal(document.getElementById('collegeIdModal'));
+    collegeIdModal.show();
+  }
+
+  // Handle the form submission
+  document.getElementById('collegeIdForm').addEventListener('submit', function(e) {
+    e.preventDefault();  // Prevent the form from refreshing the page
+
+    var student_id = document.getElementById('student_id').value;
+    var team_id = document.getElementById('team_id').value;
+    var college_email = document.getElementById('college_email').value;
+
+    // Send the data via AJAX to the server to save
+    fetch("{% url 'students:save_college_id' %}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}"
+      },
+      body: JSON.stringify({
+        student_id: student_id,
+        team_id: team_id,
+        college_email: college_email
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert("Data saved successfully!");
+        // Hide the modal after successful submission
+        var collegeIdModal = bootstrap.Modal.getInstance(document.getElementById('collegeIdModal'));
+        collegeIdModal.hide();
+      } else {
+        alert("There was an error saving the data.");
+      }
+    });
+  });
+</script>
+
 {% endblock %}
