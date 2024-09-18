@@ -33,8 +33,6 @@ def save_college_id(request):
             return JsonResponse({'success': False, 'error': 'Student not found'}, status=404)
     return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)
 
-
-
 class StudentView(View):
     template_name = 'dashboard/students/add.html'
 
@@ -46,15 +44,6 @@ class StudentView(View):
         form = StudentAddForm(data=request.POST, files=request.FILES)
 
         if form.is_valid():
-            email = form.cleaned_data['user'].email  # Get email from user form
-            User = get_user_model()  # Get the User model
-
-            # Check if the email already exists
-            if User.objects.filter(email=email).exists():
-                messages.error(request, "A user with this email already exists.")
-                return render(request, self.template_name, {'form': form})
-
-            # If email does not exist, save the form
             form.save()
             messages.success(request, "Student added successfully")
             return redirect('students:studentlist')
@@ -85,7 +74,6 @@ class StudentView(View):
             if not form_instance.is_valid():
                 for field, errors in form_instance.errors.items():
                     print(f"Errors for {form_name} - {field}: {errors}")
-
 
 class StudentEditView(View):
     template_name = 'dashboard/students/edit.html'
@@ -185,12 +173,10 @@ class StudentAjax(View):
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
                 <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
-                <button type="button" class="btn btn-primary btn-sm" onclick="openCollegeIdModal({student_id})">Add Email IDs</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="openCollegeIdModal({student_id})">Add IDs</button>
                 <input type="hidden" name="_selected_id" value="{student_id}" />
                 <input type="hidden" name="_selected_type" value="student" />
                 <input type="hidden" name="_back_url" value="{backurl}" />
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
         '''
-
-

@@ -43,7 +43,6 @@ class Student(models.Model):
     campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
-    student_id = models.CharField(max_length=255, unique=True)
 
     team_id = models.CharField(max_length=50, blank=True, null=True)  # Add team_id field
     college_email = models.EmailField(blank=True, null=True)
