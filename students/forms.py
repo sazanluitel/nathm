@@ -156,30 +156,41 @@ class StudentAddForm(forms.ModelForm):
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
-        instance = kwargs.get('instance', None)  # Get instance if present
-
-        # Pop the instance argument for forms that are not ModelForms
-        model_forms_kwargs = kwargs.copy()
-        if instance:
-            model_forms_kwargs.pop('instance', None)
+        # Extract instance if present
+        instance = kwargs.pop('instance', None)  # Main form instance
+        personalinfo_instance = kwargs.pop('personalinfo_instance', None)  # Nested form instance for personal info
 
         # Initialize the main form
         super(StudentAddForm, self).__init__(*args, **kwargs)
 
-        # Initialize nested forms
-        self.user_form = UserForm(*args, **model_forms_kwargs)  # Remove 'instance' if not required
-        self.permanent_address_form = AddressInfoForm(prefix="permanent", *args, **model_forms_kwargs)
-        self.temporary_address_form = AddressInfoForm(prefix="temporary", *args, **model_forms_kwargs)
-        self.payment_address_form = AddressInfoForm(prefix="payment", *args, **model_forms_kwargs)
-        self.personal_info_form = PersonalInfoForm(*args, **kwargs)  # Pass the instance only to ModelForms
-        self.student_form = StudentForm(*args, **kwargs)  # This should get the instance
-        self.emergency_contact_form = EmergencyContactForm(*args, **model_forms_kwargs)
-        self.emergency_address_form = AddressInfoForm(prefix="emergency", *args, **model_forms_kwargs)
+        if instance and personalinfo_instance:
+            # Initialize forms with instances if provided
+            self.user_form = UserForm(instance=instance.user)
+            self.permanent_address_form = AddressInfoForm(instance=personalinfo_instance.permanent_address, prefix="permanent")
+            self.temporary_address_form = AddressInfoForm(instance=personalinfo_instance.temporary_address, prefix="temporary")
+            self.payment_address_form = AddressInfoForm(instance=instance.payment_address, prefix="payment")
+            self.personal_info_form = PersonalInfoForm(instance=instance.personal_info, prefix="personal")
+            self.emergency_contact_form = EmergencyContactForm(instance=personalinfo_instance.emergency_contact, prefix="emergency")
+
+            # Safely handle emergency contact address
+            if personalinfo_instance.emergency_contact and personalinfo_instance.emergency_contact.address:
+                self.emergency_address_form = AddressInfoForm(instance=personalinfo_instance.emergency_contact.address, prefix="emergency_address")
+            else:
+                self.emergency_address_form = AddressInfoForm(prefix="emergency_address")
+        else:
+            # Initialize forms without instances
+            self.user_form = UserForm(*args, **kwargs)
+            self.permanent_address_form = AddressInfoForm(prefix="permanent", *args, **kwargs)
+            self.temporary_address_form = AddressInfoForm(prefix="temporary", *args, **kwargs)
+            self.payment_address_form = AddressInfoForm(prefix="payment", *args, **kwargs)
+            self.personal_info_form = PersonalInfoForm(*args, **kwargs)
+            self.emergency_contact_form = EmergencyContactForm(*args, **kwargs)
+            self.emergency_address_form = AddressInfoForm(prefix="emergency_address", *args, **kwargs)
+
+        self.student_form = StudentForm(*args, **kwargs)
 
     def is_valid(self):
         valid = True
-
-        # Check if all individual forms are valid
         forms = [
             self.user_form,
             self.permanent_address_form,
@@ -194,6 +205,7 @@ class StudentAddForm(forms.ModelForm):
         for form in forms:
             if not form.is_valid():
                 valid = False
+                self.add_error(None, form.errors)  # Add validation errors to main form
 
         return valid
 
@@ -201,17 +213,23 @@ class StudentAddForm(forms.ModelForm):
         if not self.is_valid():
             raise ValueError("Cannot save invalid form data.")
 
-        # Save all forms as before
+        # Save individual forms
         user_form_instance = self.user_form.save(commit=False)
         permanent_address_form_instance = self.permanent_address_form.save(commit=False)
         temporary_address_form_instance = self.temporary_address_form.save(commit=False)
         payment_address_form_instance = self.payment_address_form.save(commit=False)
         personal_info_form_instance = self.personal_info_form.save(commit=False)
-        student_form_instance = self.student_form.save(commit=False)
         emergency_contact_form_instance = self.emergency_contact_form.save(commit=False)
         emergency_address_form_instance = self.emergency_address_form.save(commit=False)
+        student_form_instance = self.student_form.save(commit=False)
+
+        # Set relationships for personal info
+        personal_info_form_instance.permanent_address = permanent_address_form_instance
+        personal_info_form_instance.temporary_address = temporary_address_form_instance
+        personal_info_form_instance.emergency_contact = emergency_contact_form_instance
 
         if commit:
+            # Save user and related instances
             user_form_instance.save()
             permanent_address_form_instance.save()
             temporary_address_form_instance.save()
@@ -223,7 +241,9 @@ class StudentAddForm(forms.ModelForm):
             student_form_instance.payment_address = payment_address_form_instance
             student_form_instance.user = user_form_instance
             student_form_instance.save()
+
             emergency_contact_form_instance.save()
             emergency_address_form_instance.save()
 
         return student_form_instance
+

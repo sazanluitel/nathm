@@ -13,37 +13,45 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth import get_user_model
 
+from django.http import JsonResponse, HttpResponseRedirect
+from django.urls import reverse
 
-@csrf_exempt
-def save_college_id(request, id):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        student_id = data.get('student_id')
-        team_id = data.get('team_id')
-        college_email = data.get('college_email')
+def add_ids(request):
+    if request.method == "POST":
+        student_id = request.POST.get('student_id')
+        college_email = request.POST.get('college_email')
+        teams_id = request.POST.get('teams_id')
 
-        try:
-            student = Student.objects.get(id=student_id)
-            student.team_id = team_id
-            student.college_email = college_email
-            student.save()
+        student = get_object_or_404(Student, id=student_id)
+        student.college_email = college_email
+        student.team_id = teams_id
+        student.save()
 
-            return JsonResponse({'success': True}, status=200)
-        except Student.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Student not found'}, status=404)
-    elif request.method == 'GET':
-        college_email_filter = request.GET.get('college_email', '')
-        team_id_filter = request.GET.get('team_id', '')
+        # Redirect to the student list page
+        return HttpResponseRedirect(reverse('students:studentlist'))
 
-        students = Student.objects.all()
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
-        if college_email_filter:
-            students = students.filter(college_email__icontains=college_email_filter)
+def get_ids(request):
+    if request.method == "GET":
+        student_id = request.GET.get('student_id')
+        
+        if student_id:
+            try:
+                student = Student.objects.get(id=student_id)
+                data = {
+                    'college_email': student.college_email,  
+                    'teams_id': student.team_id,  # Safely get 'teams_id'
+                    'success': True
+                }
+            except Student.DoesNotExist:
+                data = {'success': False, 'error': 'Student not found'}
+        else:
+            data = {'success': False, 'error': 'Student ID not provided'}
 
-        if team_id_filter:
-            students = students.filter(team_id__icontains=team_id_filter)
+        return JsonResponse(data)
 
-        return render(request, 'dashboard/students/list.html', {'students': students})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 class StudentView(View):
     template_name = 'dashboard/students/add.html'
@@ -92,25 +100,27 @@ class StudentEditView(View):
 
     def get(self, request, id):
         student = get_object_or_404(Student, id=id)
-
-        form = StudentAddForm(instance=student)
-        return render(request, self.template_name, {'form': form, 'student_id':id})
+        personalinfo = get_object_or_404(PersonalInfo, user=student.user)
+        form = StudentAddForm(instance=student, personalinfo_instance=personalinfo)
+        return render(request, self.template_name, {'form': form, 'student_id': id})
 
     def post(self, request, id):
         student = get_object_or_404(Student, id=id)
+        personalinfo = get_object_or_404(PersonalInfo, user=student.user)
 
-        form = StudentAddForm(data=request.POST, files=request.FILES, instance=student)
+        # Pass the personalinfo_instance during POST as well
+        form = StudentAddForm(data=request.POST, files=request.FILES, instance=student, personalinfo_instance=personalinfo)
 
         if form.is_valid():
             email = form.cleaned_data['user'].email  # Get email from user form
             User = get_user_model()
 
-            # Check if the email already exists for another user
-            if User.objects.filter(email=email).exists():
+            # Exclude the current user from the email uniqueness check
+            if User.objects.filter(email=email).exclude(id=student.user.id).exists():
                 messages.error(request, "A user with this email already exists.")
-                return render(request, self.template_name, {'form': form,})
+                return render(request, self.template_name, {'form': form, 'student_id': id})
 
-            # Save the updated student
+            # Save the updated student and related models
             form.save()
             messages.success(request, "Student updated successfully")
             return redirect('students:studentlist')
@@ -118,7 +128,13 @@ class StudentEditView(View):
             messages.error(request, "Please correct the errors below.")
             self.handle_errors(form)
 
-        return render(request, self.template_name, {'form': form, 'student_id':id})
+        return render(request, self.template_name, {'form': form, 'student_id': id})
+
+    def handle_errors(self, form):
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(self.request, f"{field}: {error}")
+
 
 class StudentList(View):
     template_name = 'dashboard/students/list.html'
@@ -189,7 +205,7 @@ class StudentAjax(View):
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
                 <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
-                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#collegeIdModal">Add IDs</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addIdsModal" onclick="openAddIdsModal(1)">Add IDs</button>
                 <input type="hidden" name="_selected_id" value="{student_id}" />
                 <input type="hidden" name="_selected_type" value="student" />
                 <input type="hidden" name="_back_url" value="{backurl}" />
