@@ -70,7 +70,7 @@ class StudentView(View):
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
-        form = StudentAddForm(data=request.POST, files=request.FILES)
+        form = StudentAddForm(data=request.POST)
         if form.is_valid():
             try:
                 form.save()
@@ -86,8 +86,8 @@ class StudentView(View):
 
     def handle_errors(self, form):
         # Print errors for debugging purposes
-        for field, errors in form.errors.items():
-            print(f"Errors for {field}: {errors}")
+        # for field, errors in form.errors.items():
+        #     print(f"Errors for {field}: {errors}")
 
         # Print errors for each sub-form
         form_instances = {
@@ -102,6 +102,7 @@ class StudentView(View):
         }
 
         for form_name, form_instance in form_instances.items():
+            print(f"{form_name} is valid: {form_instance.is_valid()}")
             if not form_instance.is_valid():
                 for field, errors in form_instance.errors.items():
                     print(f"Errors for {form_name} - {field}: {errors}")
@@ -195,7 +196,9 @@ class StudentAjax(View):
         }, status=200)
 
     def get_checkbox_html(self, student_id):
-        return f'<input type="checkbox" name="selected_students" value="{student_id}">'
+        return (f'<div class="form-check"><label for="checkbox_{student_id}_question"></label><input '
+                f'class="form-check-input delete_single_checkbox" type="checkbox" name="_selected_id"'
+                f' value="{student_id}" id="checkbox_{student_id}_question"></div>'),
 
     def get_action(self, student_id):
         edit_url = reverse('students:studentedit', kwargs={'id': student_id})

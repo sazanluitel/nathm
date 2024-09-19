@@ -10,141 +10,147 @@
 {% endblock %}
 
 {% block content %}
-<style>
-    .dt-responsive {
-        overflow-x: auto;
-        white-space: nowrap;
-    }
-    .dt-responsive table th, .dt-responsive table td {
-        padding: 10px;
-        text-align: left;
-    }
-</style>
+    <style>
+        .dt-responsive {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
 
-<div class="col-sm-12">
-    {% with messages=messages %}
-        {% include 'dashboard/alert.html' %}
-    {% endwith %}
-    <div class="card">
-        <div class="card-body">
-            <div class="row mb-3">
-                <div class="col-sm-4">
-                    {{ form.campus }}
+        .dt-responsive table th, .dt-responsive table td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+
+    <div class="col-sm-12">
+        {% with messages=messages %}
+            {% include 'dashboard/alert.html' %}
+        {% endwith %}
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-4">
+                        {{ form.campus }}
+                    </div>
+                    <div class="col-sm-4">
+                        {{ form.program }}
+                    </div>
+                    <div class="col-sm-4">
+                        {{ form.department }}
+                    </div>
                 </div>
-                <div class="col-sm-4">
-                    {{ form.program }}
+                <div class="row mb-3">
+                    <div class="col-sm-4">
+                        <select id="campus-filter" class="form-control">
+                            <option value="">All Campuses</option>
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <select id="program-filter" class="form-control">
+                            <option value="">All Programs</option>
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <select id="department-filter" class="form-control">
+                            <option value="">All Departments</option>
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                    </div>
                 </div>
-                <div class="col-sm-4">
-                    {{ form.department }}
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-sm-4">
-                    <select id="campus-filter" class="form-control">
-                        <option value="">All Campuses</option>
-                        <!-- Options will be populated by JavaScript -->
-                    </select>
-                </div>
-                <div class="col-sm-4">
-                    <select id="program-filter" class="form-control">
-                        <option value="">All Programs</option>
-                        <!-- Options will be populated by JavaScript -->
-                    </select>
-                </div>
-                <div class="col-sm-4">
-                    <select id="department-filter" class="form-control">
-                        <option value="">All Departments</option>
-                        <!-- Options will be populated by JavaScript -->
-                    </select>
-                </div>
-            </div>
-            <div class="dt-responsive">
-                <div style="overflow-x: auto;">
-                    <table
-                        class="ajaxdatatable table table-bordered nowrap"
-                        data-ajax="{% url 'students:studentajax' %}"
-                        data-nodata="No Data Found"
-                    >
-                        <thead>
-                        <tr>
-                            <th>Add</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Campus</th>
-                            <th>Department</th>
-                            <th>Program</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                    </table>
+                <div class="dt-responsive">
+                    <div style="overflow-x: auto;">
+                        <table
+                                class="ajaxdatatable table table-bordered nowrap"
+                                data-ajax="{% url 'students:studentajax' %}"
+                                data-nodata="No Data Found"
+                        >
+                            <thead>
+                            <tr>
+                                <th>
+                                    <div class="form-check">
+                                        <label for="allCheckbox"></label>
+                                        <input class="form-check-input" type="checkbox" id="allCheckbox">
+                                    </div>
+                                </th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Campus</th>
+                                <th>Department</th>
+                                <th>Program</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="modal fade" id="addIdsModal" tabindex="-1" aria-labelledby="addIdsModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addIdsModalLabel">Add College Email and Teams ID</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="add-ids-form" method="POST" action="{% url 'students:add_ids' %}">
-                    {% csrf_token %}
-                    <input type="hidden" id="student_id" name="student_id">
-                    
-                    <div class="mb-3">
-                        <label for="college_email" class="form-label">College Email</label>
-                        <input type="email" class="form-control" id="college_email" name="college_email">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="teams_id" class="form-label">Teams ID</label>
-                        <input type="text" class="form-control" id="teams_id" name="teams_id">
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </form>
+    <div class="modal fade" id="addIdsModal" tabindex="-1" aria-labelledby="addIdsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addIdsModalLabel">Add College Email and Teams ID</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-ids-form" method="POST" action="{% url 'students:add_ids' %}">
+                        {% csrf_token %}
+                        <input type="hidden" id="student_id" name="student_id">
+
+                        <div class="mb-3">
+                            <label for="college_email" class="form-label">College Email</label>
+                            <input type="email" class="form-control" id="college_email" name="college_email">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="teams_id" class="form-label">Teams ID</label>
+                            <input type="text" class="form-control" id="teams_id" name="teams_id">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script type="text/javascript">
-    function openAddIdsModal(studentId) {
-        // Set the student_id in the hidden input field
-        document.getElementById("student_id").value = studentId;
+    <script type="text/javascript">
+        function openAddIdsModal(studentId) {
+            // Set the student_id in the hidden input field
+            document.getElementById("student_id").value = studentId;
 
-        // CSRF token for security
-        var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            // CSRF token for security
+            var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-        // Make an AJAX request to get the current values of college_email and teams_id
-        $.ajax({
-            url: "{% url 'students:get_ids' %}",  // URL to fetch existing data
-            type: "GET",
-            data: {
-                'student_id': studentId,
-                'csrfmiddlewaretoken': csrfToken
-            },
-            success: function (response) {
-                if (response.success) {
-                    // Populate the modal form fields with the fetched values
-                    document.getElementById("college_email").value = response.college_email;
-                    document.getElementById("teams_id").value = response.teams_id;
-                    
-                    // Open the modal
-                    $('#addIdsModal').modal('show');
-                } else {
-                    alert('Error: ' + response.error);
+            // Make an AJAX request to get the current values of college_email and teams_id
+            $.ajax({
+                url: "{% url 'students:get_ids' %}",  // URL to fetch existing data
+                type: "GET",
+                data: {
+                    'student_id': studentId,
+                    'csrfmiddlewaretoken': csrfToken
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Populate the modal form fields with the fetched values
+                        document.getElementById("college_email").value = response.college_email;
+                        document.getElementById("teams_id").value = response.teams_id;
+
+                        // Open the modal
+                        $('#addIdsModal').modal('show');
+                    } else {
+                        alert('Error: ' + response.error);
+                    }
+                },
+                error: function (error) {
+                    alert('An error occurred while fetching data.');
                 }
-            },
-            error: function (error) {
-                alert('An error occurred while fetching data.');
-            }
-        });
-    }
-</script>
+            });
+        }
+    </script>
 
 {% endblock %}

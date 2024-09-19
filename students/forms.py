@@ -141,16 +141,15 @@ class StudentForm(forms.ModelForm):
 class StudentAddForm:
     def __init__(self, *args, **kwargs):
         data = kwargs.get('data')
-        files = kwargs.get('files')
 
-        self.user_form = UserForm(data=data, files=files)
-        self.permanent_address_form = AddressInfoForm(prefix="permanent", data=data, files=files)
-        self.temporary_address_form = AddressInfoForm(prefix="temporary", data=data, files=files)
-        self.payment_address_form = AddressInfoForm(prefix="payment", data=data, files=files)
-        self.personal_info_form = PersonalInfoForm(data=data, files=files)
-        self.emergency_contact_form = EmergencyContactForm(data=data, files=files)
-        self.emergency_address_form = AddressInfoForm(prefix="emergency_address", data=data, files=files)
-        self.student_form = StudentForm(data=data, files=files)
+        self.user_form = UserForm(data=data)
+        self.permanent_address_form = AddressInfoForm(prefix="permanent", data=data)
+        self.temporary_address_form = AddressInfoForm(prefix="temporary", data=data)
+        self.payment_address_form = AddressInfoForm(prefix="payment", data=data)
+        self.personal_info_form = PersonalInfoForm(data=data)
+        self.emergency_contact_form = EmergencyContactForm(data=data)
+        self.emergency_address_form = AddressInfoForm(prefix="emergency_address", data=data)
+        self.student_form = StudentForm(data=data)
 
     def is_valid(self):
         registration_forms = [
