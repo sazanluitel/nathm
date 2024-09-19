@@ -4,8 +4,7 @@ from userauth.models import AddressInfo, User, PersonalInfo
 
 
 class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    personal_info = models.OneToOneField(PersonalInfo, on_delete=models.CASCADE, null=True, blank=True)
+    personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE, null=True, blank=True)
     PAYMENT_BY = [
         ('STUDENT', 'Student'),
         ('PARENT', 'Parent/Guardian'),

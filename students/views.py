@@ -173,7 +173,7 @@ class StudentAjax(View):
         department_id = request.GET.get("department", None)
         page_number = (start // length) + 1
 
-        students = Student.objects.select_related('user', 'campus', 'department', 'program')
+        students = Student.objects.select_related('personal_info', 'campus', 'department', 'program')
 
         if campus_id:
             students = students.filter(campus_id=campus_id)
