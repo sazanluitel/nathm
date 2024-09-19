@@ -112,7 +112,7 @@ class StudentForm(forms.ModelForm):
                 'data-placeholder': 'Select why us option',
             }),
             'why_us_other': forms.Textarea(attrs={
-                'class': 'form-control',
+                'class': 'form-control',    
                 'id': 'why_us_other',
                 'rows': 2,
                 'placeholder': 'If Other, specify...',
@@ -194,3 +194,34 @@ class StudentAddForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = '__all__'
+
+
+class KioskForm:
+    def __init__(self, data=None):
+        self.user_form = UserForm(data)
+        self.student_form = StudentForm(data)
+        self.permanent_address_form = AddressInfoForm(data, prefix='permanent')
+        self.temporary_address_form = AddressInfoForm(data, prefix='temporary')
+
+    def is_valid(self):
+        return (self.user_form.is_valid() and
+                self.student_form.is_valid() and
+                self.permanent_address_form.is_valid() and
+                self.temporary_address_form.is_valid())
+
+    def save(self):
+        user = self.user_form.save()
+        student = self.student_form.save(commit=False)
+        student.user = user  # Assuming there's a foreign key relation with the user
+        student.save()
+
+        # Save addresses with student reference
+        permanent_address = self.permanent_address_form.save(commit=False)
+        permanent_address.student = student
+        permanent_address.address_type = 'permanent'
+        permanent_address.save()
+
+        temporary_address = self.temporary_address_form.save(commit=False)
+        temporary_address.student = student
+        temporary_address.address_type = 'temporary'
+        temporary_address.save()

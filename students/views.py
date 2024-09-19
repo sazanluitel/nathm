@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from students.forms import StudentAddForm
+from students.forms import StudentAddForm,KioskForm
 from userauth.forms import *
 from userauth.models import *
 from students.models import *
@@ -247,3 +247,20 @@ class StudentFilters(View):
             'departments': departments,
             'programs': programs,
         })
+    
+
+class KioskView(View):
+    def post(self, request, *args, **kwargs):
+        form = KioskForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'All forms have been submitted successfully.')
+            return redirect('some_success_url')  # Redirect after successful form submission
+        else:
+            messages.error(request, 'There was an error in one or more forms. Please check the fields.')
+            # Return the form with errors back to the user
+            return render(request, 'dashboard/kiosk/add.html', {'form': form})
+
+    def get(self, request, *args, **kwargs):
+        form = KioskForm()
+        return render(request, 'dashboard/kiosk/add.html', {'form': form})

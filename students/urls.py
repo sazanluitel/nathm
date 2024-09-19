@@ -8,6 +8,7 @@ urlpatterns = [
     path('student/edit/<int:id>', StudentEditView.as_view(), name='studentedit'),
     path('student/list/', StudentList.as_view(), name='studentlist'),
     path('student/ajax', StudentAjax.as_view(), name='studentajax'),
+    path('kiosk-reg/', KioskView.as_view(), name='kiosk-reg'),
 
     path('filters/', StudentFilters.as_view(), name='students_filters'),
 
