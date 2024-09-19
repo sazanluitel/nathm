@@ -15,67 +15,86 @@
             <div class="card-header h5 py-3">Admission Overview</div>
             <div class="card-body">
                <div class="row">
-                  <div class="col-md-4 mb-3">
-                     <label for="{{ form.student_form.campus.id_for_label }}" class="form-label">Campus</label>
-                     {{ form.student_form.campus }}
-                     {% include "parts/error.html" with errors=form.student_form.campus.errors %}
-                  </div>
-                  <div class="col-md-4 mb-3">
-                     <label for="{{ form.student_form.department.id_for_label }}"
-                        class="form-label">Department</label>
-                     {{ form.student_form.department }}
-                     {% include "parts/error.html" with errors=form.student_form.department.errors %}
-                  </div>
-                  <div class="col-md-4 mb-3">
-                     <label for="{{ form.student_form.program.id_for_label }}"
-                        class="form-label">Program</label>
-                     {{ form.student_form.program }}
-                     {% include "parts/error.html" with errors=form.student_form.program.errors %}
-                  </div>
-                  <div class="col-md-4 mb-3">
-                     <label for="{{ form.student_form.shift.id_for_label }}" class="form-label">Shift</label>
-                     {{ form.student_form.shift }}
-                     {% include "parts/error.html" with errors=form.student_form.shift.errors %}
-                  </div>
-                  <div class="col-md-4 mb-3">
-                     <label for="{{ form.student_form.date_of_admission.id_for_label }}" class="form-label">Date
-                     of Admission</label>
-                     {{ form.student_form.date_of_admission }}
-                     {% include "parts/error.html" with errors=form.student_form.date_of_admission.errors %}
-                  </div>
-                  <div class="col-md-4 mb-3">
-                     <label for="{{ form.student_form.commencing_term.id_for_label }}" class="form-label">Commencing
-                     Term</label>
-                     {{ form.student_form.commencing_term }}
-                     {% include "parts/error.html" with errors=form.student_form.commencing_term.errors %}
-                  </div>
-                  <div class="col-md-12 mb-3">
-                     <label for="{{ form.student_form.scholarship_details.id_for_label }}" class="form-label">Scholarship
-                     Details</label>
-                     {{ form.student_form.scholarship_details }}
-                     {% include "parts/error.html" with errors=form.student_form.scholarship_details.errors %}
-                  </div>
-                  <div class="col-md-6 mb-3">
-                     <label for="{{ form.student_form.admission_officer.id_for_label }}" class="form-label">Admission
-                     Officer</label>
-                     {{ form.student_form.admission_officer }}
-                     {% include "parts/error.html" with errors=form.student_form.admission_officer.errors %}
-                  </div>
-                  <div class="col-md-6 mb-3">
-                     <label for="{{ form.student_form.referred_by.id_for_label }}" class="form-label">Referred
-                     By</label>
-                     {{ form.student_form.referred_by }}
-                     {% include "parts/error.html" with errors=form.student_form.referred_by.errors %}
-                  </div>
-                  <div class="col-md-12 mb-3">
-                     <label for="{{ form.student_form.authorize_person.id_for_label }}" class="form-label">Authorize Person
-                     </label>
-                     {{ form.student_form.authorize_person }}
-                     {% include "parts/error.html" with errors=form.student_form.authorize_person.errors %}
-                  </div>
+                     <!-- Campus Field -->
+                     <div class="col-md-4 mb-3">
+                        <label for="{{ form.student_form.campus.id_for_label }}" class="form-label">Campus</label>
+                        {{ form.student_form.campus }}
+                        {% include "parts/error.html" with errors=form.student_form.campus.errors %}
+                     </div>
+
+                     <!-- Department Field -->
+                     <div class="col-md-4 mb-3">
+                        <label for="{{ form.student_form.department.id_for_label }}" class="form-label">Department</label>
+                        {{ form.student_form.department }}
+                        {% include "parts/error.html" with errors=form.student_form.department.errors %}
+                     </div>
+
+                     <!-- Program Field -->
+                     <div class="col-md-4 mb-3">
+                        <label for="{{ form.student_form.program.id_for_label }}" class="form-label">Program</label>
+                        {{ form.student_form.program }}
+                        {% include "parts/error.html" with errors=form.student_form.program.errors %}
+                     </div>
+
+                     <!-- Shift Field -->
+                     <div class="col-md-4 mb-3">
+                        <label for="{{ form.student_form.shift.id_for_label }}" class="form-label">Shift</label>
+                        {{ form.student_form.shift }}
+                        {% include "parts/error.html" with errors=form.student_form.shift.errors %}
+                     </div>
+
+                     <!-- Date of Admission Field -->
+                     <div class="col-md-4 mb-3">
+                        <label for="{{ form.student_form.date_of_admission.id_for_label }}" class="form-label">Date of Admission</label>
+                        {{ form.student_form.date_of_admission }}
+                        {% include "parts/error.html" with errors=form.student_form.date_of_admission.errors %}
+                     </div>
+
+                     <!-- Commencing Term Field -->
+                     <div class="col-md-4 mb-3">
+                        <label for="{{ form.student_form.commencing_term.id_for_label }}" class="form-label">Commencing Term</label>
+                        {{ form.student_form.commencing_term }}
+                        {% include "parts/error.html" with errors=form.student_form.commencing_term.errors %}
+                     </div>
+
+                     <!-- Scholarship Details Field -->
+                     <div class="col-md-6 mb-3">
+                        <label for="{{ form.student_form.scholarship_details.id_for_label }}" class="form-label">Scholarship Details</label>
+                        {{ form.student_form.scholarship_details }}
+                        {% include "parts/error.html" with errors=form.student_form.scholarship_details.errors %}
+                     </div>
+
+                     <!-- Student ID Field (New Field) -->
+                     <div class="col-md-6 mb-3">
+                        <label for="{{ form.student_form.student_id.id_for_label }}" class="form-label">Student ID</label>
+                        {{ form.student_form.student_id }}
+                        {% include "parts/error.html" with errors=form.student_form.student_id.errors %}
+                     </div>
+
+                     <!-- Admission Officer Field -->
+                     <div class="col-md-6 mb-3">
+                        <label for="{{ form.student_form.admission_officer.id_for_label }}" class="form-label">Admission Officer</label>
+                        {{ form.student_form.admission_officer }}
+                        {% include "parts/error.html" with errors=form.student_form.admission_officer.errors %}
+                     </div>
+
+                     <!-- Referred By Field -->
+                     <div class="col-md-6 mb-3">
+                        <label for="{{ form.student_form.referred_by.id_for_label }}" class="form-label">Referred By</label>
+                        {{ form.student_form.referred_by }}
+                        {% include "parts/error.html" with errors=form.student_form.referred_by.errors %}
+                     </div>
+
+                     <!-- Authorize Person Field -->
+                     <div class="col-md-12 mb-3">
+                        <label for="{{ form.student_form.authorize_person.id_for_label }}" class="form-label">Authorize Person</label>
+                        {{ form.student_form.authorize_person }}
+                        {% include "parts/error.html" with errors=form.student_form.authorize_person.errors %}
+                     </div>
                </div>
             </div>
          </div>
+
          <div class="card mb-4">
             <div class="card-header h5 py-3">Personal Details</div>
             <div class="card-body">
