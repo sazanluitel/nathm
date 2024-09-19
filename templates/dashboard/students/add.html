@@ -101,36 +101,36 @@
                   <div class="col-md-10">
                      <div class="row">
                         <div class="col-md-2 mb-3">
-                           <label for="{{ form.user_form.title.id_for_label }}" class="form-label">Title</label>
+                           <label for="{{ form.user_form.title.id_for_label }}" class="form-label">Title:</label>
                            {{ form.user_form.title }}
                            {% include "parts/error.html" with errors=form.user_form.title.errors %}
                         </div>
                         <div class="col-md-4 mb-3">
                            <label for="{{ form.user_form.first_name.id_for_label }}" class="form-label">First
-                           Name</label>
+                           Name:</label>
                            {{ form.user_form.first_name }}
                            {% include "parts/error.html" with errors=form.user_form.first_name.errors %}
                         </div>
                         <div class="col-md-2 ">
                            <label for="{{ form.user_form.middle_name.id_for_label }}" class="form-label">Middle
-                           Name</label>
+                           Name:</label>
                            {{ form.user_form.middle_name }}
                            {% include "parts/error.html" with errors=form.user_form.middle_name.errors %}
                         </div>
                         <div class="col-md-4">
                            <label for="{{ form.user_form.last_name.id_for_label }}" class="form-label">Last
-                           Name</label>
+                           Name:</label>
                            {{ form.user_form.last_name }}
                            {% include "parts/error.html" with errors=form.user_form.last_name.errors %}
                         </div>
                         <div class="col-md-4 mb-3">
                         <label for="{{ form.personal_info_form.gender.id_for_label }}"
-                           class="form-label">Gender</label>
+                           class="form-label">Gender:</label>
                         {{ form.personal_info_form.gender }}
                         {% include "parts/error.html" with errors=form.personal_info_form.gender.errors %}
                      </div>
                      <div class="col-md-8 mb-3">
-                        <label for="{{ form.user_form.email.id_for_label }}" class="form-label">Email</label>
+                        <label for="{{ form.user_form.email.id_for_label }}" class="form-label">Email:</label>
                         {{ form.user_form.email }}
                         {% include "parts/error.html" with errors=form.user_form.email.errors %}
                      </div>
@@ -138,7 +138,7 @@
                   </div>
                   <div class="col-md-2">
                      <div class="col-md-12">
-                        <label for="profile_image" class="form-label">Profile Image</label>
+                        <label for="profile_image" class="form-label">Profile Image:</label>
                         {% include 'dashboard/image-picker.html' with name=form.user_form.profile_image.name image=form.user_form.profile_image.value %}
                         {% include "parts/error.html" with errors=form.user_form.profile_image.errors %}
                      </div>
@@ -148,20 +148,20 @@
                   <div class="col-md-7">
                      <div class="col-md-12 mb-3">
                         <label for="{{ form.personal_info_form.date_of_birth_in_ad.id_for_label }}"
-                           class="form-label">Date of Birth</label>
+                           class="form-label">Date of Birth:</label>
                         {{ form.personal_info_form.date_of_birth_in_ad }}
                         {% include "parts/error.html" with errors=form.personal_info_form.date_of_birth_in_ad.errors %}
                      </div>
                      <div class="col-md-12 mb-3">
                         <label for="{{ form.personal_info_form.citizenship_number.id_for_label }}"
-                           class="form-label">Citizenship Number</label>
+                           class="form-label">Citizenship Number:</label>
                         {{ form.personal_info_form.citizenship_number }}
                         {% include "parts/error.html" with errors=form.personal_info_form.citizenship_number.errors %}
                      </div>
                   </div>
                   <div class="col-md-5">
                      <div class="col-md-12 mb-3">
-                        <label for="citizenship_card" class="form-label">Citizenship Card</label>
+                        <label for="citizenship_card" class="form-label">Citizenship:</label>
                         {% include 'dashboard/image-picker.html' with name=form.personal_info_form.citizenship_img.name image=form.personal_info_form.citizenship_img.value %}
                         {% include "parts/error.html" with errors=form.personal_info_form.citizenship_img.errors %}
                      </div>
