@@ -58,6 +58,44 @@ def get_ids(request):
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
+def manage_forms(request):
+    if request.method == 'POST':
+        if 'education_history_form' in request.POST:
+            education_history_form = EducationHistoryForm(request.POST)
+            if education_history_form.is_valid():
+                education_history_form.save()
+                return JsonResponse({'success': True})  # Respond with JSON
+            else:
+                return JsonResponse({'success': False, 'errors': education_history_form.errors})
+
+        elif 'english_test_form' in request.POST:
+            english_test_form = EnglishTestForm(request.POST)
+            if english_test_form.is_valid():
+                english_test_form.save()
+                return JsonResponse({'success': True})  # Respond with JSON
+            else:
+                return JsonResponse({'success': False, 'errors': english_test_form.errors})
+
+        elif 'employment_history_form' in request.POST:
+            employment_history_form = EmploymentHistoryForm(request.POST)
+            if employment_history_form.is_valid():
+                employment_history_form.save()
+                return JsonResponse({'success': True})  # Respond with JSON
+            else:
+                return JsonResponse({'success': False, 'errors': employment_history_form.errors})
+
+    else:
+        # Render empty forms for GET request
+        education_history_form = EducationHistoryForm()
+        english_test_form = EnglishTestForm()
+        employment_history_form = EmploymentHistoryForm()
+
+    return render(request, 'your_template.html', {
+        'education_history_form': education_history_form,
+        'english_test_form': english_test_form,
+        'employment_history_form': employment_history_form,
+    })
+
 class StudentView(View):
     template_name = 'dashboard/students/add.html'
 
