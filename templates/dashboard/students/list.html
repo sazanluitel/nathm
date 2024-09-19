@@ -11,25 +11,54 @@
 
 {% block content %}
 <style>
-        .dt-responsive {
-            overflow-x: auto;
-            white-space: nowrap;
-        }
+    .dt-responsive {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    .dt-responsive table th, .dt-responsive table td {
+        padding: 10px;
+        text-align: left;
+    }
+</style>
 
-        .dt-responsive table th, .dt-responsive table td {
-            padding: 10px;
-            text-align: left;
-        }
-
-    </style>
-    <div class="col-sm-12">
+<div class="col-sm-12">
     {% with messages=messages %}
         {% include 'dashboard/alert.html' %}
     {% endwith %}
     <div class="card">
         <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-sm-4">
+                    {{ form.campus }}
+                </div>
+                <div class="col-sm-4">
+                    {{ form.program }}
+                </div>
+                <div class="col-sm-4">
+                    {{ form.department }}
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-4">
+                    <select id="campus-filter" class="form-control">
+                        <option value="">All Campuses</option>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    <select id="program-filter" class="form-control">
+                        <option value="">All Programs</option>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div class="col-sm-4">
+                    <select id="department-filter" class="form-control">
+                        <option value="">All Departments</option>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
             <div class="dt-responsive">
-                <!-- Add the scrollable container -->
                 <div style="overflow-x: auto;">
                     <table
                         class="ajaxdatatable table table-bordered nowrap"
@@ -40,7 +69,7 @@
                         <tr>
                             <th>Add</th>
                             <th>Name</th>
-                            <th>Email</th> 
+                            <th>Email</th>
                             <th>Campus</th>
                             <th>Department</th>
                             <th>Program</th>
@@ -54,6 +83,7 @@
         </div>
     </div>
 </div>
+
 <div class="modal fade" id="addIdsModal" tabindex="-1" aria-labelledby="addIdsModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -117,8 +147,5 @@
         });
     }
 </script>
-
-
-
 
 {% endblock %}

@@ -94,7 +94,6 @@
                </div>
             </div>
          </div>
-
          <div class="card mb-4">
             <div class="card-header h5 py-3">Personal Details</div>
             <div class="card-body">
@@ -140,9 +139,9 @@
                         {% include "parts/error.html" with errors=form.personal_info_form.gender.errors %}
                      </div>
                      <div class="col-md-8 mb-3">
-                        <label for="{{ form.student_form.email.id_for_label }}" class="form-label">Email</label>
-                        {{ form.student_form.email }}
-                        {% include "parts/error.html" with errors=form.student_form.email.errors %}
+                        <label for="{{ form.user_form.email.id_for_label }}" class="form-label">Email</label>
+                        {{ form.user_form.email }}
+                        {% include "parts/error.html" with errors=form.user_form.email.errors %}
                      </div>
                </div>
                <div class="row">
@@ -389,7 +388,6 @@
                </div>
             </div>
          </div>
-         
          <div class="card mb-4">
             <div class="card-body">
                 <div class="col-md-12 mb-3">

@@ -141,16 +141,22 @@
         }
     }
     $(document).ready(function () {
+        // Initialize DataTable
         const datatableAjaxElement = $(document).find('.ajaxdatatable');
         if (datatableAjaxElement.length > 0) {
             try {
-                datatableAjaxElement.DataTable({
+                const table = datatableAjaxElement.DataTable({
                     lengthChange: true,
                     serverSide: true,
                     order: [],
                     ajax: {
                         url: datatableAjaxElement.data("ajax"),
-                        type: 'GET'
+                        type: 'GET',
+                        data: function (d) {
+                            d.campus = $('#campus-filter').val();
+                            d.program = $('#program-filter').val();
+                            d.department = $('#department-filter').val();
+                        }
                     },
                     drawCallback: function (dt) {
                         initializeSelect2();  // If you have custom initialization logic, replace this line.
@@ -163,11 +169,43 @@
                         console.error('DataTables Ajax error:', errorthrown);
                     }
                 });
+
+                // Fetch and populate dropdowns
+                $.ajax({
+                    url: "{% url 'students_filters' %}",  // URL to fetch filter options
+                    type: "GET",
+                    success: function (response) {
+                        if (response.success) {
+                            populateDropdown('#campus-filter', response.campuses);
+                            populateDropdown('#program-filter', response.programs);
+                            populateDropdown('#department-filter', response.departments);
+                        } else {
+                            alert('Error fetching filter options.');
+                        }
+                    }
+                });
+
+                // Add event listeners for dropdowns
+                $('#campus-filter, #program-filter, #department-filter').change(function () {
+                    table.ajax.reload();
+                });
+
             } catch (error) {
                 console.log(error);
             }
         }
+
+        function populateDropdown(selector, options) {
+            const $dropdown = $(selector);
+            $dropdown.empty();
+            $dropdown.append('<option value="">All</option>');
+            options.forEach(option => {
+                $dropdown.append(`<option value="${option.id}">${option.name}</option>`);
+            });
+        }
     });
+
+
 
     $(document).on('click', '.password_field .show-hide', function () {
         const parentEle = $(this).parent();
