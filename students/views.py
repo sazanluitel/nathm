@@ -245,6 +245,6 @@ class KioskView(View):
             return render(request, 'dashboard/kiosk/add.html', {'form': form})
 
     def get(self, request, *args, **kwargs):
-        form = KioskForm()
+        form = StudentAddForm()
         return render(request, 'dashboard/kiosk/add.html', {'form': form})
 

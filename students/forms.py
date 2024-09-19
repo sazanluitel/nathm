@@ -113,7 +113,7 @@ class StudentForm(forms.ModelForm):
                 'data-placeholder': 'Select why us option',
             }),
             'why_us_other': forms.Textarea(attrs={
-                'class': 'form-control',    
+                'class': 'form-control',
                 'id': 'why_us_other',
                 'rows': 2,
                 'placeholder': 'If Other, specify...',
@@ -223,12 +223,16 @@ class StudentEditForm:
             raise ValueError('Personal Info instance must be provided')
 
         self.user_form = UserForm(instance=instance.user, data=data)
-        self.permanent_address_form = AddressInfoForm(prefix="permanent", data=data, instance=personalinfo_instance.permanent_address)
-        self.temporary_address_form = AddressInfoForm(prefix="temporary", data=data, instance=personalinfo_instance.temporary_address)
+        self.permanent_address_form = AddressInfoForm(prefix="permanent", data=data,
+                                                      instance=personalinfo_instance.permanent_address)
+        self.temporary_address_form = AddressInfoForm(prefix="temporary", data=data,
+                                                      instance=personalinfo_instance.temporary_address)
         self.payment_address_form = AddressInfoForm(prefix="payment", data=data, instance=instance.payment_address)
         self.personal_info_form = PersonalInfoForm(instance=personalinfo_instance, data=data)
         self.emergency_contact_form = EmergencyContactForm(instance=personalinfo_instance.emergency_contact, data=data)
-        self.emergency_address_form = AddressInfoForm(prefix="emergency_address", instance=personalinfo_instance.emergency_contact.address, data=data)
+        self.emergency_address_form = AddressInfoForm(prefix="emergency_address",
+                                                      instance=personalinfo_instance.emergency_contact.address,
+                                                      data=data)
         self.student_form = StudentForm(instance=instance, data=data)
 
     def is_valid(self):
@@ -288,7 +292,6 @@ class StudentEditForm:
                 instance.save()
 
             return instance
-
 
 
 class KioskForm:
