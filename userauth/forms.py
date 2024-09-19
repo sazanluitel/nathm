@@ -29,7 +29,7 @@ class UserForm(forms.ModelForm):
         fields = ['title', 'email', 'first_name', 'middle_name', 'last_name', 'profile_image']
         widgets = {
             'title': forms.TextInput(
-                attrs={'class': 'form-control', 'id': 'user_title', 'placeholder': 'Title (Mr, Ms, Dr...)'}),
+                attrs={'class': 'form-control', 'id': 'user_title', 'placeholder': 'Mr, Ms, Dr...)'}),
             'email': forms.EmailInput(
                 attrs={'class': 'form-control', 'id': 'user_email', 'placeholder': 'Email Address'}),
             'first_name': forms.TextInput(
