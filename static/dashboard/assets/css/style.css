@@ -4101,3 +4101,10 @@ body .fancybox-container{
 body .invalid-feedback{
     display: block;
 }
+
+.alert-error {
+    --bs-alert-color: var(--bs-danger-text-emphasis);
+    --bs-alert-bg: var(--bs-danger-bg-subtle);
+    --bs-alert-border-color: var(--bs-danger-border-subtle);
+    --bs-alert-link-color: var(--bs-danger-text-emphasis);
+}
