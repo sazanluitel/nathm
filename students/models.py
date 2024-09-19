@@ -60,7 +60,7 @@ class Student(models.Model):
     payment_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE)
 
     # Financial capacity
-    annual_income = models.CharField(max_length=100, blank=True, null=True)
+    annual_income = models.FloatField(max_length=100, blank=True, null=True)
     members_in_family = models.IntegerField(default=1, blank=True)
     father_occupation = models.CharField(max_length=100, blank=True, null=True)
     mother_occupation = models.CharField(max_length=100, blank=True, null=True)

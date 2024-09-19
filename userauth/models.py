@@ -84,8 +84,15 @@ class EmploymentHistory(models.Model):
 
 
 class EmergencyContact(models.Model):
+    RELATION = [
+        ('Father', 'Father'),
+        ('Mother', 'Mother'),
+        ('Brother', 'Brother'),
+        ('Relative', 'Relative'),
+        ('OTHER', 'Other'),
+    ]
     name = models.CharField(max_length=100)
-    relationship = models.CharField(max_length=100, null=True, blank=True)
+    relationship = models.CharField(max_length=100, choices=RELATION,null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, null=True, blank=True)
 

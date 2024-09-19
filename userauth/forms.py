@@ -131,7 +131,7 @@ class EmergencyContactForm(forms.ModelForm):
         fields = ['name', 'relationship', 'email']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'id': 'name', 'placeholder': 'Name'}),
-            'relationship': forms.TextInput(
-                attrs={'class': 'form-control', 'id': 'relationship', 'placeholder': 'Relationship'}),
+            'relationship': forms.Select(
+                attrs={'class': 'form-control', 'id': 'relationship', 'data-placeholder': 'Select Relationship'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'id': 'email', 'placeholder': 'Email'}),
         }

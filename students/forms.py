@@ -86,7 +86,7 @@ class StudentForm(forms.ModelForm):
                 'id': 'email',
                 'placeholder': 'Email',
             }),
-            'annual_income': forms.TextInput(attrs={
+            'annual_income': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'id': 'annual_income',
                 'placeholder': 'Annual Income',
