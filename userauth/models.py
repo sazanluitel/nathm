@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
+
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -19,7 +20,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
-    title = models.CharField(max_length=255)  # Salutation
+    title = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=100, default="")
     first_name = models.CharField(max_length=100)
@@ -47,8 +48,8 @@ class User(AbstractUser):
 class AddressInfo(models.Model):
     address = models.CharField(max_length=200)
     city = models.CharField(max_length=200, null=True, blank=True)
-    province = models.CharField(max_length=200, null=True, blank=True)  # Changed to lowercase for convention
-    country = models.CharField(max_length=200)
+    province = models.CharField(max_length=200, null=True, blank=True)
+    country = models.CharField(max_length=200, null=True, blank=True)
     postcode = models.CharField(max_length=100, null=True, blank=True)
     contact_number = models.CharField(max_length=100, null=True, blank=True)
 
@@ -84,8 +85,15 @@ class EmploymentHistory(models.Model):
 
 
 class EmergencyContact(models.Model):
+    RELATION = [
+        ('Father', 'Father'),
+        ('Mother', 'Mother'),
+        ('Brother', 'Brother'),
+        ('Relative', 'Relative'),
+        ('OTHER', 'Other'),
+    ]
     name = models.CharField(max_length=100)
-    relationship = models.CharField(max_length=100, null=True, blank=True)
+    relationship = models.CharField(max_length=100, choices=RELATION, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, null=True, blank=True)
 
@@ -97,15 +105,15 @@ class PersonalInfo(models.Model):
         ('other', 'Other'),
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    citizenship_number = models.CharField(max_length=20)
-    gender = models.CharField(max_length=6, choices=GENDER_CHOICES)  # Adjusted max_length to fit values
+    citizenship_number = models.CharField(max_length=20, null=True, blank=True)
+    gender = models.CharField(max_length=6, choices=GENDER_CHOICES)
     date_of_birth_in_ad = models.DateField(null=True, blank=True)
-    citizenship_img = models.TextField()  # Fixed typo in field name
-    permanent_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='permanent_address', null=True, blank=True)
-    temporary_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='temporary_address', null=True, blank=True)
-    educational_history = models.ManyToManyField(EducationHistory, blank=True)  # Removed `on_delete`
-    english_test = models.ManyToManyField(EnglishTest, blank=True)  # Removed `on_delete`
-    employment_history = models.ManyToManyField(EmploymentHistory, blank=True)  # Removed `on_delete`
+    citizenship_img = models.TextField(null=True, blank=True)
+    permanent_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='permanent_address',
+                                          null=True, blank=True)
+    temporary_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='temporary_address',
+                                          null=True, blank=True)
+    educational_history = models.ManyToManyField(EducationHistory, blank=True)
+    english_test = models.ManyToManyField(EnglishTest, blank=True)
+    employment_history = models.ManyToManyField(EmploymentHistory, blank=True)
     emergency_contact = models.ForeignKey(EmergencyContact, on_delete=models.CASCADE, null=True, blank=True)
-
-

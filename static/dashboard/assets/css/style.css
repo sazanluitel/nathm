@@ -4097,3 +4097,7 @@ body .select2-container .select2-search--inline .select2-search__field{
 body .fancybox-container{
     z-index: 9999999999;
 }
+
+body .invalid-feedback{
+    display: block;
+}

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from students.forms import StudentAddForm,KioskForm
+from students.forms import StudentAddForm,KioskForm, StudentEditForm
 from userauth.forms import *
 from userauth.models import *
 from students.models import *
@@ -17,9 +17,11 @@ from .forms import StudentForm
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse
 
+
 def student_list(request):
     form = StudentForm()
     return render(request, 'dashboard/students/list.html', {'form': form})
+
 
 def add_ids(request):
     if request.method == "POST":
@@ -37,15 +39,16 @@ def add_ids(request):
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
+
 def get_ids(request):
     if request.method == "GET":
         student_id = request.GET.get('student_id')
-        
+
         if student_id:
             try:
                 student = Student.objects.get(id=student_id)
                 data = {
-                    'college_email': student.college_email,  
+                    'college_email': student.college_email,
                     'teams_id': student.team_id,  # Safely get 'teams_id'
                     'success': True
                 }
@@ -58,36 +61,24 @@ def get_ids(request):
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
+
 class StudentView(View):
     template_name = 'dashboard/students/add.html'
 
     def get(self, request, *args, **kwargs):
-        # Check if editing or creating a new student
-        student_id = kwargs.get('pk')
-        if student_id:
-            student_instance = get_object_or_404(Student, pk=student_id)
-            personalinfo_instance = student_instance.personal_info  # Assuming related info is accessible
-            form = StudentAddForm(instance=student_instance, personalinfo_instance=personalinfo_instance)
-        else:
-            form = StudentAddForm()
-
+        form = StudentAddForm()
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
-        student_id = kwargs.get('pk')
-        if student_id:
-            student_instance = get_object_or_404(Student, pk=student_id)
-            personalinfo_instance = student_instance.personal_info
-            form = StudentAddForm(data=request.POST, files=request.FILES, instance=student_instance, personalinfo_instance=personalinfo_instance)
-        else:
-            form = StudentAddForm(data=request.POST, files=request.FILES)
-
+        form = StudentAddForm(data=request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Student added/updated successfully")
-            return redirect('students:studentlist')
+            try:
+                form.save()
+                messages.success(request, "Student added/updated successfully")
+                return redirect('students:studentlist')
+            except Exception as e:
+                messages.error(request, f"An error occurred while saving: {e}")
         else:
-            # Display error messages
             messages.error(request, "Please correct the errors below.")
             self.handle_errors(form)
 
@@ -95,8 +86,8 @@ class StudentView(View):
 
     def handle_errors(self, form):
         # Print errors for debugging purposes
-        for field, errors in form.errors.items():
-            print(f"Errors for {field}: {errors}")
+        # for field, errors in form.errors.items():
+        #     print(f"Errors for {field}: {errors}")
 
         # Print errors for each sub-form
         form_instances = {
@@ -111,49 +102,38 @@ class StudentView(View):
         }
 
         for form_name, form_instance in form_instances.items():
+            print(f"{form_name} is valid: {form_instance.is_valid()}")
             if not form_instance.is_valid():
                 for field, errors in form_instance.errors.items():
                     print(f"Errors for {form_name} - {field}: {errors}")
 
-class StudentEditView(View):
-    template_name = 'dashboard/students/edit.html'
 
-    def get(self, request, id):
-        student = get_object_or_404(Student, id=id)
+class StudentEditView(View):
+    template_name = 'dashboard/students/add.html'
+
+    def get(self, request, *args, **kwargs):
+        student_id = kwargs.pop('id', None)
+        student = get_object_or_404(Student, id=student_id)
         personalinfo = get_object_or_404(PersonalInfo, user=student.user)
-        form = StudentAddForm(instance=student, personalinfo_instance=personalinfo)
-        return render(request, self.template_name, {'form': form, 'student_id': id})
+        form = StudentEditForm(instance=student, personalinfo_instance=personalinfo)
+        return render(request, self.template_name, {'form': form, 'student_id': student_id})
 
     def post(self, request, id):
         student = get_object_or_404(Student, id=id)
         personalinfo = get_object_or_404(PersonalInfo, user=student.user)
 
         # Pass the personalinfo_instance during POST as well
-        form = StudentAddForm(data=request.POST, files=request.FILES, instance=student, personalinfo_instance=personalinfo)
+        form = StudentEditForm(data=request.POST, instance=student,
+                              personalinfo_instance=personalinfo)
 
         if form.is_valid():
-            email = form.cleaned_data['user'].email  # Get email from user form
-            User = get_user_model()
-
-            # Exclude the current user from the email uniqueness check
-            if User.objects.filter(email=email).exclude(id=student.user.id).exists():
-                messages.error(request, "A user with this email already exists.")
-                return render(request, self.template_name, {'form': form, 'student_id': id})
-
-            # Save the updated student and related models
             form.save()
             messages.success(request, "Student updated successfully")
             return redirect('students:studentlist')
         else:
             messages.error(request, "Please correct the errors below.")
-            self.handle_errors(form)
 
         return render(request, self.template_name, {'form': form, 'student_id': id})
-
-    def handle_errors(self, form):
-        for field, errors in form.errors.items():
-            for error in errors:
-                messages.error(self.request, f"{field}: {error}")
 
 
 class StudentList(View):
@@ -161,6 +141,7 @@ class StudentList(View):
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
+
 
 class StudentAjax(View):
     def get(self, request, *args, **kwargs):
@@ -173,7 +154,7 @@ class StudentAjax(View):
         department_id = request.GET.get("department", None)
         page_number = (start // length) + 1
 
-        students = Student.objects.select_related('personal_info', 'campus', 'department', 'program')
+        students = Student.objects.select_related('campus', 'department', 'program')
 
         if campus_id:
             students = students.filter(campus_id=campus_id)
@@ -204,8 +185,7 @@ class StudentAjax(View):
                 student.campus.name,
                 student.department.name,
                 student.program.name,
-                self.get_action(student.id),
-                student.date_of_admission.strftime('%Y-%m-%d') if student.date_of_admission else '',
+                self.get_action(student.id)
             ])
 
         return JsonResponse({
@@ -216,8 +196,10 @@ class StudentAjax(View):
         }, status=200)
 
     def get_checkbox_html(self, student_id):
-        return f'<input type="checkbox" name="selected_students" value="{student_id}">'
-    
+        return (f'<div class="form-check"><label for="checkbox_{student_id}_question"></label><input '
+                f'class="form-check-input delete_single_checkbox" type="checkbox" name="_selected_id"'
+                f' value="{student_id}" id="checkbox_{student_id}_question"></div>'),
+
     def get_action(self, student_id):
         edit_url = reverse('students:studentedit', kwargs={'id': student_id})
         delete_url = reverse('dashboard:delete')
@@ -233,6 +215,7 @@ class StudentAjax(View):
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
         '''
+
 
 class StudentFilters(View):
     def get(self, request, *args, **kwargs):
@@ -264,3 +247,4 @@ class KioskView(View):
     def get(self, request, *args, **kwargs):
         form = KioskForm()
         return render(request, 'dashboard/kiosk/add.html', {'form': form})
+

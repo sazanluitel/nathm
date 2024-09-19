@@ -1,3 +1,8 @@
+import json
+from io import BytesIO
+
+import qrcode
+from django.http import Http404
 from django.shortcuts import render, redirect, HttpResponse
 from django.views.generic import View
 from django.contrib.auth.decorators import login_required
@@ -109,3 +114,43 @@ class LogoutView(View):
     def get(self, request, *args, **kwargs):
         logout(request)
         return redirect('userauth:login')
+
+
+class QRView(View):
+    def get(self, request, *args, **kwargs):
+        userid = kwargs.pop('id', None)
+        if not userid:
+            raise Http404
+
+        try:
+            user = User.objects.get(id=userid)
+            if not user:
+                messages.error(request, "Invalid User")
+                return redirect("userauth:login")
+
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=1,
+            )
+
+            qr_data = {
+                "id": user.id,
+                "name": f"{user.title} {user.first_name} {user.middle_name} {user.last_name}",
+                "email": user.email
+            }
+            qr_data_str = json.dumps({
+                "ismt": qr_data
+            })
+            qr.add_data(qr_data_str)
+            qr.make(fit=True)
+            img = qr.make_image(fill='black', back_color='white')
+
+            buffer = BytesIO()
+            img.save(buffer, "PNG")
+            buffer.seek(0)
+
+            return HttpResponse(buffer, content_type="image/png")
+        except User.DoesNotExist:
+            raise Http404

@@ -5,7 +5,7 @@ app_name = "students"
 
 urlpatterns = [
     path('student/add/', StudentView.as_view(), name='addstudent'),
-    path('student/edit/<int:id>', StudentEditView.as_view(), name='studentedit'),
+    path('student/edit/<id>', StudentEditView.as_view(), name='studentedit'),
     path('student/list/', StudentList.as_view(), name='studentlist'),
     path('student/ajax', StudentAjax.as_view(), name='studentajax'),
     path('kiosk-reg/', KioskView.as_view(), name='kiosk-reg'),

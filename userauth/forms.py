@@ -29,7 +29,7 @@ class UserForm(forms.ModelForm):
         fields = ['title', 'email', 'first_name', 'middle_name', 'last_name', 'profile_image']
         widgets = {
             'title': forms.TextInput(
-                attrs={'class': 'form-control', 'id': 'user_title', 'placeholder': 'Title (Mr, Ms, Mrs...)'}),
+                attrs={'class': 'form-control', 'id': 'user_title', 'placeholder': 'Mr, Ms, Mrs...)'}),
             'email': forms.EmailInput(
                 attrs={'class': 'form-control', 'id': 'user_email', 'placeholder': 'Email Address'}),
             'first_name': forms.TextInput(
@@ -131,7 +131,7 @@ class EmergencyContactForm(forms.ModelForm):
         fields = ['name', 'relationship', 'email']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'id': 'name', 'placeholder': 'Name'}),
-            'relationship': forms.TextInput(
-                attrs={'class': 'form-control', 'id': 'relationship', 'placeholder': 'Relationship'}),
+            'relationship': forms.Select(
+                attrs={'class': 'form-control', 'id': 'relationship', 'data-placeholder': 'Select Relationship'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'id': 'email', 'placeholder': 'Email'}),
         }
