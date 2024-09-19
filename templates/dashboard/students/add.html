@@ -6,7 +6,7 @@
 {% block content %}
 <div class="row">
    <div class="col-sm-12">
-      <form method="post" enctype="multipart/form-data" action="{% url 'students:addstudent' %}">
+      <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
          {% with messages=messages %}
          {% include 'dashboard/alert.html' %}

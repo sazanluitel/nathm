@@ -2,8 +2,9 @@ from django import forms
 from django.db import transaction
 from userauth.models import AddressInfo, User, PersonalInfo, EmergencyContact
 from students.models import Student
-from dashboard.models import Campus,Department,Program
+from dashboard.models import Campus, Department, Program
 from userauth.forms import UserForm, AddressInfoForm, PersonalInfoForm, EmergencyContactForm
+
 
 class StudentForm(forms.ModelForm):
     class Meta:
@@ -137,28 +138,22 @@ class StudentForm(forms.ModelForm):
         self.fields['program'].queryset = Program.objects.all()
 
 
-class StudentAddForm(forms.ModelForm):
+class StudentAddForm:
     def __init__(self, *args, **kwargs):
-        instance = kwargs.pop('instance', None)
-        personalinfo_instance = kwargs.pop('personalinfo_instance', None)
-        super().__init__(*args, **kwargs)
+        data = kwargs.get('data')
+        files = kwargs.get('files')
 
-        self.user_form = UserForm(prefix="user", instance=instance.user if instance else None)
-        self.permanent_address_form = AddressInfoForm(prefix="permanent", instance=personalinfo_instance.permanent_address if personalinfo_instance else None)
-        self.temporary_address_form = AddressInfoForm(prefix="temporary", instance=personalinfo_instance.temporary_address if personalinfo_instance else None)
-        self.payment_address_form = AddressInfoForm(prefix="payment", instance=instance.payment_address if instance else None)
-        self.personal_info_form = PersonalInfoForm(prefix="personal", instance=personalinfo_instance if personalinfo_instance else None)
-        self.emergency_contact_form = EmergencyContactForm(prefix="emergency", instance=personalinfo_instance.emergency_contact if personalinfo_instance else None)
-
-        if personalinfo_instance and personalinfo_instance.emergency_contact and personalinfo_instance.emergency_contact.address:
-            self.emergency_address_form = AddressInfoForm(prefix="emergency_address", instance=personalinfo_instance.emergency_contact.address)
-        else:
-            self.emergency_address_form = AddressInfoForm(prefix="emergency_address")
-
-        self.student_form = StudentForm(prefix="student", instance=instance)
+        self.user_form = UserForm(data=data, files=files)
+        self.permanent_address_form = AddressInfoForm(prefix="permanent", data=data, files=files)
+        self.temporary_address_form = AddressInfoForm(prefix="temporary", data=data, files=files)
+        self.payment_address_form = AddressInfoForm(prefix="payment", data=data, files=files)
+        self.personal_info_form = PersonalInfoForm(data=data, files=files)
+        self.emergency_contact_form = EmergencyContactForm(data=data, files=files)
+        self.emergency_address_form = AddressInfoForm(prefix="emergency_address", data=data, files=files)
+        self.student_form = StudentForm(data=data, files=files)
 
     def is_valid(self):
-        forms = [
+        registration_forms = [
             self.user_form,
             self.permanent_address_form,
             self.temporary_address_form,
@@ -168,29 +163,130 @@ class StudentAddForm(forms.ModelForm):
             self.emergency_contact_form,
             self.emergency_address_form,
         ]
-        return all(form.is_valid() for form in forms)
+        return all(form.is_valid() for form in registration_forms)
 
     def save(self, commit=True):
         with transaction.atomic():
-            instance = super().save(commit=False)
             user = self.user_form.save(commit=False)
-            personal_info = self.personal_info_form.save(commit=False)
 
             if commit:
                 user.save()
-                personal_info.user = user
-                personal_info.save()
-                instance.personal_info = personal_info
-                instance.save()
 
-                self.permanent_address_form.save(commit=True)
-                self.temporary_address_form.save(commit=True)
-                self.payment_address_form.save(commit=True)
-                self.emergency_contact_form.save(commit=True)
-                self.emergency_address_form.save(commit=True)
+            permanent_address = self.permanent_address_form.save(commit=False)
+            temporary_address = self.temporary_address_form.save(commit=False)
+            payment_address = self.payment_address_form.save(commit=False)
+
+            if commit:
+                permanent_address.save()
+                temporary_address.save()
+                payment_address.save()
+
+            emergency_contact = self.emergency_contact_form.save(commit=False)
+            emergency_address = self.emergency_address_form.save(commit=False)
+
+            if commit:
+                emergency_address.save()
+                emergency_contact.address = emergency_address
+                emergency_contact.save()
+
+            # Save Personal Info
+            personal_info = self.personal_info_form.save(commit=False)
+            personal_info.user = user
+            personal_info.permanent_address = permanent_address
+            personal_info.temporary_address = temporary_address
+            personal_info.emergency_contact = emergency_contact
+
+            if commit:
+                personal_info.save()
+
+            # Save Student instance
+            instance = self.student_form.save(commit=False)
+            instance.user = user
+            instance.payment_address = payment_address
+            instance.personal_info = personal_info
+
+            if commit:
+                instance.save()
 
             return instance
 
-    class Meta:
-        model = Student
-        fields = '__all__'
+
+class StudentEditForm:
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.pop('instance', None)
+        personalinfo_instance = kwargs.pop('personalinfo_instance', None)
+        data = kwargs.pop('data', None)
+
+        if not instance:
+            raise ValueError('Instance must be provided')
+
+        if not personalinfo_instance:
+            raise ValueError('Personal Info instance must be provided')
+
+        self.user_form = UserForm(instance=instance.user, data=data)
+        self.permanent_address_form = AddressInfoForm(prefix="permanent", data=data, instance=personalinfo_instance.permanent_address)
+        self.temporary_address_form = AddressInfoForm(prefix="temporary", data=data, instance=personalinfo_instance.temporary_address)
+        self.payment_address_form = AddressInfoForm(prefix="payment", data=data, instance=instance.payment_address)
+        self.personal_info_form = PersonalInfoForm(instance=personalinfo_instance, data=data)
+        self.emergency_contact_form = EmergencyContactForm(instance=personalinfo_instance.emergency_contact, data=data)
+        self.emergency_address_form = AddressInfoForm(prefix="emergency_address", instance=personalinfo_instance.emergency_contact.address, data=data)
+        self.student_form = StudentForm(instance=instance, data=data)
+
+    def is_valid(self):
+        registration_forms = [
+            self.user_form,
+            self.permanent_address_form,
+            self.temporary_address_form,
+            self.payment_address_form,
+            self.personal_info_form,
+            self.student_form,
+            self.emergency_contact_form,
+            self.emergency_address_form,
+        ]
+        return all(form.is_valid() for form in registration_forms)
+
+    def save(self, commit=True):
+        with transaction.atomic():
+            user = self.user_form.save(commit=False)
+
+            if commit:
+                user.save()
+
+            permanent_address = self.permanent_address_form.save(commit=False)
+            temporary_address = self.temporary_address_form.save(commit=False)
+            payment_address = self.payment_address_form.save(commit=False)
+
+            if commit:
+                permanent_address.save()
+                temporary_address.save()
+                payment_address.save()
+
+            emergency_contact = self.emergency_contact_form.save(commit=False)
+            emergency_address = self.emergency_address_form.save(commit=False)
+
+            if commit:
+                emergency_address.save()
+                emergency_contact.address = emergency_address
+                emergency_contact.save()
+
+            # Save Personal Info
+            personal_info = self.personal_info_form.save(commit=False)
+            personal_info.user = user
+            personal_info.permanent_address = permanent_address
+            personal_info.temporary_address = temporary_address
+            personal_info.emergency_contact = emergency_contact
+
+            if commit:
+                personal_info.save()
+
+            # Save Student instance
+            instance = self.student_form.save(commit=False)
+            instance.user = user
+            instance.payment_address = payment_address
+            instance.personal_info = personal_info
+
+            if commit:
+                instance.save()
+
+            return instance
+
