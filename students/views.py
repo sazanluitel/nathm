@@ -57,10 +57,16 @@ class StudentView(View):
     template_name = 'dashboard/students/add.html'
 
     def get(self, request, *args, **kwargs):
+        # If you're editing, you'd pass instances to StudentAddForm like this:
+        # student_instance = Student.objects.get(pk=some_pk)  # Get the specific student if needed
+        # form = StudentAddForm(instance=student_instance)
+        
+        # For new entries, initialize the form without any instance
         form = StudentAddForm()
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
+        # Handle form submissions
         form = StudentAddForm(data=request.POST, files=request.FILES)
 
         if form.is_valid():
@@ -68,13 +74,14 @@ class StudentView(View):
             messages.success(request, "Student added successfully")
             return redirect('students:studentlist')
         else:
+            # Display error messages
             messages.error(request, "Please correct the errors below.")
             self.handle_errors(form)
 
         return render(request, self.template_name, {'form': form})
 
     def handle_errors(self, form):
-        # Print errors for the main form
+        # Print errors for debugging purposes
         for field, errors in form.errors.items():
             print(f"Errors for {field}: {errors}")
 
