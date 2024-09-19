@@ -4,6 +4,7 @@ from students.forms import StudentAddForm
 from userauth.forms import *
 from userauth.models import *
 from students.models import *
+from dashboard.models import *
 from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator
@@ -12,9 +13,13 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth import get_user_model
-
+from .forms import StudentForm
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse
+
+def student_list(request):
+    form = StudentForm()
+    return render(request, 'dashboard/students/list.html', {'form': form})
 
 def add_ids(request):
     if request.method == "POST":
@@ -57,21 +62,29 @@ class StudentView(View):
     template_name = 'dashboard/students/add.html'
 
     def get(self, request, *args, **kwargs):
-        # If you're editing, you'd pass instances to StudentAddForm like this:
-        # student_instance = Student.objects.get(pk=some_pk)  # Get the specific student if needed
-        # form = StudentAddForm(instance=student_instance)
-        
-        # For new entries, initialize the form without any instance
-        form = StudentAddForm()
+        # Check if editing or creating a new student
+        student_id = kwargs.get('pk')
+        if student_id:
+            student_instance = get_object_or_404(Student, pk=student_id)
+            personalinfo_instance = student_instance.personal_info  # Assuming related info is accessible
+            form = StudentAddForm(instance=student_instance, personalinfo_instance=personalinfo_instance)
+        else:
+            form = StudentAddForm()
+
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
-        # Handle form submissions
-        form = StudentAddForm(data=request.POST, files=request.FILES)
+        student_id = kwargs.get('pk')
+        if student_id:
+            student_instance = get_object_or_404(Student, pk=student_id)
+            personalinfo_instance = student_instance.personal_info
+            form = StudentAddForm(data=request.POST, files=request.FILES, instance=student_instance, personalinfo_instance=personalinfo_instance)
+        else:
+            form = StudentAddForm(data=request.POST, files=request.FILES)
 
         if form.is_valid():
             form.save()
-            messages.success(request, "Student added successfully")
+            messages.success(request, "Student added/updated successfully")
             return redirect('students:studentlist')
         else:
             # Display error messages
@@ -155,41 +168,46 @@ class StudentAjax(View):
         start = int(request.GET.get("start", 0))
         length = int(request.GET.get("length", 10))
         search_value = request.GET.get("search[value]", None)
+        campus_id = request.GET.get("campus", None)
+        program_id = request.GET.get("program", None)
+        department_id = request.GET.get("department", None)
         page_number = (start // length) + 1
 
-        # Query to fetch all students
         students = Student.objects.select_related('user', 'campus', 'department', 'program')
 
-        # Apply search filters
+        if campus_id:
+            students = students.filter(campus_id=campus_id)
+        if program_id:
+            students = students.filter(program_id=program_id)
+        if department_id:
+            students = students.filter(department_id=department_id)
+
         if search_value:
             students = students.filter(
                 Q(user__first_name__icontains=search_value) |
                 Q(user__last_name__icontains=search_value) |
                 Q(student_id__icontains=search_value) |
-                Q(campus__name__icontains=search_value) |  # Assuming campus has a 'name' field
-                Q(department__name__icontains=search_value) |  # Assuming department has a 'name' field
-                Q(program__name__icontains=search_value)  # Assuming program has a 'name' field
+                Q(campus__name__icontains=search_value) |
+                Q(department__name__icontains=search_value) |
+                Q(program__name__icontains=search_value)
             )
 
-        # Paginate the results
         paginator = Paginator(students, length)
         page_students = paginator.page(page_number)
 
-        # Prepare data to send in response
         data = []
         for student in page_students:
             data.append([
                 self.get_checkbox_html(student.id),
                 student.user.get_full_name(),
                 student.user.email,
-                student.campus.name,  
-                student.department.name,  
-                student.program.name,  
-                self.get_action(student.id), 
+                student.campus.name,
+                student.department.name,
+                student.program.name,
+                self.get_action(student.id),
                 student.date_of_admission.strftime('%Y-%m-%d') if student.date_of_admission else '',
             ])
 
-        # Return JSON response
         return JsonResponse({
             "draw": draw,
             "recordsTotal": paginator.count,
@@ -199,12 +217,8 @@ class StudentAjax(View):
 
     def get_checkbox_html(self, student_id):
         return f'<input type="checkbox" name="selected_students" value="{student_id}">'
-
     
     def get_action(self, student_id):
-        """
-        Generates action buttons (Edit, Delete).
-        """
         edit_url = reverse('students:studentedit', kwargs={'id': student_id})
         delete_url = reverse('dashboard:delete')
         backurl = reverse('students:studentlist')
@@ -212,10 +226,24 @@ class StudentAjax(View):
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
                 <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addIdsModal" onclick="openAddIdsModal(1)">Add IDs</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addIdsModal" onclick="openAddIdsModal({student_id})">Add IDs</button>
                 <input type="hidden" name="_selected_id" value="{student_id}" />
                 <input type="hidden" name="_selected_type" value="student" />
                 <input type="hidden" name="_back_url" value="{backurl}" />
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
         '''
+
+class StudentFilters(View):
+    def get(self, request, *args, **kwargs):
+        # Fetch filter options from the database
+        campuses = list(Campus.objects.values('id', 'name'))
+        departments = list(Department.objects.values('id', 'name'))
+        programs = list(Program.objects.values('id', 'name'))
+
+        return JsonResponse({
+            'success': True,
+            'campuses': campuses,
+            'departments': departments,
+            'programs': programs,
+        })
