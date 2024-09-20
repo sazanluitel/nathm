@@ -1,18 +1,129 @@
-<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true" style="z-index: 99999;">
-    <div class="modal-dialog">
-      <form method="post" action="#">
-        {% csrf_token %}
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="addModalLabel">Add Educational History</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Modal for Education History -->
+<div class="modal fade" id="educationHistoryModal" tabindex="-1" aria-labelledby="educationHistoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="educationHistoryModalLabel">Add Education History</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="educationHistoryForm" method="POST" action="{% url 'students:studentedit' id=student_id %}">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="{{ education_history_form.degree_name.id_for_label }}" class="form-label">Degree Name:</label>
+              {{education_history_form.degree_name }}
+              {% include "parts/error.html" with errors=education_history_form.degree_name.errors %}
           </div>
-          <div class="modal-body">{{ form.as_p }}</div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Add</button>
+          <div class="col-md-6 mb-3">
+              <label for="{{ education_history_form.institution_name.id_for_label }}" class="form-label">Institution Nmae:</label>
+              {{education_history_form.institution_name }}
+              {% include "parts/error.html" with errors=education_history_form.institution_name.errors %}
           </div>
-        </div>
-      </form>
-    </div>=
+          <div class="col-md-6 mb-3">
+              <label for="{{ education_history_form.graduation_year.id_for_label }}" class="form-label">Graduation year:</label>
+              {{ education_history_form.graduation_year }}
+              {% include "parts/error.html" with errors=education_history_form.graduation_year.errors %}
+          </div>
+          <div class="col-md-6 mb-3">
+              <label for="{{ education_history_form.major_subject.id_for_label }}" class="form-label">Major Subject:</label>
+              {{ education_history_form.major_subject }}
+              {% include "parts/error.html" with errors=education_history_form.major_subject.errors %}
+          </div>
+          <div class="col-md-12 mb-3">
+            <label for="certificate" class="form-label">File:</label>
+            {% include 'dashboard/image-picker.html' with name=education_history_form.file.name image=education_history_form.file.value %}
+            {% include "parts/error.html" with errors=education_history_form.file.errors %}
+          </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+      </div>
+    </div>
   </div>
+</div>
+
+<!-- Modal for English Test -->
+<div class="modal fade" id="englishTestModal" tabindex="-1" aria-labelledby="englishTestModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="englishTestModalLabel">Add English Test</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="englishTestForm" method="POST">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <label for="{{ english_test_form.test.id_for_label }}" class="form-label">Test Name:</label>
+              {{ english_test_form.test }}
+              {% include "parts/error.html" with errors=english_test_form.test.errors %}
+          </div>
+          <div class="col-md-6 mb-3">
+              <label for="{{ english_test_form.score.id_for_label }}" class="form-label">Score:</label>
+              {{ english_test_form.score }}
+              {% include "parts/error.html" with errors=english_test_form.score.errors %}
+          </div>
+          <div class="col-md-6 mb-3">
+              <label for="{{ english_test_form.date.id_for_label }}" class="form-label">Appeared Date:</label>
+              {{ english_test_form.date }}
+              {% include "parts/error.html" with errors=english_test_form.date.errors %}
+          </div>
+          <div class="col-md-12 mb-3">
+            <label for="test_certificate" class="form-label">File:</label>
+            {% include 'dashboard/image-picker.html' with name=english_test_form.files.name image=english_test_form.files.value %}
+            {% include "parts/error.html" with errors=english_test_form.files.errors %}
+          </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for Employment History -->
+<div class="modal fade" id="employmentHistoryModal" tabindex="-1" aria-labelledby="employmentHistoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="employmentHistoryModalLabel">Add Employment History</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="employmentHistoryForm" method="POST">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="{{ employment_history_form.employer_name.id_for_label }}" class="form-label">Comapany Name:</label>
+              {{ employment_history_form.employer_name }}
+              {% include "parts/error.html" with errors=employment_history_form.employer_name.errors %}
+          </div>
+          <div class="col-md-6 mb-3">
+              <label for="{{ employment_history_form.title.id_for_label }}" class="form-label">Position:</label>
+              {{ employment_history_form.title }}
+              {% include "parts/error.html" with errors=employment_history_form.title.errors %}
+          </div>
+          <div class="col-md-6 mb-3">
+              <label for="{{ employment_history_form.start_date.id_for_label }}" class="form-label">Start Date:</label>
+              {{ employment_history_form.start_date }}
+              {% include "parts/error.html" with errors=employment_history_form.start_date.errors %}
+          </div>
+          <div class="col-md-6 mb-3">
+              <label for="{{ employment_history_form.end_date.id_for_label }}" class="form-label">End Date:</label>
+              {{ employment_history_form.end_date }}
+              {% include "parts/error.html" with errors=employment_history_form.end_date.errors %}
+          </div>
+          <div class="col-md-12 mb-3">
+              <label for="{{ employment_history_form.job_description.id_for_label }}" class="form-label">Job Description:</label>
+              {{ employment_history_form.job_description }}
+              {% include "parts/error.html" with errors=employment_history_form.job_description.errors %}
+          </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
