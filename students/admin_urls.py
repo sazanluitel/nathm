@@ -11,8 +11,6 @@ urlpatterns = [
 
     path('filters/', StudentFilters.as_view(), name='filters'),
 
-    path('get-ids/', views.get_ids, name='ids'),  
-    path('add-ids/', views.add_ids, name='add_ids'),
-
+    path('get-ids/', AddStudentIds.as_view(), name='ids'),
     path('student/<pk>/educational/history/json/', EmploymentHistoryJson.as_view(), name="employment_history_json")
 ]

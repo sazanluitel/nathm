@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.decorators import method_decorator
 from django.views import View
 from students.forms import StudentAddForm,KioskForm, StudentEditForm
 from userauth.forms import *
@@ -23,8 +24,9 @@ def student_list(request):
     return render(request, 'dashboard/students/list.html', {'form': form})
 
 
-def add_ids(request):
-    if request.method == "POST":
+@method_decorator(csrf_exempt, name='dispatch')
+class AddStudentIds(View):
+    def post(self, request, *args, **kwargs):
         student_id = request.POST.get('student_id')
         college_email = request.POST.get('college_email')
         teams_id = request.POST.get('teams_id')
@@ -32,12 +34,21 @@ def add_ids(request):
         student = get_object_or_404(Student, id=student_id)
         student.college_email = college_email
         student.team_id = teams_id
+
         student.save()
 
-        # Redirect to the student list page
-        return HttpResponseRedirect(reverse('student_admin:list'))
+        label = "Add Ids"
+        if student.college_email or student.team_id:
+            label = "Update Ids"
 
-    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+        return JsonResponse({
+            'success': True,
+            'message': 'IDs added successfully',
+            'label': label,
+            'student_id': student.id,
+            "email": student.college_email,
+            "team_id": student.team_id
+        })
 
 
 def get_ids(request):
@@ -193,7 +204,7 @@ class StudentAjax(View):
                 student.campus.name,
                 student.department.name,
                 student.program.name,
-                self.get_action(student.id)
+                self.get_action(student)
             ])
 
         return JsonResponse({
@@ -208,15 +219,24 @@ class StudentAjax(View):
                 f'class="form-check-input" type="checkbox" name="_selected_id"'
                 f' value="{student_id}" id="checkbox_{student_id}_question"></div>'),
 
-    def get_action(self, student_id):
+    def get_action(self, student):
+        student_id = student.id
         edit_url = reverse('student_admin:edit', kwargs={'id': student_id})
         delete_url = reverse('dashboard:delete')
         backurl = reverse('student_admin:list')
 
+        if not student.college_email:
+            ids_button = (f'<button type="button" class="btn btn-primary btn-sm addIdsModal" '
+                          f'data-studentid="{student_id}">Add IDs</button>')
+        else:
+            ids_button = (f'<button type="button" class="btn btn-primary btn-sm addIdsModal" '
+                          f'data-studentid="{student_id}" data-email="{student.college_email}"'
+                          f' data-teamid="{student.team_id}">Update IDs</button>')
+
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
                 <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
-                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addIdsModal" onclick="openAddIdsModal({student_id})">Add IDs</button>
+                {ids_button}
                 <input type="hidden" name="_selected_id" value="{student_id}" />
                 <input type="hidden" name="_selected_type" value="student" />
                 <input type="hidden" name="_back_url" value="{backurl}" />

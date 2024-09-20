@@ -311,4 +311,59 @@
 
     $(document).on("change", "#why_us", handle_whychoose_change)
     handle_whychoose_change();
+
+
+    $(document).on("click", ".addIdsModal", function () {
+        const student_id = $(this).data("studentid");
+        const email = $(this).data("email");
+        const teamid = $(this).data("teamid");
+
+        const modal = $(document).find("#addIdsModal");
+        modal.find("#student_id").val(student_id);
+        if (email) {
+            modal.find("#college_email").val(email);
+        }
+
+        if (teamid) {
+            modal.find("#teams_id").val(teamid);
+        }
+
+        modal.modal("show");
+    })
+
+    $(document).on("submit", "#add-ids-form", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const form = $(this);
+        const prevBtn = form.find("[type=submit]");
+        let prevHTML = prevBtn.html();
+
+        const student_id = form.find("#student_id").val();
+        const rowButton = $(document).find(`.addIdsModal[data-studentid="${student_id}"]`);
+
+        const formData = $(this).serialize();
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: formData,
+            beforeSend: function () {
+                prevBtn.attr("disabled", true).html("Please wait . . .");
+            },
+            success: function (response) {
+                rowButton.attr("data-studentid", response?.student_id);
+                rowButton.attr("data-email", response?.email);
+                rowButton.attr("data-teamid", response?.team_id);
+                rowButton.html(response?.label || "Add Ids");
+                form.find("input").val("");
+                form.closest(".modal").modal("hide");
+            },
+            error: function (xhr, status, error) {
+                alert('An error occurred while updating ids.');
+            },
+            complete: function () {
+                prevBtn.attr("disabled", false).html(prevHTML);
+            }
+        });
+    })
 })(jQuery);
