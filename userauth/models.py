@@ -132,7 +132,19 @@ class PersonalInfo(models.Model):
 
 
 class Sections(models.Model):
+    SEMESTER_CHOICES = [
+        ('1', "First Semester"),
+        ('2', "Second Semester"),
+        ('3', "Third Semester"),
+        ('4', "Fourth Semester"),
+        ('5', "Fifth Semester"),
+        ('6', "Sixth Semester"),
+        ('7', "Seventh Semester"),
+        ('8', "Eighth Semester"),
+    ]
     section_name = models.CharField(max_length=255)
     campus = models.ForeignKey("dashboard.Campus", on_delete=models.CASCADE)
     program = models.ForeignKey('dashboard.Program', on_delete=models.CASCADE)
+    year = models.IntegerField()
+    semester = models.CharField(max_length=255, choices=SEMESTER_CHOICES)
     user = models.ManyToManyField('userauth.User')

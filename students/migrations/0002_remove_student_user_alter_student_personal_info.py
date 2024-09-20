@@ -15,10 +15,5 @@ class Migration(migrations.Migration):
         migrations.RemoveField(
             model_name='student',
             name='user',
-        ),
-        migrations.AlterField(
-            model_name='student',
-            name='personal_info',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='userauth.personalinfo'),
-        ),
+        )
     ]

@@ -4116,3 +4116,14 @@ body .modal{
 body .modal-backdrop{
     z-index: 999999999;
 }
+
+.student_lists_table .dt-container .row:first-child > div:first-child{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap:15px;
+}
+
+body .form-check-input{
+    border-color: #ccc;
+}

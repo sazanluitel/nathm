@@ -162,7 +162,7 @@ class StudentAjax(View):
         department_id = request.GET.get("department", None)
         page_number = (start // length) + 1
 
-        students = Student.objects.select_related('campus', 'department', 'program')
+        students = Student.objects.select_related('campus', 'department', 'program').order_by("-id")
 
         if campus_id:
             students = students.filter(campus_id=campus_id)
@@ -205,7 +205,7 @@ class StudentAjax(View):
 
     def get_checkbox_html(self, student_id):
         return (f'<div class="form-check"><label for="checkbox_{student_id}_question"></label><input '
-                f'class="form-check-input delete_single_checkbox" type="checkbox" name="_selected_id"'
+                f'class="form-check-input" type="checkbox" name="_selected_id"'
                 f' value="{student_id}" id="checkbox_{student_id}_question"></div>'),
 
     def get_action(self, student_id):
@@ -216,7 +216,7 @@ class StudentAjax(View):
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
                 <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addIdsModal" onclick="openAddIdsModal({student_id})">Add IDs</button>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addIdsModal" onclick="openAddIdsModal({student_id})">Add IDs</button>
                 <input type="hidden" name="_selected_id" value="{student_id}" />
                 <input type="hidden" name="_selected_type" value="student" />
                 <input type="hidden" name="_back_url" value="{backurl}" />

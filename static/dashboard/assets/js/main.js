@@ -145,10 +145,14 @@
         const datatableAjaxElement = $(document).find('.ajaxdatatable');
         if (datatableAjaxElement.length > 0) {
             try {
-                const table = datatableAjaxElement.DataTable({
+                const table = datatableAjaxElement.on('init.dt', function () {
+                    $(document).find(".student_lists_table .dt-container .row:first-child > div:first-child").append(`<button disabled type="button" class="btn btn-primary" id="student_create_section">Create Section</button>`)
+                }).DataTable({
                     lengthChange: true,
                     serverSide: true,
                     order: [],
+                    ordering: false,
+                    responsive: true,
                     ajax: {
                         url: datatableAjaxElement.data("ajax"),
                         type: 'GET',
@@ -159,7 +163,7 @@
                         }
                     },
                     drawCallback: function (dt) {
-                        initializeSelect2();  // If you have custom initialization logic, replace this line.
+
                     },
                     language: {
                         emptyTable: datatableAjaxElement.data("nodata") ?? 'No data available'
@@ -167,21 +171,6 @@
                     processing: true,
                     errorCallback: function (settings, xhr, errorthrown) {
                         console.error('DataTables Ajax error:', errorthrown);
-                    }
-                });
-
-                // Fetch and populate dropdowns
-                $.ajax({
-                    url: "{% url 'students_filters' %}",  // URL to fetch filter options
-                    type: "GET",
-                    success: function (response) {
-                        if (response.success) {
-                            populateDropdown('#campus-filter', response.campuses);
-                            populateDropdown('#program-filter', response.programs);
-                            populateDropdown('#department-filter', response.departments);
-                        } else {
-                            alert('Error fetching filter options.');
-                        }
                     }
                 });
 
@@ -194,6 +183,35 @@
                 console.log(error);
             }
         }
+
+        let student_ids = [];
+
+        function enable_or_disable_button() {
+            console.log(student_ids)
+            const $studentCreateSection = $("#student_create_section");
+            if ($studentCreateSection.length) {
+                $studentCreateSection.prop("disabled", student_ids.length === 0);
+            }
+        }
+
+        function updateStudentIds() {
+            student_ids = $(".student_lists_table tbody input[type=checkbox]:checked").map(function () {
+                return $(this).val();
+            }).get();
+            enable_or_disable_button();
+        }
+
+        $(document).on("change", ".student_lists_table tbody input[type=checkbox]", updateStudentIds);
+
+        $("#allCheckbox").on("change", function (e) {
+            e.preventDefault();
+
+            const isChecked = $(this).is(":checked");
+            const $checkboxes = $(".student_lists_table tbody input[type=checkbox]");
+            $checkboxes.prop("checked", isChecked);
+            updateStudentIds();
+        });
+
 
         function populateDropdown(selector, options) {
             const $dropdown = $(selector);

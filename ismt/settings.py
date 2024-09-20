@@ -86,7 +86,7 @@ WSGI_APPLICATION = "ismt.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 #
-LIVE_DATABASE = config("LIVE_DATABASE", False)
+LIVE_DATABASE = config("LIVE_DATABASE", False).lower() in ['true', '1']
 if LIVE_DATABASE:
     DATABASES = {
         'default': {
