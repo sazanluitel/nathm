@@ -366,4 +366,22 @@
             }
         });
     })
+
+    $(document).on("click", ".sameAsPermanent", function(){
+        const address = $(document).find("[name='permanent-address']").val();
+        const city = $(document).find("[name='permanent-city']").val();
+        const province = $(document).find("[name='permanent-province']").val();
+        const country = $(document).find("[name='permanent-country']").val();
+        const postcode = $(document).find("[name='permanent-postcode']").val();
+        const contactnumber = $(document).find("[name='permanent-contact_number']").val();
+
+        console.log(address, city, province, country, postcode, contactnumber);
+
+        $(document).find("[name='temporary-address']").val(address);
+        $(document).find("[name='temporary-city']").val(city);
+        $(document).find("[name='temporary-province']").val(province);
+        $(document).find("[name='temporary-country']").val(country);
+        $(document).find("[name='temporary-postcode']").val(postcode);
+        $(document).find("[name='temporary-contact_number']").val(contactnumber);
+    })
 })(jQuery);
