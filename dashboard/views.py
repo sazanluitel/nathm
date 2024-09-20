@@ -568,6 +568,26 @@ class DeleteHelper:
         return self.get_objects(ids, EducationHistory, "Educational History", None, student_title,
                                 student_kwargs)
 
+    def get_employment_history(self, ids):
+        def student_title(obj):
+            return obj.title
+
+        def student_kwargs(student):
+            return None
+
+        return self.get_objects(ids, EmploymentHistory, "Employment History", None, student_title,
+                                student_kwargs)
+
+    def get_englishtest_history(self, ids):
+        def student_title(obj):
+            return obj.test
+
+        def student_kwargs(student):
+            return None
+
+        return self.get_objects(ids, EnglishTest, "English Test", None, student_title,
+                                student_kwargs)
+
     def get_titles(self, post_type: str, total):
         if post_type == "program":
             return "Programs" if total > 1 else "Program"
@@ -601,6 +621,10 @@ class DeleteHelper:
                 objects, originals = self.get_student(selected_ids)
             elif delete_type == "educational_history":
                 objects, originals = self.get_educational_history(selected_ids)
+            elif delete_type == "employment_history":
+                objects, originals = self.get_employment_history(selected_ids)
+            elif delete_type == "englishtest":
+                objects, originals = self.get_englishtest_history(selected_ids)
 
         return objects, originals
 

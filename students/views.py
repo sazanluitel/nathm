@@ -275,7 +275,7 @@ class KioskView(View):
         return render(request, 'dashboard/kiosk/add.html', {'form': form})
 
 
-class EmploymentHistoryJson(View):
+class EducationalHistoryJson(View):
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
         start = int(request.GET.get("start", 0))
@@ -339,4 +339,118 @@ class EmploymentHistoryJson(View):
             return JsonResponse({'success': True, 'message': 'Education history added successfully.'})
         return JsonResponse({'errors': form.errors, 'status': 'error'}, status=400)
 
+
+class EnglishTestHistoryJson(View):
+    def get(self, request, *args, **kwargs):
+        draw = int(request.GET.get("draw", 1))
+        start = int(request.GET.get("start", 0))
+        length = int(request.GET.get("length", 10))
+        page_number = (start // length) + 1
+
+        student = Student.objects.filter(id=kwargs.get("pk")).first()
+        english_test = EnglishTest.objects.filter(user=student.user).order_by('-id')
+        paginator = Paginator(english_test, length)
+        english_test_history = paginator.page(page_number)
+
+        data = []
+        for history in english_test_history:
+            data.append([
+                history.test,
+                history.score,
+                history.date,
+                self.get_action(student.id, history.id, history.files)
+            ])
+
+        return JsonResponse({
+            "draw": draw,
+            "recordsTotal": paginator.count,
+            "recordsFiltered": paginator.count,
+            "data": data,
+        }, status=200)
+
+    def get_action(self, student_id, obj_id, file):
+        delete_url = reverse('dashboard:delete')
+        backurl = reverse('student_admin:edit', kwargs={
+            'id': student_id
+        })
+
+        view_file = ""
+        if file:
+            view_file = f'<a href="{file}" class="btn btn-primary btn-sm" target="_blank">View File</a>'
+
+        return f'''
+            <form method="post" action="{delete_url}" class="button-group">
+                {view_file}
+                <input type="hidden" name="_selected_id" value="{obj_id}" />
+                <input type="hidden" name="_selected_type" value="englishtest" />
+                <input type="hidden" name="_back_url" value="{backurl}" />
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+        '''
+
+    def post(self, request, *args, **kwargs):
+        form = EnglishTestForm(request.POST, request.FILES)
+        if form.is_valid():
+            englishtest_form = form.save(commit=False)
+            student = Student.objects.filter(id=self.kwargs['pk']).first()
+            englishtest_form.user = student.user
+            englishtest_form.save()
+            return JsonResponse({'success': True, 'message': 'English test saved successfully.'})
+        return JsonResponse({'errors': form.errors, 'status': 'error'}, status=400)
+
+
+class EmploymentHistoryJson(View):
+    def get(self, request, *args, **kwargs):
+        draw = int(request.GET.get("draw", 1))
+        start = int(request.GET.get("start", 0))
+        length = int(request.GET.get("length", 10))
+        page_number = (start // length) + 1
+
+        student = Student.objects.filter(id=kwargs.get("pk")).first()
+        english_test = EmploymentHistory.objects.filter(user=student.user).order_by('-id')
+        paginator = Paginator(english_test, length)
+        english_test_history = paginator.page(page_number)
+
+        data = []
+        for history in english_test_history:
+            data.append([
+                history.employer_name,
+                history.title,
+                history.start_date,
+                history.end_date,
+                history.job_description,
+                self.get_action(student.id, history.id)
+            ])
+
+        return JsonResponse({
+            "draw": draw,
+            "recordsTotal": paginator.count,
+            "recordsFiltered": paginator.count,
+            "data": data,
+        }, status=200)
+
+    def get_action(self, student_id, obj_id):
+        delete_url = reverse('dashboard:delete')
+        backurl = reverse('student_admin:edit', kwargs={
+            'id': student_id
+        })
+
+        return f'''
+            <form method="post" action="{delete_url}" class="button-group">
+                <input type="hidden" name="_selected_id" value="{obj_id}" />
+                <input type="hidden" name="_selected_type" value="employment_history" />
+                <input type="hidden" name="_back_url" value="{backurl}" />
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+        '''
+
+    def post(self, request, *args, **kwargs):
+        form = EmploymentHistoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            employment_form = form.save(commit=False)
+            student = Student.objects.filter(id=self.kwargs['pk']).first()
+            employment_form.user = student.user
+            employment_form.save()
+            return JsonResponse({'success': True, 'message': 'Employment history saved saved successfully.'})
+        return JsonResponse({'errors': form.errors, 'status': 'error'}, status=400)
 
