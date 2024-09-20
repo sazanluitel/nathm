@@ -11,7 +11,7 @@
 
 {% block rightbutton %}
   <div class="d-flex justify-content-end mb-2">
-    <a href="{% url 'students:addstudent' %}" class="btn btn-primary mt-3">Add New Student</a>
+    <a href="{% url 'student_admin:add' %}" class="btn btn-primary mt-3">Add New Student</a>
   </div>
 {% endblock %}
 
@@ -57,7 +57,7 @@
 
         <div class="dt-responsive">
           <div style="overflow-x: auto;">
-            <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'students:studentajax' %}" data-nodata="No Data Found">
+            <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'student_admin:ajax' %}" data-nodata="No Data Found">
               <thead>
                 <tr>
                   <th>
@@ -89,7 +89,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="add-ids-form" method="POST" action="{% url 'students:add_ids' %}">
+          <form id="add-ids-form" method="POST" action="{% url 'student_admin:add_ids' %}">
             {% csrf_token %}
             <input type="hidden" id="student_id" name="student_id" />
 

@@ -6,7 +6,7 @@
 {% block content %}
     <div class="row">
         <div class="col-sm-12">
-            <form method="post" enctype="multipart/form-data" action="{% url 'students:studentedit' id=student_id %}">
+            <form method="post" enctype="multipart/form-data" action="{% url 'student_admin:edit' id=student_id %}">
                 {% csrf_token %}
                 {% with messages=messages %}
                     {% include 'dashboard/alert.html' %}
@@ -417,7 +417,7 @@
                         <div id="education_history_container" class="table-responsive">
                             <table
                                     class="table student-datatable table-bordered"
-                                    data-ajax="{% url 'students:employment_history_json' pk=student_id %}"
+                                    data-ajax="{% url 'student_admin:employment_history_json' pk=student_id %}"
                             >
                                 <thead>
                                     <tr>
@@ -512,7 +512,7 @@
                 </div>
                 <div class="flex mb-5 ms-3">
                     <button type="submit" class="btn btn-success mt-3">Submit</button>
-                    <a href="{% url "students:studentlist" %}" class="btn btn-secondary mt-3">Cancel</a>
+                    <a href="{% url "student_admin:list" %}" class="btn btn-secondary mt-3">Cancel</a>
                 </div>
             </form>
         </div>

@@ -25,9 +25,12 @@ urlpatterns = [
     path('', redirect_to_dashboard_or_login, name='home'),
 
     path("", include("userauth.urls", namespace="userauth")),
-    path("", include("dashboard.urls", namespace="dashboard")),
-    path("", include("students.urls", namespace="students")),
+    path("admin/", include("dashboard.urls", namespace="dashboard")),
+    
     path('', include ('filehub.urls', namespace="filehub")),
+
+    path("", include("students.urls", namespace="students")),
+    path("admin/", include("students.admin_urls", namespace="student_admin")),
 ]
 
 if settings.DEBUG:
