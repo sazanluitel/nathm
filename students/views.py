@@ -319,9 +319,13 @@ class EducationalHistoryJson(View):
             'id': student_id
         })
 
+        view_file = ""
+        if file and file != "None":
+            view_file = f'<a href="{file}" class="btn btn-primary btn-sm" target="_blank">View File</a>'
+
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
-                <a href="{file}" class="btn btn-primary btn-sm" target="_blank">View File</a>
+                {view_file}
                 <input type="hidden" name="_selected_id" value="{obj_id}" />
                 <input type="hidden" name="_selected_type" value="educational_history" />
                 <input type="hidden" name="_back_url" value="{backurl}" />
@@ -375,7 +379,7 @@ class EnglishTestHistoryJson(View):
         })
 
         view_file = ""
-        if file:
+        if file and file != "None":
             view_file = f'<a href="{file}" class="btn btn-primary btn-sm" target="_blank">View File</a>'
 
         return f'''
