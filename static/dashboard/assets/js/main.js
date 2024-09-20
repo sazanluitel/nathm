@@ -324,6 +324,7 @@
             modal.find("#college_email").val(email);
         }
 
+
         if (teamid) {
             modal.find("#teams_id").val(teamid);
         }
