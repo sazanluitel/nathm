@@ -127,3 +127,49 @@
     </div>
   </div>
 </div>
+
+<!-- Modal for Add section -->
+<div class="modal fade" id="addSectionModal" tabindex="-1" aria-labelledby="addSectionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addSectionModalLabel">Add Section</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addSectionModal" method="POST">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="{{ employment_history_form.employer_name.id_for_label }}" class="form-label">Comapany Name:</label>
+              {{ employment_history_form.employer_name }}
+              {% include "parts/error.html" with errors=employment_history_form.employer_name.errors %}
+          </div>
+          <div class="col-md-6 mb-3">
+              <label for="{{ employment_history_form.title.id_for_label }}" class="form-label">Position:</label>
+              {{ employment_history_form.title }}
+              {% include "parts/error.html" with errors=employment_history_form.title.errors %}
+          </div>
+          <div class="col-md-6 mb-3">
+              <label for="{{ employment_history_form.start_date.id_for_label }}" class="form-label">Start Date:</label>
+              {{ employment_history_form.start_date }}
+              {% include "parts/error.html" with errors=employment_history_form.start_date.errors %}
+          </div>
+          <div class="col-md-6 mb-3">
+              <label for="{{ employment_history_form.end_date.id_for_label }}" class="form-label">End Date:</label>
+              {{ employment_history_form.end_date }}
+              {% include "parts/error.html" with errors=employment_history_form.end_date.errors %}
+          </div>
+          <div class="col-md-12 mb-3">
+              <label for="{{ employment_history_form.job_description.id_for_label }}" class="form-label">Job Description:</label>
+              {{ employment_history_form.job_description }}
+              {% include "parts/error.html" with errors=employment_history_form.job_description.errors %}
+          </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
