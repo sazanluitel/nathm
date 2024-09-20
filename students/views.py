@@ -256,3 +256,69 @@ class KioskView(View):
         form = StudentAddForm()
         return render(request, 'dashboard/kiosk/add.html', {'form': form})
 
+
+class EmploymentHistoryJson(View):
+    def get(self, request, *args, **kwargs):
+        draw = int(request.GET.get("draw", 1))
+        start = int(request.GET.get("start", 0))
+        length = int(request.GET.get("length", 10))
+        search_value = request.GET.get("search[value]", None)
+        page_number = (start // length) + 1
+
+        student = Student.objects.filter(id=kwargs.get("pk")).first()
+        educations_history = EducationHistory.objects.filter(user=student.user).order_by('-id')
+        if search_value:
+            educations_history = educations_history.filter(
+                Q(degree_name__icontains=search_value) |
+                Q(institution_name__icontains=search_value) |
+                Q(graduation_year__icontains=search_value) |
+                Q(major_subject__icontains=search_value)
+            )
+
+        paginator = Paginator(educations_history, length)
+        educations_history = paginator.page(page_number)
+
+        data = []
+        for history in educations_history:
+            data.append([
+                history.degree_name,
+                history.institution_name,
+                history.graduation_year,
+                history.major_subject,
+                self.get_action(student.id, history.id, history.file)
+            ])
+
+        return JsonResponse({
+            "draw": draw,
+            "recordsTotal": paginator.count,
+            "recordsFiltered": paginator.count,
+            "data": data,
+        }, status=200)
+
+    def get_action(self, student_id, obj_id, file):
+        delete_url = reverse('dashboard:delete')
+        backurl = reverse('students:studentedit', kwargs={
+            'id': student_id
+        })
+
+        return f'''
+            <form method="post" action="{delete_url}" class="button-group">
+                <a href="{file}" class="btn btn-primary btn-sm" target="_blank">View File</a>
+                <input type="hidden" name="_selected_id" value="{obj_id}" />
+                <input type="hidden" name="_selected_type" value="educational_history" />
+                <input type="hidden" name="_back_url" value="{backurl}" />
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+        '''
+
+    def post(self, request, *args, **kwargs):
+        form = EducationHistoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            education_history = form.save(commit=False)
+            student = Student.objects.filter(id=self.kwargs['pk']).first()
+            education_history.user = student.user
+            education_history.save()
+            return JsonResponse({'success': True, 'message': 'Education history added successfully.'})
+        return JsonResponse({'errors': form.errors, 'status': 'error'}, status=400)
+
+

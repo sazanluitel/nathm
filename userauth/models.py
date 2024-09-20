@@ -19,6 +19,17 @@ class UserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
+ROLE_CHOICES = [
+    ('admin', 'Admin'),
+    ('college', 'College'),
+    ('it', 'IT Support'),
+    ('student_service', 'Student Service Department'),
+    ('student', 'Student'),
+    ('teacher', 'Teacher'),
+    ('parent', 'Parent'),
+]
+
+
 class User(AbstractUser):
     title = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
@@ -27,6 +38,7 @@ class User(AbstractUser):
     middle_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100)
     profile_image = models.TextField(blank=True, null=True)
+    role = models.CharField(max_length=100, choices=ROLE_CHOICES, default="student")
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ['username']
@@ -55,6 +67,7 @@ class AddressInfo(models.Model):
 
 
 class EducationHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     degree_name = models.CharField(max_length=100)
     institution_name = models.CharField(max_length=100)
     graduation_year = models.IntegerField()
@@ -63,6 +76,7 @@ class EducationHistory(models.Model):
 
 
 class EnglishTest(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     TESTS = [
         ('TOEFL', 'TOEFL'),
         ('IELTS', 'IELTS'),
@@ -77,6 +91,7 @@ class EnglishTest(models.Model):
 
 
 class EmploymentHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     employer_name = models.CharField(max_length=100)
     title = models.CharField(max_length=100)
     start_date = models.DateField()
@@ -113,7 +128,11 @@ class PersonalInfo(models.Model):
                                           null=True, blank=True)
     temporary_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='temporary_address',
                                           null=True, blank=True)
-    educational_history = models.ManyToManyField(EducationHistory, blank=True)
-    english_test = models.ManyToManyField(EnglishTest, blank=True)
-    employment_history = models.ManyToManyField(EmploymentHistory, blank=True)
     emergency_contact = models.ForeignKey(EmergencyContact, on_delete=models.CASCADE, null=True, blank=True)
+
+
+class Sections(models.Model):
+    section_name = models.CharField(max_length=255)
+    campus = models.ForeignKey("dashboard.Campus", on_delete=models.CASCADE)
+    program = models.ForeignKey('dashboard.Program', on_delete=models.CASCADE)
+    user = models.ManyToManyField('userauth.User')

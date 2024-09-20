@@ -4108,3 +4108,11 @@ body .invalid-feedback{
     --bs-alert-border-color: var(--bs-danger-border-subtle);
     --bs-alert-link-color: var(--bs-danger-text-emphasis);
 }
+
+body .modal{
+    z-index: 9999999999;
+}
+
+body .modal-backdrop{
+    z-index: 999999999;
+}

@@ -14,4 +14,6 @@ urlpatterns = [
 
     path('get-ids/', views.get_ids, name='get_ids'),  # URL to fetch existing data
     path('add-ids/', views.add_ids, name='add_ids'),
+
+    path('student/<pk>/educational/history/json/', EmploymentHistoryJson.as_view(), name="employment_history_json")
 ]
