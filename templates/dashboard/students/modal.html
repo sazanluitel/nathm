@@ -7,7 +7,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="educationHistoryForm" method="POST">
+        <form id="educationHistoryForm" method="POST" action="{% url 'students:studentedit' id=student_id %}">
           {% csrf_token %}
           <div class="col-md-4 mb-3">
               <label for="{{ form.education_history_form.degree_name.id_for_label }}" class="form-label">Degree Name:</label>
@@ -121,71 +121,3 @@
     </div>
   </div>
 </div>
-<script>
-$(document).ready(function(){
-    // AJAX form submission for Education History Form
-    $('#educationHistoryForm').on('submit', function(event){
-        event.preventDefault();
-        $.ajax({
-            url: "{% url 'your_view_url' %}",
-            type: "POST",
-            data: $(this).serialize(),
-            success: function(response){
-                if (response.success) {
-                    // Handle success (e.g., close modal, show success message)
-                    $('#educationHistoryModal').modal('hide');
-                    alert('Education history added successfully!');
-                } else {
-                    // Handle validation errors
-                    alert('Error: ' + JSON.stringify(response.errors));
-                }
-            },
-            error: function(xhr, status, error){
-                console.log(error);
-            }
-        });
-    });
-$('#englishTestForm').on('submit', function(event){
-        event.preventDefault();
-        $.ajax({
-            url: "{% url 'your_view_url' %}",
-            type: "POST",
-            data: $(this).serialize(),
-            success: function(response){
-                if (response.success) {
-                    // Handle success (e.g., close modal, show success message)
-                    $('#englishTestModal').modal('hide');
-                    alert('English Test added successfully!');
-                } else {
-                    // Handle validation errors
-                    alert('Error: ' + JSON.stringify(response.errors));
-                }
-            },
-            error: function(xhr, status, error){
-                console.log(error);
-            }
-        });
-    });
-    $('#employmentHistoryForm').on('submit', function(event){
-        event.preventDefault();
-        $.ajax({
-            url: "{% url 'your_view_url' %}",
-            type: "POST",
-            data: $(this).serialize(),
-            success: function(response){
-                if (response.success) {
-                    // Handle success (e.g., close modal, show success message)
-                    $('#employmentHistoryModal').modal('hide');
-                    alert('Employment history added successfully!');
-                } else {
-                    // Handle validation errors
-                    alert('Error: ' + JSON.stringify(response.errors));
-                }
-            },
-            error: function(xhr, status, error){
-                console.log(error);
-            }
-        });
-    });
-});
-</script>

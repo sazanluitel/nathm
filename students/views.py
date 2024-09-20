@@ -61,6 +61,18 @@ def get_ids(request):
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
+def student_edit_view(request, id):
+    student = get_object_or_404(Student, id=id)  # Fetch the student object by id
+    education_history_form = EducationHistoryForm()
+    english_test_form = EnglishTestForm()
+    employment_history_form = EmploymentHistoryForm()
+
+    return render(request, 'dashboard/students/edit.html', {
+        'student': student,
+        'education_history_form': education_history_form,
+        'english_test_form': english_test_form,
+        'employment_history_form': employment_history_form,
+    })
 
 class StudentView(View):
     template_name = 'dashboard/students/add.html'
@@ -108,7 +120,7 @@ class StudentView(View):
 
 
 class StudentEditView(View):
-    template_name = 'dashboard/students/add.html'
+    template_name = 'dashboard/students/edit.html'
 
     def get(self, request, *args, **kwargs):
         student_id = kwargs.pop('id', None)
