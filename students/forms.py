@@ -141,16 +141,15 @@ class StudentForm(forms.ModelForm):
 class StudentAddForm:
     def __init__(self, *args, **kwargs):
         data = kwargs.get('data')
-        files = kwargs.get('files')
 
-        self.user_form = UserForm(data=data, files=files)
-        self.permanent_address_form = AddressInfoForm(prefix="permanent", data=data, files=files)
-        self.temporary_address_form = AddressInfoForm(prefix="temporary", data=data, files=files)
-        self.payment_address_form = AddressInfoForm(prefix="payment", data=data, files=files)
-        self.personal_info_form = PersonalInfoForm(data=data, files=files)
-        self.emergency_contact_form = EmergencyContactForm(data=data, files=files)
-        self.emergency_address_form = AddressInfoForm(prefix="emergency_address", data=data, files=files)
-        self.student_form = StudentForm(data=data, files=files)
+        self.user_form = UserForm(data=data)
+        self.permanent_address_form = AddressInfoForm(prefix="permanent", data=data)
+        self.temporary_address_form = AddressInfoForm(prefix="temporary", data=data)
+        self.payment_address_form = AddressInfoForm(prefix="payment", data=data)
+        self.personal_info_form = PersonalInfoForm(data=data)
+        self.emergency_contact_form = EmergencyContactForm(data=data)
+        self.emergency_address_form = AddressInfoForm(prefix="emergency_address", data=data)
+        self.student_form = StudentForm(data=data)
 
     def is_valid(self):
         registration_forms = [
@@ -224,12 +223,16 @@ class StudentEditForm:
             raise ValueError('Personal Info instance must be provided')
 
         self.user_form = UserForm(instance=instance.user, data=data)
-        self.permanent_address_form = AddressInfoForm(prefix="permanent", data=data, instance=personalinfo_instance.permanent_address)
-        self.temporary_address_form = AddressInfoForm(prefix="temporary", data=data, instance=personalinfo_instance.temporary_address)
+        self.permanent_address_form = AddressInfoForm(prefix="permanent", data=data,
+                                                      instance=personalinfo_instance.permanent_address)
+        self.temporary_address_form = AddressInfoForm(prefix="temporary", data=data,
+                                                      instance=personalinfo_instance.temporary_address)
         self.payment_address_form = AddressInfoForm(prefix="payment", data=data, instance=instance.payment_address)
         self.personal_info_form = PersonalInfoForm(instance=personalinfo_instance, data=data)
         self.emergency_contact_form = EmergencyContactForm(instance=personalinfo_instance.emergency_contact, data=data)
-        self.emergency_address_form = AddressInfoForm(prefix="emergency_address", instance=personalinfo_instance.emergency_contact.address, data=data)
+        self.emergency_address_form = AddressInfoForm(prefix="emergency_address",
+                                                      instance=personalinfo_instance.emergency_contact.address,
+                                                      data=data)
         self.student_form = StudentForm(instance=instance, data=data)
 
     def is_valid(self):
@@ -290,3 +293,33 @@ class StudentEditForm:
 
             return instance
 
+
+class KioskForm:
+    def __init__(self, data=None):
+        self.user_form = UserForm(data)
+        self.student_form = StudentForm(data)
+        self.permanent_address_form = AddressInfoForm(data, prefix='permanent')
+        self.temporary_address_form = AddressInfoForm(data, prefix='temporary')
+
+    def is_valid(self):
+        return (self.user_form.is_valid() and
+                self.student_form.is_valid() and
+                self.permanent_address_form.is_valid() and
+                self.temporary_address_form.is_valid())
+
+    def save(self):
+        user = self.user_form.save()
+        student = self.student_form.save(commit=False)
+        student.user = user  # Assuming there's a foreign key relation with the user
+        student.save()
+
+        # Save addresses with student reference
+        permanent_address = self.permanent_address_form.save(commit=False)
+        permanent_address.student = student
+        permanent_address.address_type = 'permanent'
+        permanent_address.save()
+
+        temporary_address = self.temporary_address_form.save(commit=False)
+        temporary_address.student = student
+        temporary_address.address_type = 'temporary'
+        temporary_address.save()

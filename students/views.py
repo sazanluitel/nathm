@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from students.forms import StudentAddForm, StudentEditForm
+from students.forms import StudentAddForm,KioskForm, StudentEditForm
 from userauth.forms import *
 from userauth.models import *
 from students.models import *
@@ -82,7 +82,7 @@ class StudentView(View):
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
-        form = StudentAddForm(data=request.POST, files=request.FILES)
+        form = StudentAddForm(data=request.POST)
         if form.is_valid():
             try:
                 form.save()
@@ -98,8 +98,8 @@ class StudentView(View):
 
     def handle_errors(self, form):
         # Print errors for debugging purposes
-        for field, errors in form.errors.items():
-            print(f"Errors for {field}: {errors}")
+        # for field, errors in form.errors.items():
+        #     print(f"Errors for {field}: {errors}")
 
         # Print errors for each sub-form
         form_instances = {
@@ -114,6 +114,7 @@ class StudentView(View):
         }
 
         for form_name, form_instance in form_instances.items():
+            print(f"{form_name} is valid: {form_instance.is_valid()}")
             if not form_instance.is_valid():
                 for field, errors in form_instance.errors.items():
                     print(f"Errors for {form_name} - {field}: {errors}")
@@ -207,7 +208,9 @@ class StudentAjax(View):
         }, status=200)
 
     def get_checkbox_html(self, student_id):
-        return f'<input type="checkbox" name="selected_students" value="{student_id}">'
+        return (f'<div class="form-check"><label for="checkbox_{student_id}_question"></label><input '
+                f'class="form-check-input delete_single_checkbox" type="checkbox" name="_selected_id"'
+                f' value="{student_id}" id="checkbox_{student_id}_question"></div>'),
 
     def get_action(self, student_id):
         edit_url = reverse('students:studentedit', kwargs={'id': student_id})
@@ -239,3 +242,21 @@ class StudentFilters(View):
             'departments': departments,
             'programs': programs,
         })
+    
+
+class KioskView(View):
+    def post(self, request, *args, **kwargs):
+        form = KioskForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'All forms have been submitted successfully.')
+            return redirect('some_success_url')  # Redirect after successful form submission
+        else:
+            messages.error(request, 'There was an error in one or more forms. Please check the fields.')
+            # Return the form with errors back to the user
+            return render(request, 'dashboard/kiosk/add.html', {'form': form})
+
+    def get(self, request, *args, **kwargs):
+        form = StudentAddForm()
+        return render(request, 'dashboard/kiosk/add.html', {'form': form})
+
