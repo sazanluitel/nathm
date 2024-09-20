@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.shortcuts import render, redirect
 from django.views.generic import View
 from django.urls import reverse, reverse_lazy
@@ -22,12 +22,13 @@ from students.models import *
 class DashboardView(View):
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
-        return render(request, 'dashboard/parts/index.html') 
-    
+        return render(request, 'dashboard/parts/index.html')
+
 
 class FileManagerView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'dashboard/parts/filemanager.html')
+
 
 class CampusView(View):
     def post(self, request, *args, **kwargs):
@@ -39,13 +40,14 @@ class CampusView(View):
         else:
             messages.error(request, "Form input is not valid")
             return render(request, 'dashboard/campus/add.html', {'form': form})
-        
+
     def get(self, request, *args, **kwargs):
         form = CampusForm()
         return render(request, 'dashboard/campus/add.html', {
             "form": form
         })
-    
+
+
 class CampusEdit(View):
     def get(self, request, id):
         campus = get_object_or_404(Campus, id=id)
@@ -64,7 +66,7 @@ class CampusEdit(View):
             return redirect('dashboard:campuslist')
         else:
             messages.error(request, "Please correct the errors below.")
-        
+
         return render(request, 'dashboard/campus/edit.html', {
             'form': form,
             'campus_id': id
@@ -75,7 +77,8 @@ class CampusList(View):
     def get(self, request, *args, **kwargs):
         campuses = Campus.objects.all()
         return render(request, 'dashboard/campus/list.html', {'Campus': campuses})
-    
+
+
 class CampusAjax(View):
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
@@ -131,7 +134,7 @@ class CampusAjax(View):
             </form>
         '''
 
-        
+
 class DepartmentView(View):
     def post(self, request, *args, **kwargs):
         form = DepartmentForm(request.POST, request.FILES)
@@ -149,16 +152,19 @@ class DepartmentView(View):
         campus = Campus.objects.all()
         return render(request, 'dashboard/department/add.html', {'form': form, 'campus': campus})
 
+
 class DepartmentList(View):
     def get(self, request, *args, **kwargs):
         departments = Department.objects.all()
         return render(request, 'dashboard/department/list.html', {'department': departments})
-    
+
+
 class DepartmentSelect(View):
-    def get(self, request,id ):
-        departments = Department.objects.filter(campus_id = id).values("id", "name" )
-        return JsonResponse(list(departments), safe = False)
-    
+    def get(self, request, id):
+        departments = Department.objects.filter(campus_id=id).values("id", "name")
+        return JsonResponse(list(departments), safe=False)
+
+
 class DepartmentEdit(View):
     def get(self, request, id):
         department = get_object_or_404(Department, id=id)
@@ -171,19 +177,20 @@ class DepartmentEdit(View):
     def post(self, request, id):
         department = get_object_or_404(Department, id=id)
         form = DepartmentForm(request.POST, request.FILES, instance=department)
-        
+
         if form.is_valid():
             form.save()
             messages.success(request, "Department updated successfully")
             return redirect('dashboard:departmentlist')
         else:
             messages.error(request, "Please correct the errors below.")
-        
+
         return render(request, 'dashboard/department/edit.html', {
             'form': form,
             'department_id': id
         })
-    
+
+
 class DepartmentAjax(View):
     def get_campuses(self, obj):
         output = []
@@ -200,13 +207,13 @@ class DepartmentAjax(View):
 
         departments = Department.objects.all()
         if search_value:
-            departments= departments.filter(
+            departments = departments.filter(
                 Q(name__icontains=search_value) | Q(description__icontains=search_value)
             )
 
         departments = departments.order_by("name")
 
-        paginator = Paginator(departments,length)
+        paginator = Paginator(departments, length)
         page_menu_items = paginator.page(page_number)
 
         data = []
@@ -256,16 +263,18 @@ class ProgramView(View):
             campus = Campus.objects.all()
             messages.error(request, "The form is not valid")
             return render(request, 'dashboard/program/add.html', {'form': form, 'campus': campus})
-        
+
     def get(self, request, *args, **kwargs):
         form = ProgramForm()
         campus = Campus.objects.all()
         return render(request, 'dashboard/program/add.html', {'form': form, 'campus': campus})
-    
+
+
 class ProgramList(View):
     def get(self, request, *args, **kwargs):
         programs = Program.objects.all()
         return render(request, 'dashboard/program/list.html', {'program': programs})
+
 
 class ProgramEdit(View):
     def get(self, request, id):
@@ -279,33 +288,33 @@ class ProgramEdit(View):
     def post(self, request, id):
         program = get_object_or_404(Program, id=id)
         form = ProgramForm(request.POST, request.FILES, instance=program)
-        
+
         if form.is_valid():
             form.save()
             messages.success(request, "Program updated successfully")
             return redirect('dashboard:programlist')
         else:
             messages.error(request, "Please correct the errors below.")
-        
+
         return render(request, 'dashboard/program/edit.html', {
             'form': form,
             'program_id': id
         })
- 
+
+
 class ProgramAjax(View):
     def get_campuses(self, obj):
         output = []
         for campus in obj.campus.all():
             output.append(campus.name)
         return ", ".join(output)
-    
+
     def get_department(self, obj):
         output = []
         for department in obj.department.all():
             output.append(department.name)
         return ", ".join(output)
 
-        
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
         start = int(request.GET.get("start", 0))
@@ -368,6 +377,7 @@ class ProgramAjax(View):
             </form>
         '''
 
+
 class ModulesView(View):
     def post(self, request, *args, **kwargs):
         form = ModulesForm(request.POST)
@@ -379,16 +389,19 @@ class ModulesView(View):
             program = Program.objects.all()
             messages.error(request, "Form is not valid")
             return render(request, 'dashboard/modules/add.html', {'form': form, 'program': program})
+
     def get(self, request, *args, **kwargs):
         program = Program.objects.all()
         form = ModulesForm
         return render(request, 'dashboard/modules/add.html', {'form': form, 'program': program})
-    
+
+
 class ModulesList(View):
     def get(self, request, *args, **kwargs):
         modules = Modules.objects.all()
         return render(request, 'dashboard/modules/list.html', {'module': modules})
-      
+
+
 class ModulesEdit(View):
     def get(self, request, id):
         module = get_object_or_404(Modules, id=id)
@@ -401,19 +414,20 @@ class ModulesEdit(View):
     def post(self, request, id):
         module = get_object_or_404(Modules, id=id)
         form = ModulesForm(request.POST, instance=module)
-        
+
         if form.is_valid():
             form.save()
             messages.success(request, "Module updated successfully")
             return redirect('dashboard:moduleslist')
         else:
             messages.error(request, "Please correct the errors below.")
-        
+
         return render(request, 'dashboard/modules/edit.html', {
             'form': form,
             'module_id': id
         })
-    
+
+
 class ModulesAjax(View):
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
@@ -470,6 +484,7 @@ class ModulesAjax(View):
             </form>
         '''
 
+
 class DeleteHelper:
     def get_objects(self, ids, model, type_title, reverse_name, title_generator, kwargs_generator):
         objects = []
@@ -479,7 +494,10 @@ class DeleteHelper:
                 try:
                     obj = model.objects.get(id=obj_id)
                     title = title_generator(obj)
-                    url = reverse(reverse_name, kwargs=kwargs_generator(obj))
+                    if reverse_name:
+                        url = reverse(reverse_name, kwargs=kwargs_generator(obj))
+                    else:
+                        url = "#"
                     objects_org.append(obj)
                     objects.append({
                         "id": obj.id,
@@ -493,6 +511,7 @@ class DeleteHelper:
             print(e)
             pass
         return objects, objects_org
+
     def get_campus(self, ids):
         def campus_title(campus):
             return campus.name
@@ -501,6 +520,7 @@ class DeleteHelper:
             return {"id": campus.id}
 
         return self.get_objects(ids, Campus, "Campus", "dashboard:campusedit", campus_title, campus_kwargs)
+
     def get_department(self, ids):
         def department_title(department):
             return department.name
@@ -508,7 +528,9 @@ class DeleteHelper:
         def department_kwargs(department):
             return {"id": department.id}
 
-        return self.get_objects(ids, Department, "Department", "dashboard:departmentedit", department_title, department_kwargs)
+        return self.get_objects(ids, Department, "Department", "dashboard:departmentedit", department_title,
+                                department_kwargs)
+
     def get_program(self, ids):
         def program_title(program):
             return program.name
@@ -517,6 +539,7 @@ class DeleteHelper:
             return {"id": program.id}
 
         return self.get_objects(ids, Program, "Program", "dashboard:programedit", program_title, program_kwargs)
+
     def get_modules(self, ids):
         def modules_title(modules):
             return modules.name
@@ -525,7 +548,7 @@ class DeleteHelper:
             return {"id": modules.id}
 
         return self.get_objects(ids, Modules, "Modules", "dashboard:modulesedit", modules_title, modules_kwargs)
-    
+
     def get_student(self, ids):
         def student_title(student):
             return student.user.get_full_name()
@@ -534,7 +557,17 @@ class DeleteHelper:
             return {"id": student.id}
 
         return self.get_objects(ids, Student, "Student", "students:studentedit", student_title, student_kwargs)
-    
+
+    def get_educational_history(self, ids):
+        def student_title(obj):
+            return obj.degree_name
+
+        def student_kwargs(student):
+            return None
+
+        return self.get_objects(ids, EducationHistory, "Educational History", None, student_title,
+                                student_kwargs)
+
     def get_titles(self, post_type: str, total):
         if post_type == "program":
             return "Programs" if total > 1 else "Program"
@@ -566,8 +599,11 @@ class DeleteHelper:
                 objects, originals = self.get_modules(selected_ids)
             elif delete_type == "student":
                 objects, originals = self.get_student(selected_ids)
-            
+            elif delete_type == "educational_history":
+                objects, originals = self.get_educational_history(selected_ids)
+
         return objects, originals
+
 
 class DeleteFinalView(View, DeleteHelper):
     def get(self, request, *args, **kwargs):
@@ -590,7 +626,8 @@ class DeleteFinalView(View, DeleteHelper):
         if back:
             return redirect(back)
         return redirect("dashboard:index")
-    
+
+
 @method_decorator(csrf_exempt, name='dispatch')
 class DeleteView(View, DeleteHelper):
     def post(self, request, *args, **kwargs):
@@ -610,4 +647,3 @@ class DeleteView(View, DeleteHelper):
             "type": delete_type,
             "total": total_objects
         })
-

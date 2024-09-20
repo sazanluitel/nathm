@@ -7,7 +7,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="educationHistoryForm" method="POST" action="{% url 'students:studentedit' id=student_id %}">
+        <form id="educationHistoryForm" method="POST" action="{% url 'students:employment_history_json' pk=student_id %}">
           {% csrf_token %}
           <div class="row">
             <div class="col-md-6 mb-3">
@@ -36,7 +36,7 @@
             {% include "parts/error.html" with errors=education_history_form.file.errors %}
           </div>
           </div>
-          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="submit" class="btn btn-primary w-100">Save</button>
         </form>
       </div>
     </div>
