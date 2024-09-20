@@ -19,34 +19,34 @@
                 console.error('DataTables Ajax error:', errorthrown);
             }
         });
-    })
 
-    $(document).on("submit", ".educationHistoryForm", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
+        $(document).on("submit", "#educationHistoryForm", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
 
-        const form = $(this);
-        const prevBtn = form.find("[type=submit]");
-        const prevHTML = prevBtn.html();
+            const form = $(this);
+            const prevBtn = form.find("[type=submit]");
+            const prevHTML = prevBtn.html();
 
-        const formData = $(this).serialize();
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'POST',
-            data: formData,
-            beforeSend: function(){
-                prevBtn.attr("disabled", true).html("Please wait . . .");
-            },
-            success: function (response) {
-                educationalHistoryTable.ajax.reload();
-                form.closest(".modal").modal("hide");
-            },
-            error: function (xhr, status, error) {
-                alert('An error occurred while submitting the form.');
-            },
-            complete: function(){
-                prevBtn.attr("disabled", false).html(prevHTML);
-            }
-        });
+            const formData = $(this).serialize();
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                beforeSend: function(){
+                    prevBtn.attr("disabled", true).html("Please wait . . .");
+                },
+                success: function (response) {
+                    educationalHistoryTable.ajax.reload();
+                    form.closest(".modal").modal("hide");
+                },
+                error: function (xhr, status, error) {
+                    alert('An error occurred while submitting the form.');
+                },
+                complete: function(){
+                    prevBtn.attr("disabled", false).html(prevHTML);
+                }
+            });
+        })
     })
 })(jQuery)
