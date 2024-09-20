@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     "dashboard",
     "userauth",
     "students",
-    "filehub"
+    "filehub",
+    "itdepartment",
     
 ]
 
