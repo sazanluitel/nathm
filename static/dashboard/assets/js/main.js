@@ -315,8 +315,8 @@
 
     $(document).on("click", ".addIdsModal", function () {
         const student_id = $(this).data("studentid");
-        const email = $(this).data("email");
-        const teamid = $(this).data("teamid");
+        const email = $(this).attr("data-email");
+        const teamid = $(this).attr("data-teamid");
 
         const modal = $(document).find("#addIdsModal");
         modal.find("#student_id").val(student_id);
@@ -351,7 +351,6 @@
                 prevBtn.attr("disabled", true).html("Please wait . . .");
             },
             success: function (response) {
-                rowButton.attr("data-studentid", response?.student_id);
                 rowButton.attr("data-email", response?.email);
                 rowButton.attr("data-teamid", response?.team_id);
                 rowButton.html(response?.label || "Add Ids");
