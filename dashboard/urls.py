@@ -1,19 +1,17 @@
 from django.urls import path
-from django.urls import path
-from .views import *
 
 from .views import *
 
-app_name="dashboard"
+app_name = "dashboard"
 
-urlpatterns=[
-    path('admin/',DashboardView.as_view(), name='index'), 
+urlpatterns = [
+    path('', DashboardView.as_view(), name='index'),
     path("filemanager/", FileManagerView.as_view(), name="filemanager"),
 
     path('campus/add', CampusView.as_view(), name='campus'),
-    path('campus/list',CampusList.as_view(),name='campuslist'),
-    path('campus/edit/<int:id>',CampusEdit.as_view(),name='campusedit'),
-    path('campus/ajax',CampusAjax.as_view(),name='campusajax'),
+    path('campus/list', CampusList.as_view(), name='campuslist'),
+    path('campus/edit/<int:id>', CampusEdit.as_view(), name='campusedit'),
+    path('campus/ajax', CampusAjax.as_view(), name='campusajax'),
 
 
     path('department/add', DepartmentView.as_view(), name='department'),
