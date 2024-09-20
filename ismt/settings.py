@@ -86,23 +86,25 @@ WSGI_APPLICATION = "ismt.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 #
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+LIVE_DATABASE = config("LIVE_DATABASE", False)
+if LIVE_DATABASE:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'ismt',
+            'USER': 'ismt',
+            'PASSWORD': 'ISMTdatabase',
+            'HOST': '93.127.194.205',
+            'PORT': '5432',
+        }
     }
-}
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'ismt',
-#         'USER': 'ismt',
-#         'PASSWORD': 'ISMTdatabase',
-#         'HOST': '93.127.194.205',
-#         'PORT': '5432',
-#     }
-# }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 # Password validation
