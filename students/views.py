@@ -35,7 +35,7 @@ def add_ids(request):
         student.save()
 
         # Redirect to the student list page
-        return HttpResponseRedirect(reverse('students:studentlist'))
+        return HttpResponseRedirect(reverse('student_admin:list'))
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
@@ -74,7 +74,7 @@ class StudentView(View):
             try:
                 form.save()
                 messages.success(request, "Student added/updated successfully")
-                return redirect('students:studentlist')
+                return redirect('student_admin:list')
             except Exception as e:
                 messages.error(request, f"An error occurred while saving: {e}")
         else:
@@ -135,7 +135,7 @@ class StudentEditView(View):
         if form.is_valid():
             form.save()
             messages.success(request, "Student updated successfully")
-            return redirect('students:studentlist')
+            return redirect('student_admin:list')
         else:
             messages.error(request, "Please correct the errors below.")
 
@@ -209,9 +209,9 @@ class StudentAjax(View):
                 f' value="{student_id}" id="checkbox_{student_id}_question"></div>'),
 
     def get_action(self, student_id):
-        edit_url = reverse('students:studentedit', kwargs={'id': student_id})
+        edit_url = reverse('student_admin:edit', kwargs={'id': student_id})
         delete_url = reverse('dashboard:delete')
-        backurl = reverse('students:studentlist')
+        backurl = reverse('student_admin:list')
 
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
@@ -246,10 +246,8 @@ class KioskView(View):
         if form.is_valid():
             form.save()
             messages.success(request, 'All forms have been submitted successfully.')
-            return redirect('some_success_url')  # Redirect after successful form submission
         else:
-            messages.error(request, 'There was an error in one or more forms. Please check the fields.')
-            # Return the form with errors back to the user
+            messages.error(request, 'There was an error in the forms')
             return render(request, 'dashboard/kiosk/add.html', {'form': form})
 
     def get(self, request, *args, **kwargs):
@@ -297,7 +295,7 @@ class EmploymentHistoryJson(View):
 
     def get_action(self, student_id, obj_id, file):
         delete_url = reverse('dashboard:delete')
-        backurl = reverse('students:studentedit', kwargs={
+        backurl = reverse('student_admin:edit', kwargs={
             'id': student_id
         })
 
