@@ -391,24 +391,83 @@
                </div>
             </div>
          </div>
-
          <div class="card mb-4">
+            <div class="card-header py-3 h5">Education History</div>
             <div class="card-body">
-               <div class="col-md-12 mb-3">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#educationHistoryModal">
-                       Add Education History
-                     </button> 
+               <div class="d-flex justify-content-end mb-3">
+                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#educationHistoryModal">
+                        Add Education History
+                     </button>
                </div>
-               <div class="col-md-12 mb-3">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#englishTestModal">
+               <div id="education_history_container" class="table-responsive">
+                     <table class="table table-bordered">
+                        <thead>
+                           <tr>
+                                 <th>Degree</th>
+                                 <th>Institution</th>
+                                 <th>Start Year</th>
+                                 <th>End Year</th>
+                                 <th>Grade</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                     </table>
+               </div>
+            </div>
+         </div>
+         <div class="card mb-4">
+            <div class="card-header py-3 h5">English Test Record</div>
+            <div class="card-body">
+               <div class="d-flex justify-content-end mb-3">
+                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#englishTestModal">
                        Add English Test
                      </button> 
                </div>
-               <div class="col-md-12 mb-3">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employmentHistoryModal">
-                      Add Employment History
-                     </button> 
+               <div id="education_history_container" class="table-responsive">
+                     <table class="table table-bordered">
+                        <thead>
+                           <tr>
+                              <th>Test Name</th>
+                              <th>Score</th>
+                              <th>Date</th>
+                              <th>Grade</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                     </table>
                </div>
+            </div>
+         </div>
+          <div class="card mb-4">
+            <div class="card-header py-3 h5">Employment History</div>
+            <div class="card-body">
+               <!-- Flex container for alignment -->
+               <div class="d-flex justify-content-end mb-3">
+                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employmentHistoryModal">
+                      Add Employment History
+                     </button>
+               </div>
+               <div id="education_history_container" class="table-responsive">
+                     <table class="table table-bordered">
+                        <thead>
+                           <tr>
+                              <th>Company</th>
+                              <th>Position</th>
+                              <th>Start Year</th>
+                              <th>End Year</th>
+                              <th>Job Description</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                     </table>
+               </div>
+            </div>
+         </div>
+         <div class="card mb-4">
+            <div class="card-body">
                <div class="col-md-12 mb-3">
                      <label for="{{ form.student_form.about_us.id_for_label }}" class="form-label">How Did You Know About Us</label>
                      {{ form.student_form.about_us }}
