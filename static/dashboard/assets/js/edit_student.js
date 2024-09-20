@@ -1,7 +1,9 @@
 (function ($) {
     $(document).ready(function () {
         const studentDatatable = $(document).find(".student-datatable");
-        const educationalHistoryTable = studentDatatable.DataTable({
+
+        function update_student_tables(studentDatatable, form){
+            const educationalHistoryTable = studentDatatable.DataTable({
             serverSide: true,
             info: true,
             searching: false,
@@ -19,8 +21,7 @@
                 console.error('DataTables Ajax error:', errorthrown);
             }
         });
-
-        $(document).on("submit", "#educationHistoryForm", function (e) {
+            form.on("submit", function (e) {
             e.preventDefault();
             e.stopPropagation();
 
@@ -48,5 +49,6 @@
                 }
             });
         })
+        }
     })
 })(jQuery)
