@@ -26,42 +26,6 @@ class DashboardView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'dashboard/student_service/index.html')
 
-class StudentEditView(View):
-    template_name = 'dashboard/student_service/edit.html'
-
-    def get(self, request, *args, **kwargs):
-        student_id = kwargs.pop('id', None)
-        student = get_object_or_404(Student, id=student_id)
-        personalinfo = get_object_or_404(PersonalInfo, user=student.user)
-        education_history_form = EducationHistoryForm()
-        english_test_form = EnglishTestForm()
-        employment_history_form = EmploymentHistoryForm()
-        form = StudentEditForm(instance=student, personalinfo_instance=personalinfo)
-        return render(request, self.template_name, {'form': form, 'student_id': student_id,'education_history_form': education_history_form,
-        'english_test_form': english_test_form,
-        'employment_history_form': employment_history_form})
-
-    def post(self, request, id):
-        student = get_object_or_404(Student, id=id)
-        personalinfo = get_object_or_404(PersonalInfo, user=student.user)
-        education_history_form = EducationHistoryForm()
-        english_test_form = EnglishTestForm()
-        employment_history_form = EmploymentHistoryForm()
-        # Pass the personalinfo_instance during POST as well
-        form = StudentEditForm(data=request.POST, instance=student,
-                              personalinfo_instance=personalinfo)
-
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Student updated successfully")
-            return redirect('student_service:list')
-        else:
-            messages.error(request, "Please correct the errors below.")
-
-        return render(request, self.template_name, {'form': form, 'student_id': id,'education_history_form': education_history_form,
-        'english_test_form': english_test_form,
-        'employment_history_form': employment_history_form})
-
 
 class StudentList(View):
     template_name = 'dashboard/student_service/list.html'
@@ -140,7 +104,7 @@ class StudentFilters(View):
             'departments': departments,
             'programs': programs,
         })
-    
+
 
 class EducationalHistoryJson(View):
     def get(self, request, *args, **kwargs):
@@ -327,7 +291,7 @@ class EmploymentHistoryJson(View):
 
 
 class SectionView(View):
-    template_name = 'dashboard/student_service/section_list.html'
+    template_name = 'dashboard/student_service/sections/list.html'
 
     def get(self, request, *args, **kwargs):
         section_form = SectionForm()

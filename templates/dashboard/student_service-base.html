@@ -61,22 +61,16 @@
                         </a>
                     </li>
 
-                    <li class="ps-item ps-hasmenu">
-                        <a href="#!" class="ps-link">
+                    <li class="ps-item">
+                        <a href="{% url 'student_service:sectionlist' %}" class="ps-link">
                             <span class="ps-micon">
                                 <i class="fa-solid fa-layer-group"></i>
                             </span>
                             <span class="ps-mtext">Sections</span>
-                            <span class="ps-arrow"><i class="fa fa-angle-right"></i></span>
                         </a>
-
-                        <ul class="ps-submenu">
-                            {% comment %} <li class="ps-item"><a class="ps-link" href="{% url 'it_department:add'%}">Add New</a></li> {% endcomment %}
-                            <li class="ps-item"><a class="ps-link" href="{% url 'student_service:sectionlist' %}">List</a></li>
-                        </ul>
                     </li>
 
-                    <li class="ps-item ps-hasmenu">
+                    <li class="ps-item">
                         <a href="#!" class="ps-link">
                             <span class="ps-micon">
                                 <i class="fa-solid fa-user-graduate"></i>
@@ -86,7 +80,7 @@
                         </a>
 
                         <ul class="ps-submenu">
-                            {% comment %} <li class="ps-item"><a class="ps-link" href="{% url 'it_department:add'%}">Add New</a></li> {% endcomment %}
+                            <li class="ps-item"><a class="ps-link" href="{% url 'it_department:add'%}">Add New</a></li>
                             <li class="ps-item"><a class="ps-link" href="{% url 'student_service:list' %}">Students</a></li>
                         </ul>
                     </li>

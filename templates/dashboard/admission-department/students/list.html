@@ -1,16 +1,12 @@
-{% extends 'dashboard/bases/student-service.html' %}
-{% block title %}
-    Students
-{% endblock %}
-{% block breadcrumb %}
-    Students
-{% endblock %}
-{% block maintitle %}
-    Students
-{% endblock %}
+{% extends 'dashboard/bases/admission-department.html' %}
+{% block title %}Students{% endblock %}
+{% block breadcrumb %}Students{% endblock %}
+{% block maintitle %}Students{% endblock %}
 
 {% block rightbutton %}
-
+    <div class="d-flex justify-content-end mb-2">
+        <a href="{% url 'admission_department:student_add' %}" class="btn btn-primary mt-3">Add New Student</a>
+    </div>
 {% endblock %}
 
 {% block content %}
@@ -33,10 +29,9 @@
         {% endwith %}
         <div class="card">
             <div class="card-body">
-                <div class="student_lists_table">
-                    <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'it_department:ajax' %}"
-                           data-nodata="No Data Found">
-                        <thead>
+                <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'admission_department:students_ajax' %}"
+                       data-nodata="No Data Found">
+                    <thead>
                         <tr>
                             <th>Name</th>
                             <th>Email</th>
@@ -45,10 +40,10 @@
                             <th>Program</th>
                             <th>Actions</th>
                         </tr>
-                        </thead>
-                    </table>
-                </div>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>
+
 {% endblock %}

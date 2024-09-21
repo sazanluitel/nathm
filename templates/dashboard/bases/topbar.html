@@ -1,0 +1,122 @@
+{% load static %}
+
+<!-- [ Header Topbar ] start -->
+<header class="ps-header">
+    <div class="header-wrapper">
+        <div class="me-auto ps-mob-drp">
+            <ul class="list-unstyled">
+                <!-- ======= Menu collapse Icon ===== -->
+                <li class="ps-h-item ps-sidebar-collapse">
+                    <a href="#" class="ps-head-link ms-0" id="sidebar-hide">
+                        <i class="fa-solid fa-bars"></i>
+                    </a>
+                </li>
+                <li class="ps-h-item ps-sidebar-popup">
+                    <a href="#" class="ps-head-link ms-0" id="mobile-collapse">
+                        <i class="fa-solid fa-bars"></i>
+                    </a>
+                </li>
+
+                {% comment %} <li class="ps-h-item">
+                        <form class="header_search_form">
+                            <i class="fa fa-search"></i>
+                            <input type="search" class="form-control" placeholder="Search...">
+                        </form>
+                    </li> {% endcomment %}
+            </ul>
+        </div>
+        <!-- [Mobile Media Block end] -->
+        <div class="ms-auto">
+            <ul class="list-unstyled">
+                <li class="ps-h-item">
+                    <a href="" class="ps-head-link me-0" target="_blank">
+                        <i class="fa fa-globe"></i>
+                    </a>
+                </li>
+
+                <li class="ps-h-item">
+                    <a href="#" class="ps-head-link me-0" data-bs-toggle="offcanvas" data-bs-target="#announcement"
+                       aria-controls="announcement">
+                        <i class="fa-regular fa-bell"></i>
+                    </a>
+                </li>
+
+                <li class="dropdown ps-h-item header-user-profile ">
+                    <a class="ps-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
+                       role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
+                        <img src="{% static 'dashboard/assets/images/user.png' %}" alt="user-image"
+                             class="user-avatar"/>
+                    </a>
+                    <div class="dropdown-menu dropdown-user-profile dropdown-menu-end z-999 ps-h-dropdown">
+                        <div class="dropdown-header d-flex align-items-center justify-content-between">
+                            <h5 class="m-0">Profile</h5>
+                        </div>
+                        <div class="dropdown-body">
+                            <div class="profile-notification-scroll position-relative"
+                                 style="max-height: calc(100vh - 225px)">
+                                <div class="d-flex mb-1">
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-1">ISMT College</h6>
+                                        <span>{{ request.user.username }}</span>
+                                    </div>
+                                </div>
+                                <hr class="border-secondary border-opacity-50"/>
+                                <div class="card">
+                                    <div class="card-body py-3">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <h5 class="mb-0 d-inline-flex align-items-center">
+                                                <i
+                                                        class="fa-regular fa-bell ps-icon text-muted me-2"></i>Notification
+                                            </h5>
+                                            <div class="form-check form-switch form-check-reverse m-0">
+                                                <input class="form-check-input f-18" type="checkbox"
+                                                       role="switch"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-span">Manage</p>
+                                <a href="" class="dropdown-item">
+                                        <span>
+                                            <i class="ps-icon text-muted me-2 fa fa-cog"></i>
+                                            <span>Settings</span>
+                                        </span>
+                                </a>
+                                <a href="#" class="dropdown-item">
+                                        <span>
+                                            <i class="ps-icon text-muted me-2 fa fa-share"></i>
+                                            <span>Share</span>
+                                        </span>
+                                </a>
+                                <a href="" class="dropdown-item">
+                                        <span>
+                                            <i class="ps-icon text-muted me-2 fa fa-lock"></i>
+                                            <span>Change Password</span>
+                                        </span>
+                                </a>
+                                <hr class="border-secondary border-opacity-50"/>
+                                <div class="d-grid mb-3">
+                                    <a class="btn btn-primary" href="{% url 'userauth:logout' %}">
+                                        <i class="fa-solid fa-arrow-right-from-bracket ps-icon me-2"></i> Logout
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+
+<div class="offcanvas ps-announcement-offcanvas offcanvas-end" tabindex="-1" id="announcement"
+     aria-labelledby="announcementLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="announcementLabel">Notifications</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+
+    </div>
+</div>
+<!-- [ Header ] end -->

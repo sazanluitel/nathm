@@ -1,0 +1,109 @@
+{% load static %}
+{% include "dashboard/bases/header.html" %}
+
+<!-- [ Sidebar Menu ] start -->
+<nav class="ps-sidebar">
+    <div class="navbar-wrapper">
+        <div class="m-header">
+            <a href="" class="b-brand text-primary">
+                <img src="{% static 'dashboard/assets/images/logo.jpg' %}" class="img-fluid logo-lg opacity-100 h-full"
+                     alt="logo">
+            </a>
+        </div>
+        <div class="navbar-content">
+            <div class="card ps-user-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1 ms-3 me-2">
+                            <h6 class="mb-0">ISMT College - {{ request.user.username }}</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <ul class="ps-navbar">
+                <li class="ps-item ps-caption">
+                    <label>Navigation</label>
+                </li>
+
+                <li class="ps-item">
+                    <a href="{% url 'student_service:index' %}" class="ps-link">
+                            <span class="ps-micon">
+                                <i class="fa fa-home"></i>
+                            </span>
+                        <span class="ps-mtext">Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="ps-item">
+                    <a href="{% url 'student_service:sections' %}" class="ps-link">
+                            <span class="ps-micon">
+                                <i class="fa-solid fa-layer-group"></i>
+                            </span>
+                        <span class="ps-mtext">Services</span>
+                    </a>
+                </li>
+
+                <li class="ps-item">
+                    <a href="{% url 'student_service:students' %}" class="ps-link">
+                            <span class="ps-micon">
+                                <i class="fa-solid fa-user-graduate"></i>
+                            </span>
+                        <span class="ps-mtext">Students</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="ps-menu-overlay d-none"></div>
+</nav>
+<!-- [ Sidebar Menu ] end -->
+
+{% include "dashboard/bases/topbar.html" %}
+
+<!-- [ Main Content ] start -->
+<div class="ps-container">
+    <div class="ps-content">
+        <!-- [ breadcrumb ] start -->
+        <div class="page-header">
+            <div class="page-block">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        {% block beadcumbfull %}
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="">Home</a></li>
+                                <li class="breadcrumb-item" aria-current="page">{% block beadcrumb %}
+                                    Dashboard{% endblock %}</li>
+                            </ul>
+                        {% endblock beadcumbfull %}
+
+                        <div class="page-header-title d-block">
+                            <h2 class="mb-0">{% block maintitle %}{% endblock maintitle %}</h2>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        {% block rightbutton %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- [ breadcrumb ] end -->
+
+        <!-- [ Main Content ] start -->
+        <div class="row dashboard">
+            {% block content %}{% endblock content %}
+        </div>
+        <!-- [ Main Content ] end -->
+    </div>
+</div>
+<!-- [ Main Content ] end -->
+
+{% include "dashboard/bases/footer.html" %}
+
+{% block footer %}{% endblock footer %}
+<script src="{% static 'dashboard/assets/js/main.js' %}"></script>
+</body>
+
+</html>

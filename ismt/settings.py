@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "filehub",
     "itdepartment",
     "student_service",
+    "admission_department"
     
 ]
 
