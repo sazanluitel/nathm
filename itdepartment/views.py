@@ -117,12 +117,11 @@ class StudentAjax(View):
         data = []
         for student in page_students:
             data.append([
-                self.get_checkbox_html(student.id),
                 student.user.get_full_name(),
                 student.user.email,
-                student.campus.name,  
-                student.department.name,  
-                student.program.name ,  
+                student.campus.name if student.campus else "",
+                student.department.name if student.department else "",
+                student.program.name if student.program else "",
                 self.get_action(student)
             ])
 

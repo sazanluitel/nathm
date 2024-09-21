@@ -109,10 +109,9 @@ class StudentAjax(View):
                 self.get_checkbox_html(student.id),
                 student.user.get_full_name(),
                 student.user.email,
-                student.campus.name,
-                student.department.name,
-                student.program.name,
-                self.get_action(student)
+                student.campus.name if student.campus else "",
+                student.department.name if student.department else "",
+                student.program.name if student.program else ""
             ])
 
         return JsonResponse({
@@ -126,21 +125,6 @@ class StudentAjax(View):
         return (f'<div class="form-check"><label for="checkbox_{student_id}_question"></label><input '
                 f'class="form-check-input" type="checkbox" name="_selected_id"'
                 f' value="{student_id}" id="checkbox_{student_id}_question"></div>'),
-
-    def get_action(self, student):
-        student_id = student.id
-        edit_url = reverse('student_service:edit', kwargs={'id': student_id})
-        delete_url = reverse('dashboard:delete')
-        backurl = reverse('student_service:list')
-
-        return f'''
-            <form method="post" action="{delete_url}" class="button-group">
-                <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
-                <input type="hidden" name="_selected_id" value="{student_id}" />
-                <input type="hidden" name="_selected_type" value="student" />
-                <input type="hidden" name="_back_url" value="{backurl}" />
-            </form>
-        '''
 
 
 class StudentFilters(View):
