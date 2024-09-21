@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "students",
     "filehub",
     "itdepartment",
+    "student_service",
     
 ]
 

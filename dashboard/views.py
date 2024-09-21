@@ -550,13 +550,13 @@ class DeleteHelper:
         return self.get_objects(ids, Modules, "Modules", "dashboard:modulesedit", modules_title, modules_kwargs)
 
     def get_student(self, ids):
-        def student_title(student):
-            return student.user.get_full_name()
+        def student_title(obj):
+            return obj.user.get_full_name()
 
         def student_kwargs(student):
-            return {"id": student.id}
+            return None
 
-        return self.get_objects(ids, Student, "Student", "students:studentedit", student_title, student_kwargs)
+        return self.get_objects(ids, Student, "Student",None, student_title, student_kwargs)
 
     def get_educational_history(self, ids):
         def student_title(obj):

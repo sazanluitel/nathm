@@ -1,4 +1,4 @@
-{% extends 'dashboard/itsupport-base.html' %}
+{% extends 'dashboard/student_service-base.html' %}
 {% block title %}
     Students
 {% endblock %}
@@ -10,7 +10,6 @@
 {% endblock %}
 
 {% block rightbutton %}
-
 {% endblock %}
 
 {% block content %}
@@ -53,7 +52,7 @@
                 </div>
 
                 <div class="student_lists_table">
-                    <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'it_department:ajax' %}"
+                    <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'student_service:ajax' %}"
                            data-nodata="No Data Found">
                         <thead>
                         <tr>
@@ -76,34 +75,4 @@
             </div>
         </div>
     </div>
-
-    <div class="modal fade" id="addIdsModal" tabindex="-1" aria-labelledby="addIdsModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addIdsModalLabel">Add College Email and Teams ID</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="add-ids-form" method="POST" action="{% url 'student_admin:ids' %}">
-                        {% csrf_token %}
-                        <input type="hidden" id="student_id" name="student_id"/>
-
-                        <div class="mb-3">
-                            <label for="college_email" class="form-label">College Email</label>
-                            <input type="email" class="form-control" id="college_email" name="college_email"/>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="teams_id" class="form-label">Teams ID</label>
-                            <input type="text" class="form-control" id="teams_id" name="teams_id"/>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-full">Save</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
 {% endblock %}
