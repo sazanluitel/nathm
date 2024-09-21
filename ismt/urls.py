@@ -26,6 +26,7 @@ urlpatterns = [
 
     path("", include("students.urls", namespace="students")),
     path("admin/", include("students.admin_urls", namespace="student_admin")),
+    path("it_department/", include("itdepartment.urls", namespace="it_department")),
 ]
 
 if settings.DEBUG:
