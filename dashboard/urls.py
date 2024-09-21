@@ -5,7 +5,7 @@ from .views import *
 app_name = "dashboard"
 
 urlpatterns = [
-    path('', DashboardView.as_view(), name='index'),
+    path('superuser/', DashboardView.as_view(), name='index'),
     path("filemanager/", FileManagerView.as_view(), name="filemanager"),
 
     path('campus/add', CampusView.as_view(), name='campus'),

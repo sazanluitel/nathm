@@ -22,11 +22,13 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("", include("userauth.urls", namespace="userauth")),
     path("admin/", include("dashboard.urls", namespace="dashboard")),
-    path('admin/', include('filehub.urls', namespace="filehub")),
+    path('admin/superuser', include('filehub.urls', namespace="filehub")),
 
-    path("", include("students.urls", namespace="students")),
-    path("admin/", include("students.admin_urls", namespace="student_admin")),
-    path("it_department/", include("itdepartment.urls", namespace="it_department")),
+    path("student/", include("students.urls", namespace="students")),
+    path("admin/superuser/", include("students.admin_urls", namespace="admin_urls")),
+    path("admin/itsupport/", include("itdepartment.urls", namespace="it_department")),
+    path("admin/studentservice/", include("student_service.urls", namespace="student_service")),
+
 ]
 
 if settings.DEBUG:

@@ -1,7 +1,7 @@
 from django import forms
 from userauth.models import (
     User, PersonalInfo, AddressInfo, EducationHistory,
-    EnglishTest, EmploymentHistory, EmergencyContact
+    EnglishTest, EmploymentHistory, EmergencyContact,Sections
 )
 
 
@@ -16,7 +16,6 @@ class RegisterForm(forms.Form):
     last_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}))
     phone_number = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'Phone Number'}))
-    timezone = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control d-none'}))
     username = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'test@example.com'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '********'}))
@@ -134,4 +133,17 @@ class EmergencyContactForm(forms.ModelForm):
             'relationship': forms.Select(
                 attrs={'class': 'form-control', 'id': 'relationship', 'data-placeholder': 'Select Relationship'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'id': 'email', 'placeholder': 'Email'}),
+        }
+
+class SectionForm(forms.ModelForm):
+    class Meta:
+        model = Sections
+        fields = ['section_name', 'campus', 'program', 'year', 'semester', 'user']
+        widgets = {
+            'section_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'campus': forms.Select(attrs={'class': 'form-control'}),
+            'program': forms.Select(attrs={'class': 'form-control'}),
+            'year': forms.NumberInput(attrs={'class': 'form-control'}),
+            'semester': forms.Select(attrs={'class': 'form-control'}),
+            'user': forms.SelectMultiple(attrs={'class': 'form-control'}),
         }

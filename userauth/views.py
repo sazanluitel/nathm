@@ -10,10 +10,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from userauth.forms import (
     LoginForm,
-    # RegisterForm
+    RegisterForm
 )
 from userauth.models import User
 from userauth.utils import send_verification_link
+import re
 
 # Create your views here.
 class LoginView(View):
@@ -114,6 +115,99 @@ class LogoutView(View):
     def get(self, request, *args, **kwargs):
         logout(request)
         return redirect('userauth:login')
+    
+class RegisterView(View):
+
+    def generate_username(self, email:str) -> str:
+        base_username = email.split('@')[0]
+        unique_username = base_username
+        counter = 1
+
+        # Ensure the generated username is unique
+        while User.objects.filter(username=unique_username).exists():
+            unique_username = f"{base_username}_{counter}"
+            counter += 1
+
+        return unique_username
+
+
+    def post(self, request, *args, **kwargs):
+        form = RegisterForm(request.POST)
+        print(request.POST)
+        try:
+            if form.is_valid():
+                first_name = form.cleaned_data.get('first_name')
+                last_name = form.cleaned_data.get('last_name')
+                email = form.cleaned_data.get('username')
+                password = form.cleaned_data.get('password')
+                cpassword = form.cleaned_data.get('cpassword')
+
+                if not first_name:
+                    raise Exception("First Name is required")
+
+                if not last_name:
+                    raise Exception("First Name is required")
+                
+                if re.search(r'\d', first_name):
+                    raise Exception("First Name should not contain numbers")
+                
+                if re.search(r'\d', last_name):
+                    raise Exception("Last Name should not contain numbers")
+
+                if not email:
+                    raise Exception("Email is required")
+
+                if not password:
+                    raise Exception("Password is required")
+
+                if not cpassword:
+                    raise Exception("Confirm Password is required")
+
+                if password != cpassword:
+                    raise Exception("Password and Confirm password doesn't match")
+
+                if User.objects.filter(email=email).exists():
+                    raise Exception("Email already exists")
+
+                user = User(
+                    first_name=first_name,
+                    last_name=last_name,
+                    email=email,
+                    username=self.generate_username(email),
+                    is_active=False,
+                    is_staff=False,
+                    is_superuser=False
+                )
+                user.set_password(password)
+                user.save()
+
+                # try:
+                #     emailverify = EmailVerify(user)
+                #     if emailverify.send():
+                #         response = redirect('userauth:verify')
+                #         response.set_cookie("verify_email", email)
+                #         return response
+                #     messages.error(request, "Unable to send verification code")
+                # except Exception as e:
+                #     messages.error(request, str(e))
+        except Exception as e:
+            messages.error(request, str(e))
+
+        return render(request, 'dashboard/auth/register.html', {
+            'form': form
+        })
+    
+    def get(self, request, *args, **kwargs):
+        if request.user and request.user.is_authenticated:
+            if request.user.is_host():
+                return redirect('website:teacher_dashboard')
+            return redirect('website:courses')
+        
+        form = RegisterForm()
+        return render(request, 'dashboard/auth/register.html', {
+            'form' : form
+        })
+    
 
 
 class QRView(View):

@@ -1,0 +1,122 @@
+{% extends 'dashboard/student_service-base.html' %}
+{% block title %}
+    Students
+{% endblock %}
+{% block breadcrumb %}
+    Students
+{% endblock %}
+{% block maintitle %}
+    Students
+{% endblock %}
+
+{% block rightbutton %}
+    <div class="d-flex justify-content-end mb-2">
+        <!-- Button to trigger the modal -->
+        <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addSectionModal">
+            Add New Section
+        </button>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <style>
+        .dt-responsive {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .dt-responsive table th,
+        .dt-responsive table td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+
+    <div class="col-sm-12">
+        {% with messages=messages %}
+            {% include 'dashboard/alert.html' %}
+        {% endwith %}
+        <div class="card">
+            <div class="card-body">
+                <!-- Add New Section Modal -->
+                <div class="modal fade" id="addSectionModal" tabindex="-1" aria-labelledby="addSectionModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addSectionModalLabel">Add New Section</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <!-- Use Django form for the modal form -->
+                            <form method="post" action="{% url 'student_service:sectionlist' %}">
+                                {% csrf_token %}
+                                <div class="modal-body">
+                                    <!-- Render SectionForm fields -->
+                                    <div class="mb-3">
+                                        {{ section_form.section_name.label_tag }}
+                                        {{ section_form.section_name }}
+                                    </div>
+
+                                    <div class="mb-3">
+                                        {{ section_form.campus.label_tag }}
+                                        {{ section_form.campus }}
+                                    </div>
+
+                                    <div class="mb-3">
+                                        {{ section_form.program.label_tag }}
+                                        {{ section_form.program }}
+                                    </div>
+
+                                    <div class="mb-3">
+                                        {{ section_form.year.label_tag }}
+                                        {{ section_form.year }}
+                                    </div>
+
+                                    <div class="mb-3">
+                                        {{ section_form.semester.label_tag }}
+                                        {{ section_form.semester }}
+                                    </div>
+
+                                    <div class="mb-3">
+                                        {{ section_form.user.label_tag }}
+                                        {{ section_form.user }}
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save Section</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Student Table -->
+                <div class="student_lists_table">
+                    <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'student_service:sectionajax' %}"
+                           data-nodata="No Data Found">
+                        <thead>
+                        <tr>
+                            <th>
+                                <div class="form-check">
+                                    <label for="allCheckbox"></label>
+                                    <input class="form-check-input" type="checkbox" id="allCheckbox"/>
+                                </div>
+                            </th>
+                            <th>Section Name</th>
+                            <th>Campus</th>
+                            <th>Program</th>
+                            <th>Year</th>
+                            <th>Semester</th>
+                            <th>Users</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
