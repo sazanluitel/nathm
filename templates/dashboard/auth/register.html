@@ -1,0 +1,94 @@
+{% extends "dashboard/login-base.html" %}
+{% block title %}Create an Account - ISMT{% endblock title %}
+
+{% block content %}
+<form class="theme-form emailform" method="post" data-message="Please Wait . . ." action="{% url 'userauth:register' %}">
+    {% csrf_token %}
+    <h4>Create an account </h4>
+    <p>Enter your email &amp; password to register</p>
+
+    {% include 'dashboard/alert.html' with messages=messages %}
+    {% if form.errors.username %}
+    <div class="alert alert-danger">{{ form.errors.username }}</div>
+    {% endif %}
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="col-form-label">First Name </label>
+                <div class="form-input position-relative">
+                    {{ form.first_name }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="col-form-label">Last Name </label>
+                <div class="form-input position-relative">
+                    {{ form.last_name }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="form-group">
+                <label class="col-form-label">Email Address</label>
+                {{ form.username }}
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="col-form-label">Password </label>
+                <div class="password_strength_check" data-disable="button[type=submit]">
+                    <div class="form-input position-relative password_field">
+                        {{ form.password }}
+                        <div class="show-hide"> 
+                            <i class="fa-regular fa-eye-slash"></i>
+                        </div>
+                    </div>
+    
+                    <div class="password-meter">
+                        <div class="meter-section rounded me-2"></div>
+                        <div class="meter-section rounded me-2"></div>
+                        <div class="meter-section rounded me-2"></div>
+                        <div class="meter-section rounded me-2"></div>
+                        <div class="meter-section rounded"></div>
+                    </div>
+                    
+                    <div class="form-text text-muted help">Use 8 or more characters with a mix of letters, numbers & symbols.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="col-form-label">Confirm Password </label>
+                <div class="form-input position-relative password_field">
+                    {{ form.cpassword }}
+                    <div class="show-hide"> 
+                        <i class="fa-regular fa-eye-slash"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group mb-0">
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="rememberMe" checked="">
+                <label class="form-check-label" for="rememberMe">Agree with <a href="">Privacy Policy</a></label>
+            </div>
+        </div>
+
+        <div class="text-end mt-3">
+            <button class="btn btn-primary btn-block w-100" type="submit">Register</button>
+        </div>
+    </div>
+    
+    <p class="mt-4 mb-0 text-center">Aready have an Account?<a class="ms-2" href="{% url 'userauth:login' %}">Login</a></p>
+
+</form>
+{% endblock content %}
