@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from dashboard.models import Campus, Department, Program
 from userauth.models import AddressInfo, User, PersonalInfo
@@ -38,16 +40,16 @@ class Student(models.Model):
 
     # Details
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
-    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    campus = models.ForeignKey(Campus, on_delete=models.CASCADE, null=True, blank=True)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, null=True, blank=True)
     student_id = models.CharField(max_length=20, null=True, blank=True)
     team_id = models.CharField(max_length=50, blank=True, null=True)
     college_email = models.EmailField(blank=True, null=True)
 
     commencing_term = models.TextField(null=True, blank=True)
     date_of_admission = models.DateField(null=True, blank=True)
-    shift = models.CharField(max_length=50, choices=SHIFT)
+    shift = models.CharField(max_length=50, choices=SHIFT, null=True, blank=True)
     admission_officer = models.TextField(blank=True, null=True)
     scholarship_details = models.CharField(max_length=100, blank=True, null=True)
     referred_by = models.CharField(max_length=100, blank=True, null=True)
@@ -73,8 +75,19 @@ class Student(models.Model):
     about_us = models.CharField(choices=ABOUT_US, max_length=20, default="FRIENDS", blank=True)
     about_us_other = models.TextField(max_length=255, blank=True, null=True)
 
+    # Kiosk ID
+    kiosk_id = models.CharField(max_length=50, blank=True, null=True, unique=True)
+
     def __str__(self):
         return self.email
 
+    def update_kiosk_id(self):
+        if not self.kiosk_id:
+            self.kiosk_id = self.generate_unique_kiosk_id()
+            self.save()
 
-
+    def generate_unique_kiosk_id(self):
+        while True:
+            new_kiosk_id = str(uuid.uuid4())[:10].upper()
+            if not Student.objects.filter(kiosk_id=new_kiosk_id).exists():
+                return new_kiosk_id

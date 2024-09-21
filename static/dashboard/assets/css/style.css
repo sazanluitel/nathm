@@ -4127,3 +4127,19 @@ body .modal-backdrop{
 body .form-check-input{
     border-color: #ccc;
 }
+
+body .btn-primary{
+    --btn-primary:#1B5C9C;
+    --bs-btn-bg:var(--btn-primary);
+    --bs-btn-border-color:var(--btn-primary);
+    --bs-btn-hover-bg:var(--btn-primary);
+    --bs-btn-hover-border-color:var(--btn-primary);
+    --bs-btn-active-bg:var(--btn-primary);
+    --bs-btn-active-border-color:var(--btn-primary);
+    --bs-btn-disabled-bg:var(--btn-primary);
+    --bs-btn-disabled-border-color: var(--btn-primary);
+}
+
+.card .card-header > div{
+    font-size: 19px;
+}

@@ -147,7 +147,7 @@ class StudentAddForm:
         self.temporary_address_form = AddressInfoForm(prefix="temporary", data=data)
         self.payment_address_form = AddressInfoForm(prefix="payment", data=data)
         self.personal_info_form = PersonalInfoForm(data=data)
-        self.emergency_contact_form = EmergencyContactForm(data=data)
+        self.emergency_contact_form = EmergencyContactForm(prefix="emergency_contact", data=data)
         self.emergency_address_form = AddressInfoForm(prefix="emergency_address", data=data)
         self.student_form = StudentForm(data=data)
 
