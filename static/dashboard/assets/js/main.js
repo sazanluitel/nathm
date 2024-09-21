@@ -288,8 +288,10 @@
             const value = about_us.val();
             if (value === "OTHER") {
                 $(document).find("#about_us_other_container").show();
+                $(document).find("#about_us_other_container textarea").prop("required", true);
             } else {
                 $(document).find("#about_us_other_container").hide();
+                $(document).find("#about_us_other_container textarea").prop("required", false);
             }
         }
     }
@@ -303,8 +305,10 @@
             const value = why_us.val();
             if (value === "OTHER") {
                 $(document).find("#why_us_other_container").show();
+                $(document).find("#why_us_other_container textarea").prop("required", true);
             } else {
                 $(document).find("#why_us_other_container").hide();
+                $(document).find("#why_us_other_container textarea").prop("required", false);
             }
         }
     }

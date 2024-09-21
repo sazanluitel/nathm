@@ -8,20 +8,38 @@
     <title>Admission Form</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <style>
+        :root {
+            --placeholder: #ccc;
+        }
+
         body {
             overflow: hidden;
         }
 
+        body .btn-primary {
+            --btn-primary: #1B5C9C;
+            --bs-btn-bg: var(--btn-primary);
+            --bs-btn-border-color: var(--btn-primary);
+            --bs-btn-hover-bg: var(--btn-primary);
+            --bs-btn-hover-border-color: var(--btn-primary);
+            --bs-btn-active-bg: var(--btn-primary);
+            --bs-btn-active-border-color: var(--btn-primary);
+            --bs-btn-disabled-bg: var(--btn-primary);
+            --bs-btn-disabled-border-color: var(--btn-primary);
+        }
+
         .kiosk_template {
-            margin: 40px auto;
+            padding-top: 40px;
+            margin: auto;
             position: relative;
-            height: 90vh;
+            height: calc(100vh - 40px);
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        .kiosk__template__logo__wrapper {
+        .kiosk__template__logo__wrapper,
+        .kiosk__tempalte__footer__wrapper {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -30,7 +48,7 @@
         .kiosk_template__logo {
             border: 1px dotted #beb8b7;
             border-radius: 20px;
-            padding: 0px 40px;
+            padding: 0 40px;
             display: inline-block;
             background-color: white;
             position: absolute;
@@ -41,17 +59,17 @@
         .kiosk_template__logo img {
             width: 150px;
             display: block;
-            margin: 0px auto;
+            margin: 0 auto;
         }
 
         .border-box {
-            border: 2px solid #1b5c9d;
+            border: 5px solid #1b5c9d;
             width: 100%;
 
             height: 100%;
             padding: 20px;
             border-radius: 15px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             position: relative;
             display: flex;
             flex-direction: column;
@@ -66,8 +84,7 @@
 
         .kiosk__tempalte__footer {
             position: fixed;
-            bottom: 1.5%;
-            left: 42%;
+            bottom: 2%;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -93,8 +110,8 @@
             padding: 15px 0;
             display: flex;
             justify-content: flex-end;
-            right: 3%;
-            bottom: 6%;
+            right: 40px;
+            bottom: 40px;
         }
 
         .card {
@@ -105,6 +122,8 @@
         .card .card-header {
             padding: 15px;
             background-color: rgb(219 219 219 / 10%);
+            font-size: 1.2rem;
+            font-weight: 500;
         }
 
         .card input,
@@ -121,6 +140,57 @@
         .card .form-group {
             margin-bottom: 1rem;
         }
+
+        ::-webkit-input-placeholder {
+            color: var(--placeholder) !important;
+        }
+
+        :-moz-placeholder {
+            color: var(--placeholder) !important;
+            opacity: 1;
+        }
+
+        ::-moz-placeholder {
+            color: var(--placeholder) !important;
+            opacity: 1;
+        }
+
+        :-ms-input-placeholder {
+            color: var(--placeholder) !important;
+        }
+
+        ::-ms-input-placeholder {
+            color: var(--placeholder) !important;
+        }
+
+        ::placeholder {
+            color: var(--placeholder) !important;
+        }
+
+        select,
+        select option {
+            color: #000000;
+        }
+
+        select:invalid,
+        select option[value=""] {
+            color: var(--placeholder) !important;
+        }
+
+        .invalid-feedback {
+            display: block;
+        }
+
+        .alert{
+            margin-bottom:0;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .alert-error {
+            color: #842029;
+            background-color: #f8d7da;
+            border-color: #f5c2c7;
+        }
     </style>
 </head>
 <body>
@@ -133,16 +203,17 @@
             </div>
         </div>
 
+        {% with messages=messages %}
+            {% include 'dashboard/alert.html' %}
+        {% endwith %}
+        <div class="card-header h3 px-4 py-4">Admission Form</div>
+
         <div class="scrollable-form">
             <form method="POST" action="{% url 'students:kiosk-reg' %}">
                 {% csrf_token %}
-                {% with messages=messages %}
-                    {% include 'dashboard/alert.html' %}
-                {% endwith %}
-                <div class="card-header h3 px-4 py-5 pb-2">Admission Form</div>
 
                 <!-- Student Info -->
-                <div class="card mt-3">
+                <div class="card">
                     <div class="card-header h6">General Infromation</div>
                     <div class="card-body">
                         <div class="row">
@@ -222,7 +293,7 @@
                     <div class="card-header">Permanent Address</div>
                     <div class="card-body">
                         <div class="row">
-                            {% for field in form.temporary_address_form %}
+                            {% for field in form.permanent_address_form %}
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="{{ field.id_for_label }}"
@@ -347,19 +418,27 @@
                     <div class="card-header h6">How did you learn about Us</div>
                     <div class="card-body">
                         <div class="row">
-                            <!-- Campus Field -->
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.student_form.about_us.id_for_label }}" class="form-label">About
-                                    us</label>
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.student_form.about_us.id_for_label }}" class="form-label">How Did
+                                    You
+                                    Know About Us</label>
                                 {{ form.student_form.about_us }}
-                                {% include 'parts/error.html' with errors=form.student_form.about_us.errors %}
+                                {% include "parts/error.html" with errors=form.student_form.about_us.errors %}
                             </div>
-                            <!-- Department Field -->
-                            <div class="col-md-4 mb-3" id="about-us-other-container" style="display:none;">
-                                <label for="{{ form.student_form.about_us_other.id_for_label }}" class="form-label">If
-                                    other</label>
+                            <div class="col-md-12 mb-3" id="about_us_other_container" style="display: none;">
                                 {{ form.student_form.about_us_other }}
-                                {% include 'parts/error.html' with errors=form.student_form.about_us_other.errors %}
+                                {% include "parts/error.html" with errors=form.student_form.about_us_other.errors %}
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.student_form.why_us.id_for_label }}" class="form-label">Why You
+                                    Choose
+                                    Us</label>
+                                {{ form.student_form.why_us }}
+                                {% include "parts/error.html" with errors=form.student_form.why_us.errors %}
+                            </div>
+                            <div class="col-md-12 mb-3" id="why_us_other_container" style="display: none;">
+                                {{ form.student_form.why_us_other }}
+                                {% include "parts/error.html" with errors=form.student_form.why_us_other.errors %}
                             </div>
                         </div>
                     </div>
@@ -367,7 +446,7 @@
 
                 <!-- Submit Button -->
                 <div class="fixed-buttons">
-                    <button type="button" class="btn btn-danger rounded-pill px-4 py-2">Clear</button>
+                    <button type="button" class="btn btn-danger clearForm rounded-pill px-4 py-2">Clear</button>
                     <button type="submit" class="btn rounded-pill text-white px-4 py-2 submit__btn">Submit</button>
                 </div>
             </form>
@@ -375,26 +454,14 @@
     </div>
 </div>
 
-<div class="kiosk__tempalte__footer">
-    <p class="text-center h6 text text-secondary mb-0">www.ismt.edu.np</p>
+<div class="kiosk__tempalte__footer__wrapper">
+    <div class="kiosk__tempalte__footer">
+        <p class="text-center h6 text text-secondary mb-0">www.ismt.edu.np</p>
+    </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Get the dropdown and other field container
-        var aboutUsField = document.getElementById('about_us')
-        var aboutUsOtherContainer = document.getElementById('about-us-other-container')
-        console.log(value)
 
-        // Function to toggle visibility
-        function toggleAboutUsOther() {
-            if (aboutUsField.value === 'OTHER') {
-                aboutUsOtherContainer.style.display = 'block'
-            } else {
-                aboutUsOtherContainer.style.display = 'none'
-            }
-        }
-    })
-</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="{% static 'dashboard/assets/js/kiosk.js' %}"></script>
 </body>
 </html>

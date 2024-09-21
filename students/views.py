@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
-from students.forms import StudentAddForm,KioskForm, StudentEditForm
+from students.forms import StudentAddForm, StudentEditForm
 from userauth.forms import *
 from userauth.models import *
 from students.models import *
@@ -9,13 +9,9 @@ from dashboard.models import *
 from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator
-from django.http import JsonResponse
-from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-import json
-from django.contrib.auth import get_user_model
 from .forms import StudentForm
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse
 from django.urls import reverse
 
 
@@ -72,6 +68,7 @@ def get_ids(request):
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
+
 class StudentView(View):
     template_name = 'dashboard/students/add.html'
 
@@ -95,10 +92,6 @@ class StudentView(View):
         return render(request, self.template_name, {'form': form})
 
     def handle_errors(self, form):
-        # Print errors for debugging purposes
-        # for field, errors in form.errors.items():
-        #     print(f"Errors for {field}: {errors}")
-
         # Print errors for each sub-form
         form_instances = {
             'user_form': form.user_form,
@@ -129,19 +122,21 @@ class StudentEditView(View):
         english_test_form = EnglishTestForm()
         employment_history_form = EmploymentHistoryForm()
         form = StudentEditForm(instance=student, personalinfo_instance=personalinfo)
-        return render(request, self.template_name, {'form': form, 'student_id': student_id,'education_history_form': education_history_form,
-        'english_test_form': english_test_form,
-        'employment_history_form': employment_history_form})
+        return render(request, self.template_name,
+                      {'form': form, 'student_id': student_id, 'education_history_form': education_history_form,
+                       'english_test_form': english_test_form,
+                       'employment_history_form': employment_history_form})
 
-    def post(self, request, id):
-        student = get_object_or_404(Student, id=id)
+    def post(self, request, *args, **kwargs):
+        student_id = kwargs.pop('id', None)
+        student = get_object_or_404(Student, id=student_id)
         personalinfo = get_object_or_404(PersonalInfo, user=student.user)
         education_history_form = EducationHistoryForm()
         english_test_form = EnglishTestForm()
         employment_history_form = EmploymentHistoryForm()
         # Pass the personalinfo_instance during POST as well
         form = StudentEditForm(data=request.POST, instance=student,
-                              personalinfo_instance=personalinfo)
+                               personalinfo_instance=personalinfo)
 
         if form.is_valid():
             form.save()
@@ -150,9 +145,10 @@ class StudentEditView(View):
         else:
             messages.error(request, "Please correct the errors below.")
 
-        return render(request, self.template_name, {'form': form, 'student_id': id,'education_history_form': education_history_form,
-        'english_test_form': english_test_form,
-        'employment_history_form': employment_history_form})
+        return render(request, self.template_name,
+                      {'form': form, 'student_id': id, 'education_history_form': education_history_form,
+                       'english_test_form': english_test_form,
+                       'employment_history_form': employment_history_form})
 
 
 class StudentList(View):
@@ -258,21 +254,53 @@ class StudentFilters(View):
             'departments': departments,
             'programs': programs,
         })
-    
+
 
 class KioskView(View):
-    def post(self, request, *args, **kwargs):
-        form = KioskForm(data=request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'All forms have been submitted successfully.')
-        else:
-            messages.error(request, 'There was an error in the forms')
-            return render(request, 'dashboard/kiosk/add.html', {'form': form})
-
     def get(self, request, *args, **kwargs):
         form = StudentAddForm()
         return render(request, 'dashboard/kiosk/add.html', {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = StudentAddForm(data=request.POST)
+        if form.is_valid():
+            try:
+                student = form.save()
+                student.update_kiosk_id()
+                return redirect('students:kiosk-success', pk=student.id)
+            except Exception:
+                messages.error(request, "Please correct the errors below.")
+        else:
+            messages.error(request, "Please correct the errors below.")
+            self.handle_errors(form)
+        return render(request, 'dashboard/kiosk/add.html', {'form': form})
+
+    def handle_errors(self, form):
+        form_instances = {
+            'user_form': form.user_form,
+            'permanent_address_form': form.permanent_address_form,
+            'temporary_address_form': form.temporary_address_form,
+            'payment_address_form': form.payment_address_form,
+            'personal_info_form': form.personal_info_form,
+            'student_form': form.student_form,
+            'emergency_contact_form': form.emergency_contact_form,
+            'emergency_address_form': form.emergency_address_form,
+        }
+
+        for form_name, form_instance in form_instances.items():
+            print(f"{form_name} is valid: {form_instance.is_valid()}")
+            if not form_instance.is_valid():
+                for field, errors in form_instance.errors.items():
+                    print(f"Errors for {form_name} - {field}: {errors}")
+
+
+
+class KioskSuccessView(View):
+    def get(self, request, *args, **kwargs):
+        student = get_object_or_404(Student, id=kwargs.get("pk"))
+        return render(request, 'dashboard/kiosk/success.html', {
+            "student": student
+        })
 
 
 class EducationalHistoryJson(View):
@@ -457,4 +485,3 @@ class EmploymentHistoryJson(View):
             employment_form.save()
             return JsonResponse({'success': True, 'message': 'Employment history saved saved successfully.'})
         return JsonResponse({'errors': form.errors, 'status': 'error'}, status=400)
-
