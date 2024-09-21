@@ -143,7 +143,7 @@ class Sections(models.Model):
         ('8', "Eighth Semester"),
     ]
     section_name = models.CharField(max_length=255)
-    campus = models.ForeignKey("dashboard.Campus", on_delete=models.CASCADE)
+    campus = models.ForeignKey("dashboard.Campus", on_delete=models.CASCADE, null=True, blank=True)
     program = models.ForeignKey('dashboard.Program', on_delete=models.CASCADE)
     year = models.IntegerField()
     semester = models.CharField(max_length=255, choices=SEMESTER_CHOICES)
