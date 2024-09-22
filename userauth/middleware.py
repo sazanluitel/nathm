@@ -11,7 +11,5 @@ class AccessCheck:
             if not request.user.is_authenticated:
                 return redirect('userauth:login')
 
-
-
         response = self.get_response(request)
         return response

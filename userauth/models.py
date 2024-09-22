@@ -22,6 +22,7 @@ class UserManager(BaseUserManager):
 ROLE_CHOICES = [
     ('admin', 'Admin'),
     ('college', 'College'),
+    ('admission', 'Admission'),
     ('it', 'IT Support'),
     ('student_service', 'Student Service Department'),
     ('student', 'Student'),

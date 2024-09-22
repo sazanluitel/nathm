@@ -18,6 +18,7 @@ from userauth.models import User
 from userauth.utils import send_verification_link
 import re
 
+
 # Create your views here.
 class LoginView(View):
     def post(self, request, *args, **kwargs):
@@ -34,13 +35,20 @@ class LoginView(View):
                 user = authenticate(request, username=username, password=password)
                 if user is not None:
                     login(request, user)
-                    return redirect('dashboard:index')
+
+                    if user.role == "admission":
+                        return redirect("admission_department:index")
+                    if user.role == "it":
+                        return redirect("it_department:index")
+                    elif user.role == "student_service":
+                        return redirect("student_service:index")
+                    else:
+                        return redirect('dashboard:index')
                 else:
                     raise Exception("Invalid username or password")
         except Exception as e:
             form.add_error('username', str(e))
         return render(request, 'dashboard/auth/login.html', {'form': form})
-
 
     def get(self, request, *args, **kwargs):
         if request.user and request.user.is_authenticated:
@@ -48,17 +56,19 @@ class LoginView(View):
 
         form = LoginForm()
         return render(request, 'dashboard/auth/login.html', {
-            'form' : form
+            'form': form
         })
- 
+
+
 class ForgetPassView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'dashboard/auth/forget-password.html')
-    
+
 
 class ResetPasswordView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'dashboard/auth/reset-password.html')
+
 
 # class VerifyEmailCodeView(View):
 #     def get(self, request, *args, **kwargs):
@@ -68,28 +78,28 @@ class ResetPasswordView(View):
 
 #             if not verifycode or not email:
 #                 raise Exception("Invalid verification code")
-            
+
 #             user = User.objects.get(email=email)
-        #     usermeta = UserMeta.objects.get(user=user, meta_key="verification_code", meta_value=verifycode)
+#     usermeta = UserMeta.objects.get(user=user, meta_key="verification_code", meta_value=verifycode)
 
-        #     # Once verified, activate the user and delete the verification code
-        #     user.is_active = True
-        #     user.save()
-        #     usermeta.delete()
-            
-        #     messages.success(request, "Email verified successfully")
-        #     response = redirect('userauth:login')
-        #     response.delete_cookie("verify_email")
-        #     return response
-        
-        # except User.DoesNotExist:
-        #     messages.error(request, "User does not exist")
-        # # except UserMeta.DoesNotExist:
-        # #     messages.error(request, "Invalid verification code")
-        # except Exception as e:
-        #     messages.error(request, str(e))
+#     # Once verified, activate the user and delete the verification code
+#     user.is_active = True
+#     user.save()
+#     usermeta.delete()
 
-        # return redirect("userauth:login")
+#     messages.success(request, "Email verified successfully")
+#     response = redirect('userauth:login')
+#     response.delete_cookie("verify_email")
+#     return response
+
+# except User.DoesNotExist:
+#     messages.error(request, "User does not exist")
+# # except UserMeta.DoesNotExist:
+# #     messages.error(request, "Invalid verification code")
+# except Exception as e:
+#     messages.error(request, str(e))
+
+# return redirect("userauth:login")
 
 
 class VerifyEmailView(View):
@@ -99,9 +109,9 @@ class VerifyEmailView(View):
             return redirect('userauth:login')
 
         return render(request, 'dashboard/auth/verify-email.html', context={
-            "email" : email
+            "email": email
         })
-    
+
     def post(self, request, *args, **kwargs):
         email = request.COOKIES.get('verify_email')
         sent = send_verification_link(email)
@@ -111,16 +121,17 @@ class VerifyEmailView(View):
         else:
             messages.error(request, "Failed to send verification link")
         return redirect("userauth:verify-email")
-    
-     
+
+
 class LogoutView(View):
     def get(self, request, *args, **kwargs):
         logout(request)
         return redirect('userauth:login')
-    
+
+
 class RegisterView(View):
 
-    def generate_username(self, email:str) -> str:
+    def generate_username(self, email: str) -> str:
         base_username = email.split('@')[0]
         unique_username = base_username
         counter = 1
@@ -131,7 +142,6 @@ class RegisterView(View):
             counter += 1
 
         return unique_username
-
 
     def post(self, request, *args, **kwargs):
         form = RegisterForm(request.POST)
@@ -149,10 +159,10 @@ class RegisterView(View):
 
                 if not last_name:
                     raise Exception("First Name is required")
-                
+
                 if re.search(r'\d', first_name):
                     raise Exception("First Name should not contain numbers")
-                
+
                 if re.search(r'\d', last_name):
                     raise Exception("Last Name should not contain numbers")
 
@@ -198,17 +208,39 @@ class RegisterView(View):
         return render(request, 'dashboard/auth/register.html', {
             'form': form
         })
-    
+
     def get(self, request, *args, **kwargs):
         if request.user and request.user.is_authenticated:
             if request.user.is_host():
                 return redirect('website:teacher_dashboard')
             return redirect('website:courses')
-        
+
         form = RegisterForm()
         return render(request, 'dashboard/auth/register.html', {
             'form': form
         })
+
+
+class LandingPage(View):
+    def get(self, request, *args, **kwargs):
+        if request.user and request.user.is_authenticated:
+            return redirect('student_admin:list')
+        return redirect('userauth:login')
+
+
+class DashboardView(View):
+    def get(self, request, *args, **kwargs):
+        if request.user and request.user.is_authenticated:
+            user = request.user
+            if user.role == "admission":
+                return redirect("admission_department:index")
+            if user.role == "it":
+                return redirect("it_department:index")
+            elif user.role == "student_service":
+                return redirect("student_service:index")
+            else:
+                return redirect('dashboard:index')
+        return redirect('userauth:login')
 
 
 class QRView(View):
