@@ -360,7 +360,7 @@ class SectionView(View):
                     <form method="post" action="{delete_url}" class="button-group">
                         <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
                         <input type="hidden" name="_selected_id" value="{section_id}" />
-                        <input type="hidden" name="_selected_type" value="student" />
+                        <input type="hidden" name="_selected_type" value="sections" />
                         <input type="hidden" name="_back_url" value="{backurl}" />
                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </form>
