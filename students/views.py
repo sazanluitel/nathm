@@ -477,7 +477,6 @@ class SectionAssignUsersView(View):
         for user in users:
             user.section = section
             user.save()
-            WelcomeMessage(user.user).send()
 
         messages.success(request, "Users assigned to section successfully.")
         return JsonResponse({

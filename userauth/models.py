@@ -56,6 +56,10 @@ class User(AbstractUser):
             self.username = unique_username
         super().save(*args, **kwargs)
 
+    def get_full_name(self):
+        parts = [self.title or "", self.first_name or "", self.middle_name or "", self.last_name or ""]
+        return " ".join(part for part in parts if part).strip()
+
 
 class AddressInfo(models.Model):
     address = models.CharField(max_length=200)
