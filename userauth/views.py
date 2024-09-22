@@ -8,6 +8,8 @@ from django.views.generic import View
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+
+from students.models import Student
 from userauth.forms import (
     LoginForm,
     RegisterForm
@@ -229,11 +231,21 @@ class QRView(View):
                 border=1,
             )
 
+            student = Student.objects.filter(user=user).first()
             qr_data = {
                 "id": user.id,
                 "name": f"{user.title} {user.first_name} {user.middle_name} {user.last_name}",
                 "email": user.email
             }
+            if student:
+                qr_data["college_email"] = student.college_email
+                qr_data["team_id"] = student.team_id
+                qr_data["campus"] = student.campus.name if student.campus.name else "Unknown"
+                qr_data["department"] = student.department.name if student.department else "Unknown"
+                qr_data["program"] = student.program.name if student.program else "Unknown"
+                qr_data["shift"] = student.shift
+                qr_data["kiosk_id"] = student.kiosk_id
+
             qr_data_str = json.dumps({
                 "ismt": qr_data
             })
