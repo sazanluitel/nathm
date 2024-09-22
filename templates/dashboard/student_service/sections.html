@@ -1,0 +1,45 @@
+{% extends 'dashboard/bases/student-service.html' %}
+{% load static %}
+{% block title %}Sections{% endblock %}
+{% block breadcrumb %}Sections{% endblock %}
+{% block maintitle %}Sections{% endblock %}
+
+{% block content %}
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">Add Section</div>
+            <div class="card-body">
+                {% with messages=messages %}
+                    {% include 'dashboard/alert.html' %}
+                {% endwith %}
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    {{ form.as_p }}
+
+                    <button type="submit" class="btn btn-primary w-100">{% if form.instance %}Update Section{% else %}Add Section{% endif %}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">Sections</div>
+            <div class="card-body">
+                <table
+                        class="table ajaxdatatable table-bordered"
+                        data-ajax="{% url 'student_service:sections' %}"
+                >
+                    <thead>
+                    <tr>
+                        <th>Section</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

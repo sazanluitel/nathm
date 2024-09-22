@@ -291,50 +291,81 @@ class EmploymentHistoryJson(View):
 
 
 class SectionView(View):
-    template_name = 'dashboard/student_service/sections/list.html'
-
     def get(self, request, *args, **kwargs):
-        context = {
-            'form': SectionForm()
-        }
-        return render(request, self.template_name, context)
+        draw = request.GET.get('draw')
+        if draw:
+            return self.get_json(request)
+
+        section_id = kwargs.get('pk')
+        if section_id:
+            section = get_object_or_404(Sections, id=section_id)
+            form = SectionForm(instance=section)
+        else:
+            form = SectionForm()
+        return render(request, 'dashboard/student_service/sections.html', context={
+            'form': form
+        })
 
     def post(self, request, *args, **kwargs):
-        section_form = SectionForm(request.POST)
+        section_id = kwargs.get('pk')
+        if section_id:
+            section = get_object_or_404(Sections, id=section_id)
+            form = SectionForm(request.POST, instance=section)
+        else:
+            form = SectionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Section added successfully.")
+            return redirect('student_service:sections')
+        return render(request, 'dashboard/student_service/sections.html', context={
+            'form': form
+        })
 
-        if section_form.is_valid():
-            section = section_form.save()
+    def get_json(self, request):
+        draw = int(request.GET.get("draw", 1))
+        start = int(request.GET.get("start", 0))
+        length = int(request.GET.get("length", 10))
+        search_value = request.GET.get("search[value]", None)
+        page_number = (start // length) + 1
 
-            # Handle AJAX request
-            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                data = {
-                    'id': section.id,
-                    'section_name': section.section_name,
-                    'campus': section.campus.name,
-                    'program': section.program.name,
-                    'year': section.year,
-                    'semester': section.get_semester_display(),
-                    'users': [user.get_full_name() for user in section.user.all()],
-                }
-                return JsonResponse(data)
+        sections = Sections.objects.order_by("-id")
+        if search_value:
+            sections = sections.filter(
+                Q(section_name__first_name__icontains=search_value)
+            )
+        paginator = Paginator(sections, length)
+        page_sections = paginator.page(page_number)
 
-            # If not an AJAX request, redirect as usual
-            return redirect('student_service:sectionlist')
+        data = []
+        for section in page_sections:
+            data.append([
+                section.get_title(),
+                self.get_action(section)
+            ])
 
-        # If form is not valid, re-render the page with form errors
-        sections = Sections.objects.all()
-        campuses = Campus.objects.all()
-        programs = Program.objects.all()
-        users = User.objects.all()
+        return JsonResponse({
+            "draw": draw,
+            "recordsTotal": paginator.count,
+            "recordsFiltered": paginator.count,
+            "data": data,
+        }, status=200)
 
-        context = {
-            'section_form': section_form,
-            'sections': sections,
-            'campuses': campuses,
-            'programs': programs,
-            'users': users,
-        }
-        return render(request, self.template_name, context)
+    def get_action(self, section):
+        section_id = section.id
+        edit_url = reverse('student_service:edit_section', kwargs={'pk': section_id})
+        delete_url = reverse('dashboard:delete')
+        backurl = reverse('student_service:sections')
+
+        return f'''
+                    <form method="post" action="{delete_url}" class="button-group">
+                        <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
+                        <input type="hidden" name="_selected_id" value="{section_id}" />
+                        <input type="hidden" name="_selected_type" value="student" />
+                        <input type="hidden" name="_back_url" value="{backurl}" />
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                '''
+
 
 
 class SectionAjaxView(View):
