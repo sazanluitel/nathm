@@ -181,8 +181,8 @@
             display: block;
         }
 
-        .alert{
-            margin-bottom:0;
+        .alert {
+            margin-bottom: 0;
             border-radius: 10px 10px 0 0;
         }
 
@@ -190,6 +190,18 @@
             color: #842029;
             background-color: #f8d7da;
             border-color: #f5c2c7;
+        }
+
+        .signature-pad {
+            height: 300px;
+        }
+
+        body #signatureModal{
+            z-index: 9999999;
+        }
+
+        body .modal-backdrop{
+            z-index: 999999;
         }
     </style>
 </head>
@@ -208,7 +220,7 @@
         {% endwith %}
         <div class="card-header h3 px-4 py-4">Admission Form</div>
 
-        <div class="scrollable-form">
+        <div class="scrollable-form pb-5">
             <form method="POST" action="{% url 'students:kiosk-reg' %}">
                 {% csrf_token %}
 
@@ -413,32 +425,55 @@
                     </div>
                 </div>
 
-                <!-- about us -->
-                <div class="card mt-3">
-                    <div class="card-header h6">How did you learn about Us</div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="{{ form.student_form.about_us.id_for_label }}" class="form-label">How Did
-                                    You
-                                    Know About Us</label>
-                                {{ form.student_form.about_us }}
-                                {% include "parts/error.html" with errors=form.student_form.about_us.errors %}
+                <div class="row">
+                    <div class="col-lg-6">
+                        <!-- about us -->
+                        <div class="card mt-3">
+                            <div class="card-header h6">How did you learn about Us</div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="{{ form.student_form.about_us.id_for_label }}" class="form-label">How
+                                            Did
+                                            You
+                                            Know About Us</label>
+                                        {{ form.student_form.about_us }}
+                                        {% include "parts/error.html" with errors=form.student_form.about_us.errors %}
+                                    </div>
+                                    <div class="col-md-12 mb-3" id="about_us_other_container" style="display: none;">
+                                        {{ form.student_form.about_us_other }}
+                                        {% include "parts/error.html" with errors=form.student_form.about_us_other.errors %}
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <label for="{{ form.student_form.why_us.id_for_label }}" class="form-label">Why
+                                            You
+                                            Choose
+                                            Us</label>
+                                        {{ form.student_form.why_us }}
+                                        {% include "parts/error.html" with errors=form.student_form.why_us.errors %}
+                                    </div>
+                                    <div class="col-md-12 mb-3" id="why_us_other_container" style="display: none;">
+                                        {{ form.student_form.why_us_other }}
+                                        {% include "parts/error.html" with errors=form.student_form.why_us_other.errors %}
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-12 mb-3" id="about_us_other_container" style="display: none;">
-                                {{ form.student_form.about_us_other }}
-                                {% include "parts/error.html" with errors=form.student_form.about_us_other.errors %}
-                            </div>
-                            <div class="col-md-12 mb-3">
-                                <label for="{{ form.student_form.why_us.id_for_label }}" class="form-label">Why You
-                                    Choose
-                                    Us</label>
-                                {{ form.student_form.why_us }}
-                                {% include "parts/error.html" with errors=form.student_form.why_us.errors %}
-                            </div>
-                            <div class="col-md-12 mb-3" id="why_us_other_container" style="display: none;">
-                                {{ form.student_form.why_us_other }}
-                                {% include "parts/error.html" with errors=form.student_form.why_us_other.errors %}
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header h6">Signature</div>
+                            <div class="card-body">
+                                <input style="display:none;" type="file" name="signature-file" id="signature-file" />
+
+                                <div class="signature_preview">
+                                    <img src="" id="signature_preview" alt="Signature" />
+                                </div>
+
+                                <div class="text-center">
+                                    <button data-bs-toggle="modal" data-bs-target="#signatureModal" type="button" class="btn btn-primary btn-sm w-100 px-4 py-2">Add Signature</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -454,6 +489,26 @@
     </div>
 </div>
 
+<div class="modal fade" id="signatureModal" tabindex="-1" aria-labelledby="signatureModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Signature</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="canvas-wrapper" class="signature-pad--body">
+                    <canvas></canvas>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary">Clear</button>
+                <button type="button" class="btn btn-primary">Use This</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="kiosk__tempalte__footer__wrapper">
     <div class="kiosk__tempalte__footer">
         <p class="text-center h6 text text-secondary mb-0">www.ismt.edu.np</p>
@@ -461,7 +516,9 @@
 </div>
 
 
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script src="{% static 'dashboard/assets/js/kiosk.js' %}"></script>
 </body>
 </html>

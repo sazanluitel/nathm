@@ -34,10 +34,43 @@
         $(document).on("change", "#why_us", handle_whychoose_change)
         handle_whychoose_change();
 
-        $(document).on("click", ".clearForm", function(){
-            if( confirm("Are you sure want to clear form?") ){
+        $(document).on("click", ".clearForm", function () {
+            if (confirm("Are you sure want to clear form?")) {
                 $(document).find(".scrollable-form form")[0].reset();
             }
         })
+
+        const canvas = document.querySelector("canvas");
+        console.log("Canvas", canvas)
+        if (canvas) {
+            const signaturePad = new SignaturePad(canvas);
+
+            $(document).on("click", "#signatureModal .btn-primary", function () {
+                if (!signaturePad.isEmpty()) {
+                    const dataURL = signaturePad.toDataURL("image/png");
+                    $(document).find("#signature_preview").attr("src", dataURL);
+
+                    fetch(dataURL)
+                        .then(res => res.blob())
+                        .then(blob => {
+                            const file = new File([blob], "signature.png", {type: "image/png"});
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(file);
+                            const fileInput = document.getElementById("signature-file");
+                            fileInput.files = dataTransfer.files;
+                            $(document).find("#signature-file").trigger("change");
+                        });
+                    $("#signatureModal").modal("hide");
+                }
+            })
+
+            $(document).on("click", "#signatureModal .btn-secondary", function () {
+                if (!signaturePad.isEmpty()) {
+                    if (confirm("Are you sure want to clear signature?")) {
+                        signaturePad.clear();
+                    }
+                }
+            })
+        }
     })
 })(jQuery);

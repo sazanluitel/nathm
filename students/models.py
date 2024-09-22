@@ -78,6 +78,7 @@ class Student(models.Model):
     # Kiosk ID
     kiosk_id = models.CharField(max_length=50, blank=True, null=True, unique=True)
     section = models.ForeignKey(Sections, on_delete=models.CASCADE, null=True, blank=True)
+    signature = models.ImageField(upload_to='signatures/', blank=True, null=True)
 
     def __str__(self):
         return self.email
