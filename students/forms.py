@@ -229,7 +229,7 @@ class StudentEditForm:
                                                       instance=personalinfo_instance.temporary_address)
         self.payment_address_form = AddressInfoForm(prefix="payment", data=data, instance=instance.payment_address)
         self.personal_info_form = PersonalInfoForm(instance=personalinfo_instance, data=data)
-        self.emergency_contact_form = EmergencyContactForm(instance=personalinfo_instance.emergency_contact, data=data)
+        self.emergency_contact_form = EmergencyContactForm(prefix="emergency_contact", instance=personalinfo_instance.emergency_contact, data=data)
         self.emergency_address_form = AddressInfoForm(prefix="emergency_address",
                                                       instance=personalinfo_instance.emergency_contact.address,
                                                       data=data)
