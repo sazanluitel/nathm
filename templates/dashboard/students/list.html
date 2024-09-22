@@ -35,25 +35,6 @@
         {% endwith %}
         <div class="card">
             <div class="card-body">
-                <!-- Modal -->
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                     aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">...</div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Save changes</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="student_lists_table">
                     <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'student_admin:ajax' %}"
                            data-nodata="No Data Found">
@@ -65,11 +46,11 @@
                                     <input class="form-check-input" type="checkbox" id="allCheckbox"/>
                                 </div>
                             </th>
-                            <th>Name</th>
-                            <th>Email</th>
+                            <th>Student</th>
                             <th>Campus</th>
                             <th>Department</th>
                             <th>Program</th>
+                            <th>Section</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -102,6 +83,30 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary w-full">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="updateSections" aria-labelledby="updateSectionsLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateSectionsLabel">Update Sections</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="update_sections" method="POST" action="{% url 'student_admin:section_assign_users' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_ids" id="student_ids_input">
+
+                        <div class="from-group mb-3">
+                            <label for="college_email" class="form-label d-block">Section</label>
+                            <select class="form-control noselect2 w-100 select2ajax" data-ajax="{% url 'student_admin:section_select_json' %}" data-placeholder name="section_id"></select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Assign Users</button>
                     </form>
                 </div>
             </div>

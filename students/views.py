@@ -148,7 +148,6 @@ class StudentEditView(View):
 
 class StudentList(View):
     template_name = 'dashboard/students/list.html'
-
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
 
@@ -190,11 +189,11 @@ class StudentAjax(View):
         for student in page_students:
             data.append([
                 self.get_checkbox_html(student.id),
-                student.user.get_full_name(),
-                student.user.email,
+                student.user.get_full_name() + '<br />' + student.user.email,
                 student.campus.name if student.campus else "",
                 student.department.name if student.department else "",
                 student.program.name if student.program else "",
+                self.get_section(student),
                 self.get_action(student)
             ])
 
@@ -204,6 +203,12 @@ class StudentAjax(View):
             "recordsFiltered": paginator.count,
             "data": data,
         }, status=200)
+
+    def get_section(self, obj):
+        if obj.section:
+            section_url = reverse('student_admin:edit_section', kwargs={'pk': obj.section.id})
+            return f'<a target="_blank" href="{section_url}">{obj.section.section_name}</a>'
+        return ""
 
     def get_checkbox_html(self, student_id):
         return (f'<div class="form-check"><label for="checkbox_{student_id}_question"></label><input '
@@ -480,3 +485,116 @@ class EmploymentHistoryJson(View):
             employment_form.save()
             return JsonResponse({'success': True, 'message': 'Employment history saved saved successfully.'})
         return JsonResponse({'errors': form.errors, 'status': 'error'}, status=400)
+
+
+class SectionAssignUsersView(View):
+    def post(self, request, *args, **kwargs):
+        section_id = request.POST.get('section_id')
+        user_ids = request.POST.get('user_ids', '').split(',')
+
+        section = get_object_or_404(Sections, id=section_id)
+        users = Student.objects.filter(id__in=user_ids)
+        for user in users:
+            user.section = section
+            user.save()
+
+        messages.success(request, "Users assigned to section successfully.")
+        return JsonResponse({
+            'success': True,
+            'message': 'Users assigned to section successfully.'
+        })
+
+
+class SectionSelectView(View):
+    def get(self, request, *args, **kwargs):
+        sections = Sections.objects.order_by("-id")
+        data = []
+        for section in sections:
+            data.append({
+                'id': section.id,
+                'text': section.section_name
+            })
+
+        return JsonResponse({
+            'results': data,
+            'pagination': {
+                'more': False
+            }
+        })
+
+
+class SectionView(View):
+    def get(self, request, *args, **kwargs):
+        draw = request.GET.get('draw')
+        if draw:
+            return self.get_json(request)
+
+        section_id = kwargs.get('pk')
+        if section_id:
+            section = get_object_or_404(Sections, id=section_id)
+            form = SectionForm(instance=section)
+        else:
+            form = SectionForm()
+        return render(request, 'dashboard/students/sections.html', context={
+            'form': form
+        })
+
+    def post(self, request, *args, **kwargs):
+        section_id = kwargs.get('pk')
+        if section_id:
+            section = get_object_or_404(Sections, id=section_id)
+            form = SectionForm(request.POST, instance=section)
+        else:
+            form = SectionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Section added successfully.")
+            return redirect('student_admin:sections')
+        return render(request, 'dashboard/students/sections.html', context={
+            'form': form
+        })
+
+    def get_json(self, request):
+        draw = int(request.GET.get("draw", 1))
+        start = int(request.GET.get("start", 0))
+        length = int(request.GET.get("length", 10))
+        search_value = request.GET.get("search[value]", None)
+        page_number = (start // length) + 1
+
+        sections = Sections.objects.order_by("-id")
+        if search_value:
+            sections = sections.filter(
+                Q(section_name__first_name__icontains=search_value)
+            )
+        paginator = Paginator(sections, length)
+        page_sections = paginator.page(page_number)
+
+        data = []
+        for section in page_sections:
+            data.append([
+                section.get_title(),
+                self.get_action(section)
+            ])
+
+        return JsonResponse({
+            "draw": draw,
+            "recordsTotal": paginator.count,
+            "recordsFiltered": paginator.count,
+            "data": data,
+        }, status=200)
+
+    def get_action(self, section):
+        section_id = section.id
+        edit_url = reverse('student_admin:edit_section', kwargs={'pk': section_id})
+        delete_url = reverse('dashboard:delete')
+        backurl = reverse('student_admin:sections')
+
+        return f'''
+                    <form method="post" action="{delete_url}" class="button-group">
+                        <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
+                        <input type="hidden" name="_selected_id" value="{section_id}" />
+                        <input type="hidden" name="_selected_type" value="student" />
+                        <input type="hidden" name="_back_url" value="{backurl}" />
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                '''

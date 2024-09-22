@@ -1,0 +1,116 @@
+{% extends 'dashboard/bases/student-service.html' %}
+{% block title %}
+    Students
+{% endblock %}
+{% block breadcrumb %}
+    Students
+{% endblock %}
+{% block maintitle %}
+    Students
+{% endblock %}
+
+{% block rightbutton %}
+    <div class="d-flex justify-content-end mb-2">
+        <a href="{% url 'student_admin:add' %}" class="btn btn-primary mt-3">Add New Student</a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <style>
+        .dt-responsive {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .dt-responsive table th,
+        .dt-responsive table td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+
+    <div class="col-sm-12">
+        {% with messages=messages %}
+            {% include 'dashboard/alert.html' %}
+        {% endwith %}
+        <div class="card">
+            <div class="card-body">
+                <div class="student_lists_table">
+                    <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'student_admin:ajax' %}"
+                           data-nodata="No Data Found">
+                        <thead>
+                        <tr>
+                            <th>
+                                <div class="form-check">
+                                    <label for="allCheckbox"></label>
+                                    <input class="form-check-input" type="checkbox" id="allCheckbox"/>
+                                </div>
+                            </th>
+                            <th>Student</th>
+                            <th>Campus</th>
+                            <th>Department</th>
+                            <th>Program</th>
+                            <th>Section</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addIdsModal" tabindex="-1" aria-labelledby="addIdsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addIdsModalLabel">Add College Email and Teams ID</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-ids-form" method="POST" action="{% url 'student_admin:ids' %}">
+                        {% csrf_token %}
+                        <input type="hidden" id="student_id" name="student_id"/>
+
+                        <div class="mb-3">
+                            <label for="college_email" class="form-label">College Email</label>
+                            <input type="email" class="form-control" id="college_email" name="college_email"/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="teams_id" class="form-label">Teams ID</label>
+                            <input type="text" class="form-control" id="teams_id" name="teams_id"/>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-full">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="updateSections" aria-labelledby="updateSectionsLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateSectionsLabel">Update Sections</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="update_sections" method="POST" action="{% url 'student_admin:section_assign_users' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_ids" id="student_ids_input">
+
+                        <div class="from-group mb-3">
+                            <label for="college_email" class="form-label d-block">Section</label>
+                            <select class="form-control noselect2 w-100 select2ajax" data-ajax="{% url 'student_admin:section_select_json' %}" data-placeholder name="section_id"></select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Assign Users</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

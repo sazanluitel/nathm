@@ -279,8 +279,12 @@
     width: 50px;
     border-radius: 50%;
 }
-.select2-container{
-    z-index: 999999;
+.select2-container {
+    z-index: 999999999999;
+}
+
+.modal .select2-container{
+    width: 100% !important;
 }
 
 /*-----------------------------Dashboard CSS begin------------------------------------------

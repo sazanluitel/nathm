@@ -1,7 +1,7 @@
 from django import forms
 from userauth.models import (
     User, PersonalInfo, AddressInfo, EducationHistory,
-    EnglishTest, EmploymentHistory, EmergencyContact,Sections
+    EnglishTest, EmploymentHistory, EmergencyContact, Sections
 )
 
 
@@ -99,7 +99,8 @@ class EnglishTestForm(forms.ModelForm):
         model = EnglishTest
         fields = ['test', 'score', 'date', 'files']
         widgets = {
-            'test': forms.Select(attrs={'class': 'form-control noselect2', 'id': 'test', 'data-placeholder': 'Select test type'}),
+            'test': forms.Select(
+                attrs={'class': 'form-control noselect2', 'id': 'test', 'data-placeholder': 'Select test type'}),
             'score': forms.NumberInput(attrs={'class': 'form-control', 'id': 'score', 'placeholder': 'Score'}),
             'date': forms.DateInput(
                 attrs={'class': 'form-control', 'id': 'date', 'type': 'date', 'placeholder': 'Test Date'}),
@@ -135,15 +136,15 @@ class EmergencyContactForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control', 'id': 'email', 'placeholder': 'Email'}),
         }
 
+
 class SectionForm(forms.ModelForm):
     class Meta:
         model = Sections
-        fields = ['section_name', 'campus', 'program', 'year', 'semester', 'user']
+        fields = ['section_name', 'campus', 'program', 'year', 'semester']
         widgets = {
             'section_name': forms.TextInput(attrs={'class': 'form-control'}),
             'campus': forms.Select(attrs={'class': 'form-control'}),
             'program': forms.Select(attrs={'class': 'form-control'}),
             'year': forms.NumberInput(attrs={'class': 'form-control'}),
-            'semester': forms.Select(attrs={'class': 'form-control'}),
-            'user': forms.SelectMultiple(attrs={'class': 'form-control'}),
+            'semester': forms.Select(attrs={'class': 'form-control'})
         }

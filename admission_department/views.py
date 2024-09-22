@@ -140,11 +140,11 @@ class StudentAjax(View):
         data = []
         for student in page_students:
             data.append([
-                student.user.get_full_name(),
-                student.user.email,
+                student.user.get_full_name() + '<br />' + student.user.email,
                 student.campus.name if student.campus else "",
                 student.department.name if student.department else "",
                 student.program.name if student.program else "",
+                self.get_section(student),
                 self.get_action(student)
             ])
 
@@ -154,6 +154,12 @@ class StudentAjax(View):
             "recordsFiltered": paginator.count,
             "data": data,
         }, status=200)
+
+    def get_section(self, obj):
+        if obj.section:
+            section_url = reverse('student_admin:edit_section', kwargs={'pk': obj.section.id})
+            return f'<a target="_blank" href="{section_url}">{obj.section.section_name}</a>'
+        return ""
 
     def get_checkbox_html(self, student_id):
         return (f'<div class="form-check"><label for="checkbox_{student_id}_question"></label><input '

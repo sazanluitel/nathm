@@ -28,7 +28,7 @@ class DashboardView(View):
 
 
 class StudentList(View):
-    template_name = 'dashboard/student_service/list.html'
+    template_name = 'dashboard/student_service/students/list.html'
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
@@ -294,18 +294,8 @@ class SectionView(View):
     template_name = 'dashboard/student_service/sections/list.html'
 
     def get(self, request, *args, **kwargs):
-        section_form = SectionForm()
-        sections = Sections.objects.all()  # Retrieve existing sections
-        campuses = Campus.objects.all()
-        programs = Program.objects.all()
-        users = User.objects.all()
-
         context = {
-            'section_form': section_form,
-            'sections': sections,
-            'campuses': campuses,
-            'programs': programs,
-            'users': users,
+            'form': SectionForm()
         }
         return render(request, self.template_name, context)
 
@@ -323,7 +313,7 @@ class SectionView(View):
                     'campus': section.campus.name,
                     'program': section.program.name,
                     'year': section.year,
-                    'semester': section.get_semester_display(),  # To get the display name of semester choice
+                    'semester': section.get_semester_display(),
                     'users': [user.get_full_name() for user in section.user.all()],
                 }
                 return JsonResponse(data)

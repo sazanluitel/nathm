@@ -147,4 +147,13 @@ class Sections(models.Model):
     program = models.ForeignKey('dashboard.Program', on_delete=models.CASCADE)
     year = models.IntegerField()
     semester = models.CharField(max_length=255, choices=SEMESTER_CHOICES)
-    user = models.ManyToManyField('userauth.User')
+
+    def get_title(self):
+        program_name = self.program.name if self.program else "No Program"
+        year_display = f"Year {self.year}" if self.year else "No Year"
+        semester_display = self.get_semester_display() if self.semester else "No Semester"
+
+        return f"{self.section_name} - {program_name} - {year_display} - {semester_display}"
+
+    def __str__(self):
+        return self.section_name

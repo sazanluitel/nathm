@@ -3,10 +3,15 @@ from .views import *
 app_name = "student_admin"
 
 urlpatterns = [
-    path('student/add/', StudentView.as_view(), name='add'),
-    path('student/edit/<id>', StudentEditView.as_view(), name='edit'),
-    path('student/list/', StudentList.as_view(), name='list'),
-    path('student/ajax', StudentAjax.as_view(), name='ajax'),
+    path('students/add/', StudentView.as_view(), name='add'),
+    path('students/edit/<id>', StudentEditView.as_view(), name='edit'),
+    path('students/', StudentList.as_view(), name='list'),
+    path('students/ajax', StudentAjax.as_view(), name='ajax'),
+
+    path('sections/', SectionView.as_view(), name='sections'),
+    path('sections/edit/<pk>/', SectionView.as_view(), name='edit_section'),
+    path('sections/select/json/', SectionSelectView.as_view(), name='section_select_json'),
+    path('sections/assign/users/', SectionAssignUsersView.as_view(), name='section_assign_users'),
 
     path('filters/', StudentFilters.as_view(), name='filters'),
 

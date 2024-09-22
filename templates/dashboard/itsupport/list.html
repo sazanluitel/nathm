@@ -31,23 +31,22 @@
         {% with messages=messages %}
             {% include 'dashboard/alert.html' %}
         {% endwith %}
+
         <div class="card">
             <div class="card-body">
-                <div class="student_lists_table">
-                    <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'it_department:ajax' %}"
-                           data-nodata="No Data Found">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Campus</th>
-                            <th>Department</th>
-                            <th>Program</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                    </table>
-                </div>
+                <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'it_department:ajax' %}"
+                       data-nodata="No Data Found">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Campus</th>
+                        <th>Department</th>
+                        <th>Program</th>
+                        <th>Section</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>

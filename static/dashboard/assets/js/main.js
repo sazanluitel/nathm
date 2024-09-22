@@ -80,11 +80,32 @@
                     dropdownParent: $(this).closest(".modal")
                 });
             });
+
+            $(document).find("select.select2ajax").each(function () {
+                const url = $(this).data("ajax") ?? window.location.href;
+                const placeholder = $(this).data("placeholder")
+                $(this).select2({
+                    placeholder: placeholder,
+                    ajax: {
+                        url: url,
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                search: params.term,
+                                page: params.page || 1,
+                                action: "forselect"
+                            };
+                        },
+                        cache: true,
+                        dropdownParent: $(this).closest(".modal")
+                    }
+                });
+            })
         } catch (error) {
             console.log(error);
         }
     });
-
 
     /**
      *  Tinymce editor configuration settings
@@ -141,12 +162,11 @@
         }
     }
     $(document).ready(function () {
-        // Initialize DataTable
         const datatableAjaxElement = $(document).find('.ajaxdatatable');
         if (datatableAjaxElement.length > 0) {
             try {
                 const table = datatableAjaxElement.on('init.dt', function () {
-                    $(document).find(".student_lists_table .dt-container .row:first-child > div:first-child").append(`<button disabled type="button" class="btn btn-primary" id="student_create_section">Create Section</button>`)
+                    $(document).find(".student_lists_table .dt-container .row:first-child > div:first-child").append(`<button disabled type="button" class="btn btn-primary" id="student_create_section">Assign Section</button>`)
                 }).DataTable({
                     lengthChange: true,
                     serverSide: true,
@@ -221,8 +241,35 @@
                 $dropdown.append(`<option value="${option.id}">${option.name}</option>`);
             });
         }
-    });
 
+        $(document).on("click", "#student_create_section", function () {
+            $(document).find("#updateSections").modal("show");
+        });
+
+        $(document).on("submit", "#update_sections", function (e) {
+            e.preventDefault();
+
+            let submitButton = $(this).find('button[type="submit"]');
+            submitButton.prop('disabled', true).text('Updating . . .');
+
+            $('#student_ids_input').val(student_ids.join(','));
+
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (response) {
+                    window.location.reload();
+                },
+                error: function (xhr, status, error) {
+                    alert("Error: Could not assign users to the section.");
+                },
+                complete: function () {
+                    submitButton.prop('disabled', false).text('Assign Users');
+                }
+            });
+        });
+    });
 
     $(document).on('click', '.password_field .show-hide', function () {
         const parentEle = $(this).parent();
@@ -371,7 +418,7 @@
         });
     })
 
-    $(document).on("click", ".sameAsPermanent", function(){
+    $(document).on("click", ".sameAsPermanent", function () {
         const address = $(document).find("[name='permanent-address']").val();
         const city = $(document).find("[name='permanent-city']").val();
         const province = $(document).find("[name='permanent-province']").val();
@@ -388,4 +435,6 @@
         $(document).find("[name='temporary-postcode']").val(postcode);
         $(document).find("[name='temporary-contact_number']").val(contactnumber);
     })
+
+
 })(jQuery);

@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 from dashboard.models import Campus, Department, Program
-from userauth.models import AddressInfo, User, PersonalInfo
+from userauth.models import AddressInfo, User, PersonalInfo, Sections
 
 
 class Student(models.Model):
@@ -77,6 +77,7 @@ class Student(models.Model):
 
     # Kiosk ID
     kiosk_id = models.CharField(max_length=50, blank=True, null=True, unique=True)
+    section = models.ForeignKey(Sections, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.email
