@@ -36,7 +36,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="student_lists_table">
-                    <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'student_admin:ajax' %}"
+                    <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'student_service:students_ajax' %}"
                            data-nodata="No Data Found">
                         <thead>
                         <tr>
@@ -51,7 +51,6 @@
                             <th>Department</th>
                             <th>Program</th>
                             <th>Section</th>
-                            <th>Actions</th>
                         </tr>
                         </thead>
                     </table>
