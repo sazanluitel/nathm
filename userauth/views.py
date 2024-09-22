@@ -245,6 +245,7 @@ class QRView(View):
                 qr_data["program"] = student.program.name if student.program else "Unknown"
                 qr_data["shift"] = student.shift
                 qr_data["kiosk_id"] = student.kiosk_id
+                qr_data["section"] = student.section.section_name if student.section else "Unknown"
 
             qr_data_str = json.dumps({
                 "ismt": qr_data
