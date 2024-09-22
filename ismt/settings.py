@@ -49,8 +49,8 @@ INSTALLED_APPS = [
     "filehub",
     "itdepartment",
     "student_service",
-    "admission_department"
-    
+    "admission_department",
+    "mail"
 ]
 
 MIDDLEWARE = [
@@ -156,3 +156,14 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# Mail Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = "mail.hamroguru.host"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "info@hamroguru.host"
+EMAIL_HOST_PASSWORD = "pl}SbuKwIf5?"
+
+BACKEND_DOMAIN = "https://ismt.sunbi.com.np/"

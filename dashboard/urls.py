@@ -5,7 +5,7 @@ from .views import *
 app_name = "dashboard"
 
 urlpatterns = [
-    path('superuser/', DashboardView.as_view(), name='index'),
+    path('', DashboardView.as_view(), name='index'),
     path("filemanager/", FileManagerView.as_view(), name="filemanager"),
 
     path('campus/add', CampusView.as_view(), name='campus'),
@@ -13,14 +13,11 @@ urlpatterns = [
     path('campus/edit/<int:id>', CampusEdit.as_view(), name='campusedit'),
     path('campus/ajax', CampusAjax.as_view(), name='campusajax'),
 
-
     path('department/add', DepartmentView.as_view(), name='department'),
     path('department/list', DepartmentList.as_view(), name='departmentlist'),
     path('department/<int:id>', DepartmentSelect.as_view(), name='departmentselect'),
     path('department/edit/<int:id>', DepartmentEdit.as_view(), name='departmentedit'),
     path('department/ajax', DepartmentAjax.as_view(), name='departmentajax'),
-
-
 
     path('program/add', ProgramView.as_view(), name='program'),
     path('program/list', ProgramList.as_view(), name='programlist'),

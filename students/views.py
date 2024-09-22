@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
+
+from mail.modules.welcome import WelcomeMessage
 from students.forms import StudentAddForm, StudentEditForm
 from userauth.forms import *
 from userauth.models import *
@@ -25,9 +27,9 @@ class AddStudentIds(View):
         student = get_object_or_404(Student, id=student_id)
         student.college_email = college_email
         student.team_id = teams_id
-
         student.save()
 
+        WelcomeMessage(student.user).send()
         label = "Add Ids"
         if student.college_email or student.team_id:
             label = "Update Ids"
@@ -40,28 +42,6 @@ class AddStudentIds(View):
             "email": student.college_email,
             "team_id": student.team_id
         })
-
-
-    def get_ids(request):
-        if request.method == "GET":
-            student_id = request.GET.get('student_id')
-
-            if student_id:
-                try:
-                    student = Student.objects.get(id=student_id)
-                    data = {
-                        'college_email': student.college_email,
-                        'teams_id': student.team_id,  # Safely get 'teams_id'
-                        'success': True
-                    }
-                except Student.DoesNotExist:
-                    data = {'success': False, 'error': 'Student not found'}
-            else:
-                data = {'success': False, 'error': 'Student ID not provided'}
-
-            return JsonResponse(data)
-
-        return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 
 class StudentView(View):
@@ -497,6 +477,7 @@ class SectionAssignUsersView(View):
         for user in users:
             user.section = section
             user.save()
+            WelcomeMessage(user.user).send()
 
         messages.success(request, "Users assigned to section successfully.")
         return JsonResponse({

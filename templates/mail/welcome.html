@@ -1,0 +1,15 @@
+{% extends "mail/base.html" %}
+
+{% block content %}
+    {% if first_name %}
+        <p style="margin-bottom: 20px;">Dear {{ first_name }},</p>
+    {% else %}
+        <p style="margin-bottom: 20px;">Dear Student,</p>
+    {% endif %}
+    <p style="margin-bottom: 20px;">Welcome to ISMT! We are excited to have you on board.</p>
+    <p style="margin-bottom: 20px;">Your college email and Teams ID have been successfully assigned. You can now access all the resources and connect with your peers.</p>
+    <p><strong>College Email:</strong> {{ college_email }}</p>
+    <p style="margin-bottom: 20px;"><strong>Teams ID:</strong> {{ teams_id }}</p>
+    <p style="margin-bottom: 20px;">Stay tuned for upcoming features and updates that will enhance your learning experience!</p>
+    <p>Best Regards,<br>The ISMT College</p>
+{% endblock %}
