@@ -121,7 +121,7 @@ class StudentEditView(View):
             messages.error(request, "Please correct the errors below.")
 
         return render(request, self.template_name,
-                      {'form': form, 'student_id': id, 'education_history_form': education_history_form,
+                      {'form': form, 'student_id': student_id, 'education_history_form': education_history_form,
                        'english_test_form': english_test_form,
                        'employment_history_form': employment_history_form})
 

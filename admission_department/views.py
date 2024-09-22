@@ -52,12 +52,12 @@ class StudentEditView(View):
         if form.is_valid():
             form.save()
             messages.success(request, "Student updated successfully")
-            return redirect('student_admin:list')
+            return redirect('admission_department:students')
         else:
             messages.error(request, "Please correct the errors below.")
 
         return render(request, self.template_name,
-                      {'form': form, 'student_id': id, 'education_history_form': education_history_form,
+                      {'form': form, 'student_id': student_id, 'education_history_form': education_history_form,
                        'english_test_form': english_test_form,
                        'employment_history_form': employment_history_form})
 
@@ -75,7 +75,7 @@ class StudentView(View):
             try:
                 form.save()
                 messages.success(request, "Student added/updated successfully")
-                return redirect('student_admin:list')
+                return redirect('admission_department:students')
             except Exception as e:
                 messages.error(request, f"An error occurred while saving: {e}")
         else:

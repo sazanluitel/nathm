@@ -6,7 +6,7 @@
 {% block content %}
     <div class="row">
         <div class="col-sm-12">
-            <form method="post" enctype="multipart/form-data" action="{% url 'student_admin:edit' id=student_id %}">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% with messages=messages %}
                     {% include 'dashboard/alert.html' %}
@@ -516,7 +516,7 @@
                 </div>
                 <div class="flex mb-5 ms-3">
                     <button type="submit" class="btn btn-success mt-3">Submit</button>
-                    <a href="{% url "student_admin:list" %}" class="btn btn-secondary mt-3">Cancel</a>
+                    <a href="{% url "admission_department:students" %}" class="btn btn-secondary mt-3">Cancel</a>
                 </div>
             </form>
         </div>
