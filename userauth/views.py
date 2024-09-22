@@ -235,8 +235,7 @@ class QRView(View):
                 "id": user.id,
                 "name": user.get_full_name(),
                 "email": user.email,
-                "profile": "https://sunbi.com.np" + user.profile_image if user.profile_image else "https://sunbi.com"
-                                                                                                  ".np/static/user.png"
+                "profile": "https://ismt.sunbi.com.np" + user.profile_image if user.profile_image else "https://ismt.sunbi.com.np/static/user.png"
             }
             if student:
                 qr_data["college_email"] = student.college_email
