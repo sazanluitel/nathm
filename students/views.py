@@ -248,7 +248,8 @@ class KioskView(View):
                 student = form.save()
                 student.update_kiosk_id()
                 return redirect('students:kiosk-success', pk=student.id)
-            except Exception:
+            except Exception as e:
+                print(e)
                 messages.error(request, "Please correct the errors below.")
         else:
             messages.error(request, "Please correct the errors below.")
