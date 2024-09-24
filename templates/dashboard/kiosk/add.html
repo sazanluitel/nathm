@@ -196,11 +196,11 @@
             height: 300px;
         }
 
-        body #signatureModal{
+        body #signatureModal {
             z-index: 9999999;
         }
 
-        body .modal-backdrop{
+        body .modal-backdrop {
             z-index: 999999;
         }
     </style>
@@ -261,7 +261,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-6">
+                            <div class="col-lg-4">
                                 <div class="form-group">
                                     <label class="form-label">Gender:</label>
                                     {{ form.personal_info_form.gender }}
@@ -269,7 +269,14 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-6">
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.personal_info_form.date_of_birth_in_ad.id_for_label }}"
+                                       class="form-label">Date of Birth:</label>
+                                {{ form.personal_info_form.date_of_birth_in_ad }}
+                                {% include "parts/error.html" with errors=form.personal_info_form.date_of_birth_in_ad.errors %}
+                            </div>
+
+                            <div class="col-lg-4">
                                 <div class="form-group">
                                     <label class="form-label">Email:</label>
                                     {{ form.user_form.email }}
@@ -465,14 +472,16 @@
                         <div class="card">
                             <div class="card-header h6">Signature</div>
                             <div class="card-body">
-                                <input style="display:none;" type="file" name="signature-file" id="signature-file" />
+                                <input style="display:none;" type="file" id="signature-file"/>
 
                                 <div class="signature_preview">
-                                    <img src="" id="signature_preview" alt="Signature" />
+                                    <img src="" id="signature_preview" alt="Signature"/>
                                 </div>
 
                                 <div class="text-center">
-                                    <button data-bs-toggle="modal" data-bs-target="#signatureModal" type="button" class="btn btn-primary btn-sm w-100 px-4 py-2">Add Signature</button>
+                                    <button data-bs-toggle="modal" data-bs-target="#signatureModal" type="button"
+                                            class="btn btn-primary btn-sm w-100 px-4 py-2">Add Signature
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -518,7 +527,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
 <script src="{% static 'dashboard/assets/js/kiosk.js' %}"></script>
 </body>
 </html>
+

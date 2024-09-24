@@ -1,6 +1,8 @@
 import uuid
 
 from django.db import models
+from django.utils import timezone
+
 from dashboard.models import Campus, Department, Program
 from userauth.models import AddressInfo, User, PersonalInfo, Sections
 
@@ -48,7 +50,7 @@ class Student(models.Model):
     college_email = models.EmailField(blank=True, null=True)
 
     commencing_term = models.TextField(null=True, blank=True)
-    date_of_admission = models.DateField(null=True, blank=True)
+    date_of_admission = models.DateField(null=True, blank=True, default=timezone.now)
     shift = models.CharField(max_length=50, choices=SHIFT, null=True, blank=True)
     admission_officer = models.TextField(blank=True, null=True)
     scholarship_details = models.CharField(max_length=100, blank=True, null=True)
@@ -78,7 +80,7 @@ class Student(models.Model):
     # Kiosk ID
     kiosk_id = models.CharField(max_length=50, blank=True, null=True, unique=True)
     section = models.ForeignKey(Sections, on_delete=models.CASCADE, null=True, blank=True)
-    signature = models.ImageField(upload_to='signatures/', blank=True, null=True)
+    # signature = models.ImageField(upload_to='signatures/', blank=True, null=True)
 
     def __str__(self):
         return self.email
