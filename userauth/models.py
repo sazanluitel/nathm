@@ -47,6 +47,15 @@ class User(AbstractUser):
     objects = UserManager()
 
     def save(self, *args, **kwargs):
+        # Set is_staff based on role
+        if self.role in ['admin']:
+            self.is_superuser = True
+        elif self.role in ['teacher', 'admission', 'it', 'student_service', 'college']:
+            self.is_staff = True
+        else:
+            self.is_staff = False
+
+        # Generate a unique username if none is provided
         if not self.username and self.email:
             base_username = self.email.split('@')[0]
             unique_username = base_username
@@ -55,6 +64,8 @@ class User(AbstractUser):
                 unique_username = f"{base_username}_{counter}"
                 counter += 1
             self.username = unique_username
+        
+        # Call the parent class's save() method to save the object
         super().save(*args, **kwargs)
 
     def get_full_name(self):
