@@ -8,7 +8,7 @@ from userauth.views import (
     VerifyEmailView,
     QRView,
     LandingPage,
-    DashboardView
+    DashboardView,
 )
 
 app_name = "userauth"

@@ -1,22 +1,24 @@
 import json
 from io import BytesIO
-
 import qrcode
-from django.http import Http404
-from django.shortcuts import render, redirect, HttpResponse
+from django.urls import reverse
+from django.http import Http404,JsonResponse
+from django.shortcuts import render, redirect, HttpResponse,get_object_or_404
 from django.views.generic import View
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-
 from students.models import Student
 from userauth.forms import (
     LoginForm,
-    RegisterForm
+    RegisterForm,
+    UserForm
 )
+from django.core.paginator import Paginator
 from userauth.models import User
 from userauth.utils import send_verification_link
 import re
+from django.db.models import Q
 
 
 # Create your views here.
@@ -293,3 +295,91 @@ class QRView(View):
             return HttpResponse(buffer, content_type="image/png")
         except User.DoesNotExist:
             raise Http404
+        
+
+class UserRoleView(View):
+    def get(self, request, *args, **kwargs):
+        draw = request.GET.get('draw')
+        if draw:
+            return self.get_json(request)
+
+        user_id = kwargs.get('pk')
+        if user_id:
+            user = get_object_or_404(User, id=user_id)
+            form = RegisterForm(instance=user)
+        else:
+            form = RegisterForm()
+
+        return render(request, 'dashboard/auth/user_roles.html', context={
+            'form': form
+        })
+
+    def post(self, request, *args, **kwargs):
+        user_id = kwargs.get('pk')
+        if user_id:
+            user = get_object_or_404(User, id=user_id)
+            form = RegisterForm(request.POST, instance=user)
+        else:
+            form = RegisterForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "User added successfully.")
+            return redirect('user_admin:users')
+        
+        return render(request, 'dashboard/auth/users.html', context={
+            'form': form
+        })
+
+class RolesAjaxView(View):
+
+    def get(self, request):
+        draw = int(request.GET.get("draw", 1))
+        start = int(request.GET.get("start", 0))
+        length = int(request.GET.get("length", 10))
+        search_value = request.GET.get("search[value]", None)
+        page_number = (start // length) + 1
+
+        users = User.objects.order_by("-id")
+        if search_value:
+            users = users.filter(
+                Q(first_name__icontains=search_value) |
+                Q(last_name__icontains=search_value) |
+                Q(username__icontains=search_value) |
+                Q(email__icontains=search_value)
+            )
+
+        paginator = Paginator(users, length)
+        page_users = paginator.page(page_number)
+
+        data = []
+        for user in page_users:
+            data.append([
+                user.username,
+                user.email,
+                self.get_action(user)
+            ])
+
+        return JsonResponse({
+            "draw": draw,
+            "recordsTotal": paginator.count,
+            "recordsFiltered": paginator.count,
+            "data": data,
+        }, status=200)
+
+    def get_action(self, user):
+        user_id = user.id
+        edit_url = reverse('user_admin:edit_user', kwargs={'pk': user_id})
+        delete_url = reverse('dashboard:delete')
+        backurl = reverse('user_admin:users')
+
+        return f'''
+            <form method="post" action="{delete_url}" class="button-group">
+                <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
+                <input type="hidden" name="_selected_id" value="{user_id}" />
+                <input type="hidden" name="_selected_type" value="user" />
+                <input type="hidden" name="_back_url" value="{backurl}" />
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+        '''
+
