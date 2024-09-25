@@ -1,0 +1,45 @@
+{% extends 'dashboard/admin-base.html' %}
+{% load static %}
+{% block title %}Books{% endblock %}
+{% block breadcrumb %}Books{% endblock %}
+{% block maintitle %}Books{% endblock %}
+
+{% block content %}
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">Add Books</div>
+            <div class="card-body">
+                {% with messages=messages %}
+                    {% include 'dashboard/alert.html' %}
+                {% endwith %}
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    {{ form.as_p }}
+
+                    <button type="submit" class="btn btn-primary w-100">{% if form.instance %}Update Books{% else %}Add Books{% endif %}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">Books</div>
+            <div class="card-body">
+                <table
+                        class="table ajaxdatatable table-bordered"
+                        data-ajax="#"
+                >
+                    <thead>
+                    <tr>
+                        <th>Books</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
