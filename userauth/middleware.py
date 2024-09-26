@@ -8,6 +8,7 @@ class AccessCheck:
 
     def get_role_router(self, request):
         """ Match the URL path to the role required to access it. """
+        # Define the path prefixes for each role
         path_to_role = {
             "/admin/superuser/": "admin",
             "/admin/itsupport/": "it",
@@ -17,13 +18,14 @@ class AccessCheck:
             "/teacher/": "teacher",
         }
 
-        for path, role in path_to_role.items():
-            if request.path_info.startswith(path):
+        # Loop through path_to_role to check for matching role prefix
+        for path_prefix, role in path_to_role.items():
+            if request.path_info.startswith(path_prefix):
                 return role
-        return None
+        return None  # Return None if no matching role
 
     def __call__(self, request):
-        # For any /admin/ path, we check the user's role
+        # For any /admin/ path, check the user's role
         if request.path_info.startswith('/admin'):
             if request.user.is_authenticated:
                 required_role = self.get_role_router(request)
@@ -59,4 +61,3 @@ class AccessCheck:
 
         response = self.get_response(request)
         return response
-

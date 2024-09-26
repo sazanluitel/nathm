@@ -20,6 +20,9 @@ class RegisterForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'test@example.com'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '********'}))
     cpassword = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '********'}))
+    role = forms.ChoiceField(
+        choices=[('student', 'Student'), ('teacher', 'Teacher'), ('parent', 'Parent'), ('staff', 'Staff')],
+        widget=forms.Select(attrs={'class': 'form-control'}))
 
 
 class UserForm(forms.ModelForm):

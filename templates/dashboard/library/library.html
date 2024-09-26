@@ -1,0 +1,45 @@
+{% extends 'dashboard/admin-base.html' %}
+{% load static %}
+{% block title %}Library{% endblock %}
+{% block breadcrumb %}Library{% endblock %}
+{% block maintitle %}Library{% endblock %}
+
+{% block content %}
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">Add Library</div>
+            <div class="card-body">
+                {% with messages=messages %}
+                    {% include 'dashboard/alert.html' %}
+                {% endwith %}
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    {{ form.as_p }}
+
+                    <button type="submit" class="btn btn-primary w-100">{% if form.instance %}Update Library{% else %}Add Library{% endif %}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">Library</div>
+            <div class="card-body">
+                <table
+                        class="table ajaxdatatable table-bordered"
+                        data-ajax="{% url 'student_admin:sections' %}"
+                >
+                    <thead>
+                    <tr>
+                        <th>Library</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,25 +1,11 @@
-"""
-URL configuration for ismt project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path("", include("userauth.urls", namespace="userauth")),
+    path("admin/superuser/", include("userauth.admin_user_urls", namespace="admin_user_urls")),
+    path("admin/superuser/", include("library.admin_urls", namespace="library_admin_urls")),
     path("admin/superuser/", include("dashboard.urls", namespace="dashboard")),
     path('admin/superuser', include('filehub.urls', namespace="filehub")),
     path("student/", include("students.urls", namespace="students")),
@@ -27,6 +13,7 @@ urlpatterns = [
     path("admin/itsupport/", include("itdepartment.urls", namespace="it_department")),
     path("admin/studentservice/", include("student_service.urls", namespace="student_service")),
     path("admin/admission-department/", include("admission_department.urls", namespace="admission_department")),
+    path("teacher/", include("teacher.urls", namespace="teacher")),
     path("", include("mail.urls", namespace="mail")),
 ]
 

@@ -50,7 +50,12 @@ INSTALLED_APPS = [
     "itdepartment",
     "student_service",
     "admission_department",
-    "mail"
+    "mail",
+    "teacher",
+    "library",
+    "payment",
+    "certificate",
+    
 ]
 
 MIDDLEWARE = [

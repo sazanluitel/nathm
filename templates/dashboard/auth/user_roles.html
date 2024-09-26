@@ -1,0 +1,46 @@
+{% extends 'dashboard/admin-base.html' %}
+{% load static %}
+{% block title %}Users{% endblock %}
+{% block breadcrumb %}Users{% endblock %}
+{% block maintitle %}Users{% endblock %}
+
+{% block content %}
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">Add Users</div>
+            <div class="card-body">
+                {% with messages=messages %}
+                    {% include 'dashboard/alert.html' %}
+                {% endwith %}
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    {{ form.as_p }}
+
+                    <button type="submit" class="btn btn-primary w-100">{% if form.instance %}Update User{% else %}Add User{% endif %}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">List of user</div>
+            <div class="card-body">
+                <table
+                        class="table ajaxdatatable table-bordered"
+                        data-ajax="{% url "userauth_admin_urls:rolesajax" %}"
+                >
+                    <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>email</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
