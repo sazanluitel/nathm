@@ -368,6 +368,16 @@
                                 {{ form.student_form.organization }}
                                 {% include "parts/error.html" with errors=form.student_form.organization.errors %}
                             </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.student_form.authorize_person.id_for_label }}" class="form-label">Authorize Person:</label>
+                                {{ form.student_form.authorize_person }}
+                                {% include "parts/error.html" with errors=form.student_form.authorize_person.errors %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.student_form.email.id_for_label }}" class="form-label">Email:</label>
+                                {{ form.student_form.email }}
+                                {% include "parts/error.html" with errors=form.student_form.email.errors %}
+                            </div>
                             <div class="col-md-4 mb-3">
                                 <label for="{{ form.payment_address_form.address.id_for_label }}" class="form-label">Address:</label>
                                 {{ form.payment_address_form.address }}

@@ -1,0 +1,37 @@
+{% extends "dashboard/bases/student-profile.html" %}
+{% block title %}Routine{% endblock title %}
+{% block breadcrumb %}Routine{% endblock breadcrumb %}
+{% block maintitle %}Routine{% endblock maintitle %}
+
+{% block content %}
+
+<div class="col-sm-12">
+    {% with messages=messages %}
+    {% include 'dashboard/alert.html' %}
+{% endwith %}
+    <div class="card">
+        <div class="card-body">
+            <div class="dt-responsive">
+                <table 
+                    class="ajaxdatatable table table-bordered nowrap"
+                >
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Sunday</th>
+                            <th>Monday</th>
+                            <th>Tuesday</th>
+                            <th>Wednesday</th>
+                            <th>Thursday</th>
+                            <th>Friday</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                       
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
