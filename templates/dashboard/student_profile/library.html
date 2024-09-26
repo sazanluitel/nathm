@@ -1,0 +1,35 @@
+{% extends "dashboard/bases/student-profile.html" %}
+{% block title %}Library{% endblock title %}
+{% block breadcrumb %}Library{% endblock breadcrumb %}
+{% block maintitle %}Library Record{% endblock maintitle %}
+
+{% block content %}
+
+<div class="col-sm-12">
+    {% with messages=messages %}
+    {% include 'dashboard/alert.html' %}
+{% endwith %}
+    <div class="card">
+        <div class="card-body">
+            <div class="dt-responsive">
+                <table 
+                    class="ajaxdatatable table table-bordered nowrap"
+                >
+                   <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Author</th>
+                            <th>Borrowed Date</th>
+                            <th>Return Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                       
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

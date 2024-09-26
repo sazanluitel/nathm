@@ -138,8 +138,8 @@
                 }
             ],
             table_class_list: [
-                {title: 'Table Bordered', value: 'table table-bordered'},
-                {title: 'None', value: ''}
+                { title: 'Table Bordered', value: 'table table-bordered' },
+                { title: 'None', value: '' }
             ],
             noneditable_noneditable_class: 'alert',
             min_height: 300
@@ -436,5 +436,28 @@
         $(document).find("[name='temporary-contact_number']").val(contactnumber);
     })
 
+    $('#downloadBtn').on('click', function (e) {
+        const certificate = $('#certificate_select').val();
+        const selectError = $('#selectError');
 
+        if (!certificate) {
+            selectError.show();
+            e.preventDefault();
+        } else {
+            selectError.hide();
+            const studentId = "{{ student.id }}";
+            let downloadUrl = '';
+
+            switch (certificate) {
+                case 'transcript':
+                    downloadUrl = `/download_certificate/${studentId}/?certificate=transcript`;
+                    break;
+                case 'provisional':
+                    downloadUrl = `/download_certificate/${studentId}/?certificate=recommendation`;
+                    break;
+            }
+
+            window.location.href = downloadUrl;
+        }
+    });
 })(jQuery);
