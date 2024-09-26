@@ -279,11 +279,12 @@
     width: 50px;
     border-radius: 50%;
 }
+
 .select2-container {
     z-index: 999999999999;
 }
 
-.modal .select2-container{
+.modal .select2-container {
     width: 100% !important;
 }
 
@@ -4075,7 +4076,7 @@ body {
 }
 
 body .select2-container--default .select2-selection--multiple .select2-selection__choice__remove,
-body .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover{
+body .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
     margin-top: 0;
     border: 0;
     left: 0;
@@ -4085,24 +4086,24 @@ body .select2-container--default .select2-selection--multiple .select2-selection
 }
 
 body .select2-container--default.select2-container--focus .select2-selection--multiple,
-body .select2-container--default .select2-selection--multiple{
+body .select2-container--default .select2-selection--multiple {
     border-color: var(--bs-border-color);
 }
 
-body .select2-container .select2-selection--multiple{
-    min-height:48px;
+body .select2-container .select2-selection--multiple {
+    min-height: 48px;
 }
 
-body .select2-container .select2-search--inline .select2-search__field{
-    height:30px;
+body .select2-container .select2-search--inline .select2-search__field {
+    height: 30px;
     padding: 10px;
 }
 
-body .fancybox-container{
+body .fancybox-container {
     z-index: 9999999999;
 }
 
-body .invalid-feedback{
+body .invalid-feedback {
     display: block;
 }
 
@@ -4113,37 +4114,89 @@ body .invalid-feedback{
     --bs-alert-link-color: var(--bs-danger-text-emphasis);
 }
 
-body .modal{
+body .modal {
     z-index: 9999999999;
 }
 
-body .modal-backdrop{
+body .modal-backdrop {
     z-index: 999999999;
 }
 
-.student_lists_table .dt-container .row:first-child > div:first-child{
+.student_lists_table .dt-container .row:first-child>div:first-child {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap:15px;
+    gap: 15px;
 }
 
-body .form-check-input{
+body .form-check-input {
     border-color: #ccc;
 }
 
-body .btn-primary{
-    --btn-primary:#1B5C9C;
-    --bs-btn-bg:var(--btn-primary);
-    --bs-btn-border-color:var(--btn-primary);
-    --bs-btn-hover-bg:var(--btn-primary);
-    --bs-btn-hover-border-color:var(--btn-primary);
-    --bs-btn-active-bg:var(--btn-primary);
-    --bs-btn-active-border-color:var(--btn-primary);
-    --bs-btn-disabled-bg:var(--btn-primary);
+body .btn-primary {
+    --btn-primary: #1B5C9C;
+    --bs-btn-bg: var(--btn-primary);
+    --bs-btn-border-color: var(--btn-primary);
+    --bs-btn-hover-bg: var(--btn-primary);
+    --bs-btn-hover-border-color: var(--btn-primary);
+    --bs-btn-active-bg: var(--btn-primary);
+    --bs-btn-active-border-color: var(--btn-primary);
+    --bs-btn-disabled-bg: var(--btn-primary);
     --bs-btn-disabled-border-color: var(--btn-primary);
 }
 
-.card .card-header > div{
+.card .card-header>div {
     font-size: 19px;
+}
+
+
+/* student status record */
+h2 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.student-info,
+.payment-info,
+.certificate-section {
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.student-info span,
+.payment-info span,
+.certificate-section span {
+    font-weight: bold;
+}
+
+.certificate-select {
+    margin-top: 10px;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.download-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.download-btn:hover {
+    background-color: #0056b3;
+}
+
+.select-error {
+    color: red;
+    margin-top: 10px;
 }

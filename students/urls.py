@@ -1,8 +1,29 @@
 from django.urls import path
 from .views import *
+from .studentview import *
 app_name = "students"
 
 urlpatterns = [
     path('kiosk-reg/', KioskView.as_view(), name='kiosk-reg'),
     path('kiosk-reg/<pk>/success/', KioskSuccessView.as_view(), name='kiosk-success'),
+
+    path('dashboard/', DashboardView.as_view(), name='studentdashboard'),
+    path('status/', StudentStatusView.as_view(), name='studentstatus'),
+
+    path('record/', StudentRecordView.as_view(), name='studentdata'),
+
+    path('modules/', StudentModulesView.as_view(), name='modules'),
+    path('modulesajax/', StudentModuleAjaxView.as_view(),name='modulesajax'),
+
+    path('routine/', StudentRoutineView.as_view(), name='routine'),
+    # path('routinesajax/', StudentRoutineAjaxView.as_view(),name='routinesajax'),
+    
+    path('library/', StudentLibraryView.as_view(), name='library'),
+    # path('libraryajax/', StudentLibraryAjaxView.as_view(),name='libraryajax'),
+
+    path('download_certificate/<int:student_id>/', GenerateCertificatePDF.as_view(), name='download_certificate'),
+
+    path('student/educational/<pk>/history/json/', EducationalHistoryJsons.as_view(), name="educational_history_json"),
+    path('student/test/history/<pk>/json/', EnglishTestHistoryJsons.as_view(), name="english_test_json"),
+    path('student/employment/history/<pk>/json/', EmploymentHistoryJsons.as_view(), name="employment_history_json")
 ]

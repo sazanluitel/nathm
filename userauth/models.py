@@ -50,7 +50,7 @@ class User(AbstractUser):
         # Set is_staff based on role
         if self.role in ['admin']:
             self.is_superuser = True
-        elif self.role in ['teacher', 'admission', 'it', 'student_service', 'college']:
+        elif self.role in ['admission', 'it', 'student_service', 'college']:
             self.is_staff = True
         else:
             self.is_staff = False

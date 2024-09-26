@@ -13,7 +13,9 @@ class AccessCheck:
             "/admin/superuser/": "admin",
             "/admin/itsupport/": "it",
             "/admin/studentservice/": "student_service",
-            "/admin/admission-department/": "admission"
+            "/admin/admission-department/": "admission",
+            "/student/": "student",
+            "/teacher/": "teacher",
         }
 
         # Loop through path_to_role to check for matching role prefix
@@ -45,13 +47,17 @@ class AccessCheck:
                             return redirect("student_service:index")
                         else:
                             return HttpResponseForbidden("You are not authorized to access this section.")
-
-                # If not staff, non-staff users cannot access /admin/ sections
+                elif not request.user.is_staff:
+                    if request.user.role == "student":
+                            return redirect("students:studentdashboard")
+                    elif request.user.role == "teacher":
+                            return redirect("teacher:index")
+                    else:
+                            return HttpResponseForbidden("You are not authorized to access this section.")
                 else:
                     return HttpResponseForbidden("Non-staff users are not allowed to access the admin section.")
             else:
-                return redirect('userauth:login')  # Redirect to login if the user is not authenticated
+                return redirect('userauth:login') 
 
-        # Continue processing if not under /admin/
         response = self.get_response(request)
         return response

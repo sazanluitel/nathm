@@ -5,6 +5,8 @@ from .forms import TeacherAddForm
 from django.db.models import Q
 from django.core.paginator import Paginator
 from .models import Teacher
+from dashboard.models import *
+from userauth.models import *
 from django.http import JsonResponse
 from django.urls import reverse
 
@@ -61,6 +63,8 @@ class TeacherAjax(View):
         search_value = request.GET.get("search[value]", None)
         department_id = request.GET.get("department", None)
         modules_id = request.GET.get("modules", None)
+        program_id = request.GET.get("program", None)
+
 
         page_number = (start // length) + 1
 
@@ -72,6 +76,8 @@ class TeacherAjax(View):
             teachers = teachers.filter(department_id=department_id)
         if modules_id:
             teachers = teachers.filter(modules__id=modules_id)
+        if program_id:
+            teachers = teachers.filter(program_id=program_id)
 
         # Apply search filter
         if search_value:
@@ -79,7 +85,6 @@ class TeacherAjax(View):
                 Q(personal_info__user__first_name__icontains=search_value) |
                 Q(personal_info__user__last_name__icontains=search_value) |
                 Q(teacher_id__icontains=search_value) |
-                Q(campus__name__icontains=search_value) |
                 Q(department__name__icontains=search_value) |
                 Q(program__name__icontains=search_value)
             )

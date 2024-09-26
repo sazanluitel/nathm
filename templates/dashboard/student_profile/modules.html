@@ -1,0 +1,36 @@
+{% extends "dashboard/bases/student-profile.html" %}
+{% block title %}Module{% endblock title %}
+{% block breadcrumb %}Module{% endblock breadcrumb %}
+{% block maintitle %}Module{% endblock maintitle %}
+
+{% block content %}
+
+<div class="col-sm-12">
+    {% with messages=messages %}
+    {% include 'dashboard/alert.html' %}
+{% endwith %}
+    <div class="card">
+        <div class="card-body">
+            <div class="dt-responsive">
+                <table 
+                    class="ajaxdatatable table table-bordered nowrap"
+                    data-ajax="{% url 'students:modulesajax' %}"
+                    data-nodata="No Data Found"
+                >
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Subject Code</th>
+                            <th>Credit Hours</th>
+                            <th>Level</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
