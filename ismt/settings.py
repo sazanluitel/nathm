@@ -53,6 +53,9 @@ INSTALLED_APPS = [
     "mail",
     "teacher",
     "library",
+    "payment",
+    "certificate",
+    
 ]
 
 MIDDLEWARE = [
