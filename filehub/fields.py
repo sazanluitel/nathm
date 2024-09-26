@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 
-class ImagePickerField(models.CharField):
+class ImagePickerField(models.TextField):
     def formfield(self, **kwargs):
         kwargs['widget'] = ImagePickerWidget
         return super().formfield(**kwargs)
