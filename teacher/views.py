@@ -72,7 +72,6 @@ class TeacherAjax(View):
             'department', 'program', 'modules'
         ).order_by("-id")
 
-        # Apply filters if department or module is selected
         if department_id:
             teachers = teachers.filter(department_id=department_id)
         if modules_id:
@@ -97,7 +96,7 @@ class TeacherAjax(View):
         data = []
         for teacher in page_teachers:
             data.append([
-                teacher.personal_info.user.get_full_name() + '<br />' + teacher.personal_info.user.email,
+                teacher.user.get_full_name() + '<br />' + teacher.user.email,
                 teacher.department.name if teacher.department else "",
                 teacher.program.name if teacher.program else "",
                 self.get_action(teacher)

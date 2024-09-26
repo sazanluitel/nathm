@@ -13,7 +13,7 @@
                     {% include 'dashboard/alert.html' %}
                 {% endwith %}
 
-                <form method="POST" action="{% url "library_admin_urls:library" %}">
+                <form method="POST" action="{% url 'library_admin_urls:books' %}">
                     {% csrf_token %}
 
                     {{ form.as_p }}
@@ -30,7 +30,7 @@
             <div class="card-body">
                 <table
                         class="table ajaxdatatable table-bordered"
-                        data-ajax="#"
+                        data-ajax="{% url "library_admin_urls:ajax" %}"
                 >
                     <thead>
                     <tr>

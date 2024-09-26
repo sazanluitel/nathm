@@ -299,34 +299,18 @@ class QRView(View):
 
 class UserRoleView(View):
     def get(self, request, *args, **kwargs):
-        draw = request.GET.get('draw')
-        if draw:
-            return self.get_json(request)
-
-        user_id = kwargs.get('pk')
-        if user_id:
-            user = get_object_or_404(User, id=user_id)
-            form = RegisterForm(instance=user)
-        else:
-            form = RegisterForm()
+        form = RegisterForm()
 
         return render(request, 'dashboard/auth/user_roles.html', context={
             'form': form
         })
 
     def post(self, request, *args, **kwargs):
-        user_id = kwargs.get('pk')
-        if user_id:
-            user = get_object_or_404(User, id=user_id)
-            form = RegisterForm(request.POST, instance=user)
-        else:
-            form = RegisterForm(request.POST)
-
+        form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, "User added successfully.")
             return redirect('user_admin:users')
-        
         return render(request, 'dashboard/auth/users.html', context={
             'form': form
         })
