@@ -23,7 +23,7 @@ class TeacherAddView(View):
         if form.is_valid():
             try:
                 form.save()
-                messages.success(request, "Student added/updated successfully")
+                messages.success(request, "Teacher added successfully")
                 return redirect('teacher:list')
             except Exception as e:
                 messages.error(request, f"An error occurred while saving: {e}")
@@ -37,13 +37,9 @@ class TeacherAddView(View):
         # Print errors for each sub-form
         form_instances = {
             'user_form': form.user_form,
-            'permanent_address_form': form.permanent_address_form,
-            'temporary_address_form': form.temporary_address_form,
-            'payment_address_form': form.payment_address_form,
             'personal_info_form': form.personal_info_form,
-            'student_form': form.student_form,
-            'emergency_contact_form': form.emergency_contact_form,
-            'emergency_address_form': form.emergency_address_form,
+            'address_info_form': form.address_info_form,
+            'teacher_form': form.teacher_form,
         }
 
         for form_name, form_instance in form_instances.items():
@@ -56,6 +52,7 @@ class TeacherList(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'dashboard/teacher/list.html')
 
+
 class TeacherAjax(View):
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
@@ -67,30 +64,35 @@ class TeacherAjax(View):
 
         page_number = (start // length) + 1
 
-        teachers = Teacher.objects.select_related('campus', 'department', 'program', 'modules').order_by("-id")
+        teachers = Teacher.objects.select_related(
+            'campus', 'department', 'program', 'modules', 'personal_info__user'
+        ).order_by("-id")
 
+        # Apply filters if department or module is selected
         if department_id:
             teachers = teachers.filter(department_id=department_id)
         if modules_id:
             teachers = teachers.filter(modules__id=modules_id)
 
+        # Apply search filter
         if search_value:
             teachers = teachers.filter(
-                Q(user__first_name__icontains=search_value) |
-                Q(user__last_name__icontains=search_value) |
+                Q(personal_info__user__first_name__icontains=search_value) |
+                Q(personal_info__user__last_name__icontains=search_value) |
                 Q(teacher_id__icontains=search_value) |
                 Q(campus__name__icontains=search_value) |
                 Q(department__name__icontains=search_value) |
                 Q(program__name__icontains=search_value)
             )
 
+        # Paginate the result
         paginator = Paginator(teachers, length)
         page_teachers = paginator.page(page_number)
 
         data = []
         for teacher in page_teachers:
             data.append([
-                teacher.user.get_full_name() + '<br />' + teacher.user.email,
+                teacher.personal_info.user.get_full_name() + '<br />' + teacher.personal_info.user.email,
                 teacher.department.name if teacher.department else "",
                 teacher.program.name if teacher.program else "",
                 self.get_action(teacher)

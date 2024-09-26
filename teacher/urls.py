@@ -7,5 +7,5 @@ urlpatterns =[
    path('add/',TeacherAddView.as_view(), name='add'),
    path('list/',TeacherList.as_view(), name='list'),
    path('edit/',TeacherAddView.as_view(), name='edit'),
-   path('teacherajax/',TeacherAjax.as_view(), name='teacherajax'),
+   path('teacherajax/',TeacherAjax.as_view(), name='ajax'),
 ]

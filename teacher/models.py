@@ -14,7 +14,7 @@ class Teacher(models.Model):
     personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE)
     english_test = models.ForeignKey(EnglishTest, on_delete=models.CASCADE)
     shift = models.CharField(max_length=100, choices=SHIFT_CHOICES)
-    date_joined = models.DateField()
+    date_joined = models.DateField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.personal_info.user.get_full_name()} - {self.shift}"
