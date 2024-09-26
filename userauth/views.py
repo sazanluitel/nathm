@@ -314,6 +314,7 @@ class UserRoleView(View):
         return render(request, 'dashboard/auth/users.html', context={
             'form': form
         })
+    
 
 class RolesAjaxView(View):
 
