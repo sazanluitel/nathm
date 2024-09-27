@@ -13,13 +13,31 @@ class ImagePickerField(models.TextField):
 class ImagePickerWidget(forms.widgets.TextInput):
     def render(self, name, value, attrs=None, renderer=None):
         app_url = reverse('filehub:browser_select')
-        filemanagerurl = f"{app_url}?callback_fnc=" + name
-        attrs = attrs or {}
-        attrs['class'] = "form-control"
+        filemanager_url = f"{app_url}?callback_fnc={name}"
 
-        html = '<div class="input-group">'
+        css_classes = "image_picker_container"
+        if value:
+            css_classes += " added"
+
+        # HTML
+        html = f"""<div class="{css_classes}"><style>.image_picker_container input{{display:none}}</style>"""
         html += super().render(name, value, attrs, renderer)
-        html += ('<div class="input-group-append"><a href="{url}" class="btn btn-outline-secondary '
-                 'imagePickerFancybox" type="button">Choose Image</a></div></div>')
-        html = html.format(url=filemanagerurl)
+
+        html += f"""
+        <div class="empty_placeholder">
+            <a href="{filemanager_url}" class="select_{name}_url openImagePicker">Select Image</a>
+        </div>
+        """
+
+        if value:
+            html += f"""
+            <div class="image_fill_placeholder mt-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512">
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" 
+                          stroke-width="32" d="M368 368L144 144M368 144L144 368"></path>
+                </svg>
+                <img src="{value}" style="width:auto;max-width:100%;" alt="Preview Image"/>
+            </div>
+            """
+        html += '</div>'
         return mark_safe(html)
