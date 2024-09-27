@@ -20,7 +20,7 @@ class ImagePickerWidget(forms.widgets.TextInput):
             css_classes += " added"
 
         # HTML
-        html = f"""<div class="{css_classes}">"""
+        html = f"""<div class="{css_classes}"><style>.image_picker_container input{{display:none}}</style>"""
         html += super().render(name, value, attrs, renderer)
 
         html += f"""
