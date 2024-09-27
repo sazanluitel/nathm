@@ -141,8 +141,9 @@ class LibraryAjaxView(View):
         page_libraries = paginator.page(page_number)
         data = []
         for library in page_libraries:
+            
             data.append([
-                library.name,
+                library.book.name,  
                 self.get_action(library.id)
             ])
         return JsonResponse({
@@ -166,4 +167,5 @@ class LibraryAjaxView(View):
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
         '''
+
     

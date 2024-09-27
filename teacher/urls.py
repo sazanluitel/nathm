@@ -6,6 +6,6 @@ app_name = "teacher"
 urlpatterns =[
    path('add/',TeacherAddView.as_view(), name='add'),
    path('list/',TeacherList.as_view(), name='list'),
-   path('edit/<id>/',TeacherAddView.as_view(), name='edit'),
+   #path('edit/<id>/',TeacherEditView.as_view(), name='edit'),
    path('teacherajax/',TeacherAjax.as_view(), name='ajax'),
 ]

@@ -54,7 +54,24 @@ class TeacherList(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'dashboard/teacher/list.html')
 
+# class TeacherEditView(View):
+#     def get(self, request, id, *args, **kwargs):
+#         teacher = Teacher.objects.get(id=id)
+#         user = User.objects.get(id=teacher.user_id)
+#         personal_info = PersonalInfo.objects.get(user_id=user.id)
+#         address_info = AddressInfo.objects.get(user_id=user.id)
+#         education_history_form = EducationHistoryForm()
+#         english_test_form = EnglishTestForm()
+#         employment_history_form = EmploymentHistoryForm()
+#         teacher_info = TeacherInfo.objects.get(user_id=user.id)
 
+#         return render(request, 'dashboard/teacher/edit.html', {
+#             'teacher': teacher,
+#             'user': user,
+#             'personal_info': personal_info,
+#             'address_info': address_info,
+#             'teacher_info': teacher_info,
+#         })
 class TeacherAjax(View):
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
