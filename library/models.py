@@ -11,6 +11,7 @@ class Book(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     e_book = models.BooleanField(default=False)
     available = models.BooleanField(default=True)
+    isbn = models.CharField(max_length=255)
     file = ImagePickerField(null=True, blank=True)
 
     def __str__(self):
