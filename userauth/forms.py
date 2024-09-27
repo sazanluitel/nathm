@@ -11,19 +11,19 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '********'}))
 
 
-class RegisterForm(forms.Form):
-    first_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}))
-    last_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}))
-    phone_number = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder': 'Phone Number'}))
-    username = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'test@example.com'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '********'}))
-    cpassword = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '********'}))
-    role = forms.ChoiceField(
-        choices=[('student', 'Student'), ('teacher', 'Teacher'), ('parent', 'Parent'), ('staff', 'Staff')],
-        widget=forms.Select(attrs={'class': 'form-control'}))
-
+class RegisterForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = [ 'first_name', 'middle_name', 'last_name', 'email', 'password', 'role']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'middle_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'role': forms.Select(attrs={'class': 'form-control'}),
+        }
+       
 
 class UserForm(forms.ModelForm):
     class Meta:

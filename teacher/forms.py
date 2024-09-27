@@ -81,9 +81,7 @@ class TeacherAddForm:
                     user.save()
 
                 # Save Address Info
-                address_info = self.address_info_form.save(commit=False)
-                if commit:
-                    address_info.save()
+                address_info = self.address_info_form.save()
 
                 # Save Personal Info
                 personal_info = self.personal_info_form.save(commit=False)
@@ -113,6 +111,7 @@ class TeacherAddForm:
                 # Saving the Teacher instance
                 teacher = self.teacher_form.save(commit=False)
                 teacher.user = user
+                teacher.personal_info = personal_info
 
                 if commit:
                     teacher.save()
