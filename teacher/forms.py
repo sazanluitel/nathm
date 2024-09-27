@@ -26,7 +26,7 @@ class TeacherForm(forms.ModelForm):
                 'id': 'program',
                 'data-placeholder': 'Select a program'
             }),
-            'modules':forms.Select(attrs={
+            'modules':forms.SelectMultiple(attrs={
                 'class': 'form-control',
                 'id': 'modules',
                 'data-placeholder': 'Select modules'

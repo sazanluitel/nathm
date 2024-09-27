@@ -65,17 +65,18 @@ class TeacherAjax(View):
         modules_id = request.GET.get("modules", None)
         program_id = request.GET.get("program", None)
 
-
         page_number = (start // length) + 1
 
+        # Use select_related for ForeignKey fields and prefetch_related for ManyToManyField
         teachers = Teacher.objects.select_related(
-            'department', 'program', 'modules'
-        ).order_by("-id")
+            'department', 'program', 'personal_info'
+        ).prefetch_related('modules').order_by("-id")
 
+        # Filter by department, modules, and program
         if department_id:
             teachers = teachers.filter(department_id=department_id)
         if modules_id:
-            teachers = teachers.filter(modules__id=modules_id)
+            teachers = teachers.filter(modules__id=modules_id)  # Update for many-to-many relation
         if program_id:
             teachers = teachers.filter(program_id=program_id)
 
@@ -95,6 +96,8 @@ class TeacherAjax(View):
 
         data = []
         for teacher in page_teachers:
+            # Joining multiple modules for display
+            modules = ', '.join([module.name for module in teacher.modules.all()])
             data.append([
                 teacher.user.get_full_name() + '<br />' + teacher.user.email,
                 teacher.department.name if teacher.department else "",
@@ -124,3 +127,4 @@ class TeacherAjax(View):
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
         '''
+

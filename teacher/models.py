@@ -11,7 +11,7 @@ class Teacher(models.Model):
     campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
-    modules = models.ForeignKey(Modules, on_delete=models.CASCADE)
+    modules = models.ManyToManyField(Modules)
     personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE)
     shift = models.CharField(max_length=100, choices=SHIFT_CHOICES)
     date_joined = models.DateField(blank=True, null=True)
