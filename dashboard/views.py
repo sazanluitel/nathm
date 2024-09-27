@@ -11,6 +11,8 @@ from django.db.models import Prefetch, Count
 from .forms import *
 from .models import *
 from userauth.models import *
+from teacher.models import *
+from library.models import *
 from userauth.forms import *
 from django.http import JsonResponse
 from django.contrib.auth import login, authenticate
@@ -121,7 +123,7 @@ class CampusAjax(View):
 
     def get_action(self, post_id):
         edit_url = reverse('dashboard:campusedit', kwargs={'id': post_id})
-        delete_url = reverse('dashboard:delete')
+        delete_url = reverse('generic:delete')
         backurl = reverse('dashboard:campuslist')
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
@@ -238,7 +240,7 @@ class DepartmentAjax(View):
 
     def get_action(self, post_id):
         edit_url = reverse('dashboard:departmentedit', kwargs={'id': post_id})
-        delete_url = reverse('dashboard:delete')
+        delete_url = reverse('generic:delete')
         backurl = reverse('dashboard:departmentlist')
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
@@ -364,7 +366,7 @@ class ProgramAjax(View):
 
     def get_action(self, post_id):
         edit_url = reverse('dashboard:programedit', kwargs={'id': post_id})
-        delete_url = reverse('dashboard:delete')
+        delete_url = reverse('generic:delete')
         backurl = reverse('dashboard:programlist')
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
@@ -471,7 +473,7 @@ class ModulesAjax(View):
 
     def get_action(self, post_id):
         edit_url = reverse('dashboard:modulesedit', kwargs={'id': post_id})
-        delete_url = reverse('dashboard:delete')
+        delete_url = reverse('generic:delete')
         backurl = reverse('dashboard:moduleslist')
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
@@ -483,7 +485,6 @@ class ModulesAjax(View):
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
         '''
-
 
 class DeleteHelper:
     def get_objects(self, ids, model, type_title, reverse_name, title_generator, kwargs_generator):
@@ -553,7 +554,7 @@ class DeleteHelper:
         def student_title(obj):
             return obj.user.get_full_name()
 
-        def student_kwargs(student):
+        def student_kwargs(obj):
             return None
 
         return self.get_objects(ids, Student, "Student",None, student_title, student_kwargs)
@@ -562,7 +563,7 @@ class DeleteHelper:
         def student_title(obj):
             return obj.degree_name
 
-        def student_kwargs(student):
+        def student_kwargs(obj):
             return None
 
         return self.get_objects(ids, EducationHistory, "Educational History", None, student_title,
@@ -572,7 +573,7 @@ class DeleteHelper:
         def student_title(obj):
             return obj.title
 
-        def student_kwargs(student):
+        def student_kwargs(obj):
             return None
 
         return self.get_objects(ids, EmploymentHistory, "Employment History", None, student_title,
@@ -582,7 +583,7 @@ class DeleteHelper:
         def student_title(obj):
             return obj.test
 
-        def student_kwargs(student):
+        def student_kwargs(obj):
             return None
 
         return self.get_objects(ids, EnglishTest, "English Test", None, student_title,
@@ -592,11 +593,36 @@ class DeleteHelper:
         def student_title(obj):
             return obj.section_name
 
-        def student_kwargs(student):
+        def student_kwargs(obj):
             return None
 
         return self.get_objects(ids, Sections, "Sections", None, student_title,
                                 student_kwargs)
+    
+    def get_teacher(self, ids):
+        def teacher_title(obj):
+            return obj.user.get_full_name()
+
+        def teacher_kwargs(obj):
+            return None
+
+        return self.get_objects(ids, Teacher, "Teacher",None, teacher_title, teacher_kwargs)
+    def get_library(self, ids):
+        def library_title(obj):
+            return obj.book
+
+        def library_kwargs(obj):
+            return None
+
+        return self.get_objects(ids, Library, "Library",None, library_title, library_kwargs)
+    def get_book(self, ids):
+        def book_title(obj):
+            return obj.name
+
+        def book_kwargs(obj):
+            return None
+
+        return self.get_objects(ids, Book, "Book",None, book_title, book_kwargs)
 
     def get_titles(self, post_type: str, total):
         if post_type == "program":
@@ -609,7 +635,14 @@ class DeleteHelper:
             return "Modules" if total > 1 else "Module"
         elif post_type == "student":
             return "Students" if total > 1 else "Student"
+        elif post_type == "teacher":
+            return "Teachers" if total > 1 else "Teacher"
+        elif post_type == "book":
+            return "Books" if total > 1 else "Book"
+        elif post_type == "Library":
+            return "Libraries" if total > 1 else "Library"
         return "Objects"
+        
 
     def get_delete_objects(self, delete_type, selected_ids=None):
         if selected_ids is None:
@@ -637,6 +670,12 @@ class DeleteHelper:
                 objects, originals = self.get_englishtest_history(selected_ids)
             elif delete_type == "sections":
                 objects, originals = self.get_sections(selected_ids)
+            elif delete_type == "teacher":
+                objects, originals = self.get_teacher(selected_ids)
+            elif delete_type == "library":
+                objects, originals = self.get_library(selected_ids)
+            elif delete_type == "book":
+                objects, originals = self.get_book(selected_ids)
 
         return objects, originals
 

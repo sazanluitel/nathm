@@ -112,7 +112,7 @@ class TeacherAjax(View):
     def get_action(self, teacher):
         teacher_id = teacher.id
         edit_url = reverse('teacher:edit', kwargs={'id': teacher_id})
-        delete_url = reverse('dashboard:delete')
+        delete_url = reverse('generic:delete')
         backurl = reverse('teacher:list')
 
         return f'''

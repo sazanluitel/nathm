@@ -169,7 +169,7 @@ class StudentAjax(View):
     def get_action(self, student):
         student_id = student.id
         edit_url = reverse('admission_department:student_edit', kwargs={'id': student_id})
-        delete_url = reverse('dashboard:delete')
+        delete_url = reverse('generic:delete')
         backurl = reverse('admission_department:students')
 
         return f'''
