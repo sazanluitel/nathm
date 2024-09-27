@@ -198,7 +198,7 @@ class StudentAjax(View):
     def get_action(self, student):
         student_id = student.id
         edit_url = reverse('student_admin:edit', kwargs={'id': student_id})
-        delete_url = reverse('dashboard:delete')
+        delete_url = reverse('generic:delete')
         backurl = reverse('student_admin:list')
 
         if not student.college_email:
@@ -323,7 +323,7 @@ class EducationalHistoryJson(View):
         }, status=200)
 
     def get_action(self, student_id, obj_id, file):
-        delete_url = reverse('dashboard:delete')
+        delete_url = reverse('generic:delete')
         backurl = reverse('student_admin:edit', kwargs={
             'id': student_id
         })
@@ -382,7 +382,7 @@ class EnglishTestHistoryJson(View):
         }, status=200)
 
     def get_action(self, student_id, obj_id, file):
-        delete_url = reverse('dashboard:delete')
+        delete_url = reverse('generic:delete')
         backurl = reverse('student_admin:edit', kwargs={
             'id': student_id
         })
@@ -443,7 +443,7 @@ class EmploymentHistoryJson(View):
         }, status=200)
 
     def get_action(self, student_id, obj_id):
-        delete_url = reverse('dashboard:delete')
+        delete_url = reverse('generic:delete')
         backurl = reverse('student_admin:edit', kwargs={
             'id': student_id
         })
@@ -567,7 +567,7 @@ class SectionView(View):
     def get_action(self, section):
         section_id = section.id
         edit_url = reverse('student_admin:edit_section', kwargs={'pk': section_id})
-        delete_url = reverse('dashboard:delete')
+        delete_url = reverse('generic:delete')
         backurl = reverse('student_admin:sections')
 
         return f'''

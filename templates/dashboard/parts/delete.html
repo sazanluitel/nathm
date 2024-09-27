@@ -48,7 +48,7 @@
                         </table>
 
                         <hr />
-                        <form method="post" action="{% url 'dashboard:deletefinal' %}">
+                        <form method="post" action="{% url 'generic:deletefinal' %}">
                             {% csrf_token %}
                             
                             {% for object in objects %}
