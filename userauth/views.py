@@ -355,7 +355,7 @@ class RolesAjaxView(View):
     def get_action(self, user):
         user_id = user.id
         edit_url = reverse('user_admin:edit_user', kwargs={'pk': user_id})
-        delete_url = reverse('dashboard:delete')
+        delete_url = reverse('generic:delete')
         backurl = reverse('user_admin:users')
 
         return f'''

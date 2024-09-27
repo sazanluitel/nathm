@@ -151,7 +151,7 @@ class EducationalHistoryJson(View):
         }, status=200)
 
     def get_action(self, student_id, obj_id, file):
-        delete_url = reverse('dashboard:delete')
+        delete_url = reverse('generic:delete')
         backurl = reverse('it_department:edit', kwargs={
             'id': student_id
         })
@@ -210,7 +210,7 @@ class EnglishTestHistoryJson(View):
         }, status=200)
 
     def get_action(self, student_id, obj_id, file):
-        delete_url = reverse('dashboard:delete')
+        delete_url = reverse('generic:delete')
         backurl = reverse('it_department:edit', kwargs={
             'id': student_id
         })
@@ -271,7 +271,7 @@ class EmploymentHistoryJson(View):
         }, status=200)
 
     def get_action(self, student_id, obj_id):
-        delete_url = reverse('dashboard:delete')
+        delete_url = reverse('generic:delete')
         backurl = reverse('it_department:edit', kwargs={
             'id': student_id
         })
@@ -359,7 +359,7 @@ class SectionView(View):
     def get_action(self, section):
         section_id = section.id
         edit_url = reverse('student_service:edit_section', kwargs={'pk': section_id})
-        delete_url = reverse('dashboard:delete')
+        delete_url = reverse('generic:delete')
         backurl = reverse('student_service:sections')
 
         return f'''

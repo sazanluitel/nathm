@@ -13,7 +13,7 @@
                     {% include 'dashboard/alert.html' %}
                 {% endwith %}
 
-                <form method="POST" action="{% url 'library_admin_urls:books' %}">
+                <form method="POST">
                     {% csrf_token %}
 
                     {{ form.as_p }}

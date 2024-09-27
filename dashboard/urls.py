@@ -30,7 +30,4 @@ urlpatterns = [
     path('modules/edit/<int:id>', ModulesEdit.as_view(), name='modulesedit'),
     path('modules/ajax', ModulesAjax.as_view(), name='modulesajax'),
 
-    path("delete/", DeleteView.as_view(), name="delete"),
-    path("delete/final/", DeleteFinalView.as_view(), name="deletefinal"),
-
 ]

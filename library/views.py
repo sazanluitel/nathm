@@ -12,7 +12,13 @@ from django.urls import reverse
 
 class BookView(View):
     def post(self, request, *args, **kwargs):
-        form = BookForm(request.POST)
+        id = kwargs.get("id", None)
+        if id:
+            book = Book.objects.get(id=id)
+            form = BookForm(request.POST, instance=book)
+        else:
+            form = BookForm(request.POST)
+
         if form.is_valid():
             form.save()
             messages.success(request, 'Book added successfully')
@@ -21,7 +27,12 @@ class BookView(View):
             messages.error(request, 'Error in the forms')
             return render(request, 'dashboard/library/book.html', {'form': form})
     def get(self, request, *args, **kwargs):
-        form = BookForm()
+        id = kwargs.get("id", None)
+        if id:
+            book = Book.objects.get(id=id)
+            form = BookForm(instance=book)
+        else:
+            form = BookForm()
         return render(request, 'dashboard/library/book.html', {'form': form})
 
 
@@ -59,7 +70,7 @@ class BookAjaxView(View):
         for book in page_books:
             data.append([
                 book.name,
-                self.get_action(book)
+                self.get_action(book.id)
             ])
 
         # Return JSON response
@@ -69,38 +80,28 @@ class BookAjaxView(View):
             "recordsFiltered": paginator.count,
             "data": data,
         }, status=200)
-
-    def get_action(self, book):
-        book_id = book.id
-        edit_url = reverse('library_admin_urls:edit')
-        delete_url = reverse('dashboard:delete')
-
+    def get_action(self, book_id):
+        edit_url = reverse('library_admin_urls:edit', kwargs={'id': book_id})
+        delete_url = reverse('generic:delete')
+        backurl = reverse('library_admin_urls:books')
         return f'''
-            <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
-            <a href="{delete_url}" class="btn btn-danger btn-sm">Delete</a>
-        '''
-class EditBookView(View):
-    def post(self, request, *args, **kwargs):
-        book_id = request.POST.get('_selected_id')
-        book = Book.objects.get(id=book_id)
-        form = BookForm(request.POST, instance=book)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Book updated successfully')
-            return redirect('library_admin_urls:books')
-        else:
-            messages.error(request, 'Error in the forms')
-            return render(request, 'dashboard/library/book.html', {'form': form})
-        
-    def get(self, request, *args, **kwargs):
-        book_id = kwargs.get('id')
-        book = Book.objects.get(id=book_id)
-        form = BookForm(instance=book)
-        return render(request, 'dashboard/library/book.html', {'form': form})
+            <form method="post" action="{delete_url}" class="button-group">
+                <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
 
+                <input type="hidden" name="_selected_id" value="{book_id}" />
+                <input type="hidden" name="_selected_type" value="book" />
+                <input type="hidden" name="_back_url" value="{backurl}" />
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+        '''
 class LibraryView(View):
     def post(self, request, *args, **kwargs):
-        form = LibraryForm(request.POST)
+        id = kwargs.get("id", None)
+        if id:
+            library = Library.objects.get(id=id)
+            form = LibraryForm(request.POST, instance=library)
+        else:
+            form = LibraryForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Library added successfully')
@@ -108,6 +109,61 @@ class LibraryView(View):
         else:
             messages.error(request, 'Error in the forms')
             return render(request, 'dashboard/library/library.html', {'form': form})
+        
     def get(self, request, *args, **kwargs):
-        form = LibraryForm()
+        id = kwargs.get("id", None)
+        if id:
+            library = Library.objects.get(id=id)
+            form = LibraryForm(instance=library)
+        else:
+            form = LibraryForm()
         return render(request, 'dashboard/library/library.html', {'form': form})
+  
+
+class LibraryAjaxView(View):
+    def get(self, request, *args, **kwargs):
+        draw = int(request.GET.get("draw", 1))
+        start = int(request.GET.get("start", 0))
+        length = int(request.GET.get("length", 10))
+        search_value = request.GET.get("search[value]", None)
+        page_number = (start // length) + 1
+
+        libraries = Library.objects.order_by("-id")
+
+        if search_value:
+            libraries = libraries.filter(
+                Q(name__icontains=search_value) |
+                Q(location__icontains=search_value) |
+                Q(capacity__icontains=search_value)
+            )
+
+        paginator = Paginator(libraries, length)
+        page_libraries = paginator.page(page_number)
+        data = []
+        for library in page_libraries:
+            data.append([
+                library.name,
+                self.get_action(library.id)
+            ])
+        return JsonResponse({
+            "draw": draw,
+            "recordsTotal": paginator.count,
+            "recordsFiltered": paginator.count,
+            "data": data,
+        }, status=200)
+    
+    def get_action(self, library_id):
+        edit_url = reverse('library_admin_urls:libraryedit', kwargs={'id': library_id})
+        delete_url = reverse('generic:delete')
+        backurl = reverse('library_admin_urls:library')
+        return f'''
+            <form method="post" action="{delete_url}" class="button-group">
+                <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
+
+                <input type="hidden" name="_selected_id" value="{library_id}" />
+                <input type="hidden" name="_selected_type" value="library" />
+                <input type="hidden" name="_back_url" value="{backurl}" />
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+        '''
+    
