@@ -4,6 +4,45 @@
 {% block breadcrumb %}Certificate{% endblock %}
 {% block maintitle %}Certificate{% endblock %}
 
+{% block content %}
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">Request Certificate</div>
+            <div class="card-body">
+                {% with messages=messages %}
+                    {% include 'dashboard/alert.html' %}
+                {% endwith %}
 
+                <form method="POST">
+                    {% csrf_token %}
 
-{%endblock%}
+                    {{ form.as_p }}
+
+                    <button type="submit" class="btn btn-primary w-100">Request</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">Certificates Requests</div>
+            <div class="card-body">
+                <table
+                        class="table ajaxdatatable table-bordered"
+                        data-ajax="{% url 'certificate:certificate_ajax' %}"
+                >
+                <thead>
+                    <tr>
+                        <th>Student</th>   
+                        <th>Certificate</th>  
+                        <th>Status</th>  
+                        <th>Actions</th>  
+                    </tr>
+                </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
