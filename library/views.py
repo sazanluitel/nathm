@@ -124,14 +124,32 @@ class LibraryAjaxView(View):
     def get(self, request):
         libraries = Library.objects.all()
         data = []
-        for library in libraries:
-            data.append({
-                'student': str(library.borrowed_by),
-                'book': str(library.book),
-                'actions': f'''
-                    <button class="btn btn-sm btn-warning edit-btn">Edit</button>
-                    <button class="btn btn-sm btn-danger delete-btn">Delete</button>
-                ''',
-            })
+        for library in page_libraries:
+            
+            data.append([
+                library.book.name,  
+                self.get_action(library.id)
+            ])
+        return JsonResponse({
+            "draw": draw,
+            "recordsTotal": paginator.count,
+            "recordsFiltered": paginator.count,
+            "data": data,
+        }, status=200)
+    
+    def get_action(self, library_id):
+        edit_url = reverse('library_admin_urls:libraryedit', kwargs={'id': library_id})
+        delete_url = reverse('generic:delete')
+        backurl = reverse('library_admin_urls:library')
+        return f'''
+            <form method="post" action="{delete_url}" class="button-group">
+                <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
 
-        return JsonResponse({'data': data})
+                <input type="hidden" name="_selected_id" value="{library_id}" />
+                <input type="hidden" name="_selected_type" value="library" />
+                <input type="hidden" name="_back_url" value="{backurl}" />
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+        '''
+
+    
