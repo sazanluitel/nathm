@@ -1,12 +1,13 @@
 from django.urls import path
-from .views import LibraryView, BookView, BookAjaxView,LibraryAjaxView
+from .views import LibraryView, BookView, BookAjaxView,LibraryAjaxView, ApproveLibraryView
 
 app_name = 'library_admin_urls'
 
 urlpatterns = [
     path('library/', LibraryView.as_view(), name='library'),
     path('library/edit/<id>/', LibraryView.as_view(), name='libraryedit'),
-    path('library/ajax/', LibraryAjaxView.as_view(), name='ajax'), 
+    path('approve/<int:id>/', ApproveLibraryView.as_view(), name='approve'),
+    path('library/ajax/', LibraryAjaxView.as_view(), name='libraryajax'), 
 
     path('books/', BookView.as_view(), name='books'), 
     path('books/edit/<id>/', BookView.as_view(), name='edit'), 

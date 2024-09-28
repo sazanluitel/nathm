@@ -6,31 +6,52 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('certificate', '0001_initial'),
-        ('dashboard', '0001_initial'),
+        ("certificate", "0001_initial"),
+        ("dashboard", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='requestcertificate',
-            name='file',
+            model_name="requestcertificate",
+            name="file",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='requestcertificate',
-            name='status',
-            field=models.CharField(choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Denied', 'Denied')], default='Pending', max_length=100),
+            model_name="requestcertificate",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("Pending", "Pending"),
+                    ("Approved", "Approved"),
+                    ("Denied", "Denied"),
+                ],
+                default="Pending",
+                max_length=100,
+            ),
         ),
         migrations.CreateModel(
-            name='Templates',
+            name="Templates",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('header', filehub.fields.ImagePickerField(blank=True, null=True)),
-                ('content', models.TextField()),
-                ('footer', filehub.fields.ImagePickerField(blank=True, null=True)),
-                ('campus', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dashboard.campus')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("header", filehub.fields.ImagePickerField(blank=True, null=True)),
+                ("content", models.TextField()),
+                ("footer", filehub.fields.ImagePickerField(blank=True, null=True)),
+                (
+                    "campus",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="dashboard.campus",
+                    ),
+                )
             ],
         ),
     ]

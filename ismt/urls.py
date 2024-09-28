@@ -4,9 +4,10 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path("", include("userauth.urls", namespace="userauth")),
-    path("admin/superuser/", include("userauth.admin_user_urls", namespace="admin_user_urls")),
+    path("admin/superuser/", include("userauth.admin_urls", namespace="admin_user_urls")),
     path("admin/superuser/", include("library.admin_urls", namespace="library_admin_urls")),
     path("admin/superuser/", include("dashboard.urls", namespace="dashboard")),
+    path("admin/superuser/", include("certificate.urls", namespace="certificate")),
     path("admin/generic/", include("dashboard.generic_urls", namespace="generic")),
     path('admin/superuser', include('filehub.urls', namespace="filehub")),
     path("admin/superuser/", include("students.admin_urls", namespace="admin_urls")),

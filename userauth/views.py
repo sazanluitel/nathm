@@ -300,21 +300,15 @@ class QRView(View):
 class UserRoleView(View):
     def get(self, request, *args, **kwargs):
         form = RegisterForm()
-
-        return render(request, 'dashboard/auth/user_roles.html', context={
-            'form': form
-        })
+        return render(request, 'dashboard/auth/user_roles.html', context={'form': form})
 
     def post(self, request, *args, **kwargs):
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, "User added successfully.")
-            return redirect('user_admin:users')
-        return render(request, 'dashboard/auth/users.html', context={
-            'form': form
-        })
-    
+            return redirect('userauth_urls:userroles')
+        return render(request, 'dashboard/auth/user_roles.html', context={'form': form})
 
 class RolesAjaxView(View):
 
@@ -325,6 +319,7 @@ class RolesAjaxView(View):
         search_value = request.GET.get("search[value]", None)
         page_number = (start // length) + 1
 
+        # Fetch and filter users
         users = User.objects.order_by("-id")
         if search_value:
             users = users.filter(
@@ -334,9 +329,11 @@ class RolesAjaxView(View):
                 Q(email__icontains=search_value)
             )
 
+        # Paginate the result
         paginator = Paginator(users, length)
         page_users = paginator.page(page_number)
 
+        # Prepare the data for DataTables
         data = []
         for user in page_users:
             data.append([
@@ -345,6 +342,7 @@ class RolesAjaxView(View):
                 self.get_action(user)
             ])
 
+        # Return JSON response in DataTables format
         return JsonResponse({
             "draw": draw,
             "recordsTotal": paginator.count,
@@ -354,17 +352,16 @@ class RolesAjaxView(View):
 
     def get_action(self, user):
         user_id = user.id
-        edit_url = reverse('user_admin:edit_user', kwargs={'pk': user_id})
+        # edit_url = reverse('user_admin:edit_user', kwargs={'pk': user_id})
         delete_url = reverse('generic:delete')
         backurl = reverse('user_admin:users')
 
+                # <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
-                <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
                 <input type="hidden" name="_selected_id" value="{user_id}" />
                 <input type="hidden" name="_selected_type" value="user" />
                 <input type="hidden" name="_back_url" value="{backurl}" />
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
         '''
-

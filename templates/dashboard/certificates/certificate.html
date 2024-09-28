@@ -1,13 +1,13 @@
 {% extends 'dashboard/admin-base.html' %}
 {% load static %}
-{% block title %}Library{% endblock %}
-{% block breadcrumb %}Library{% endblock %}
-{% block maintitle %}Library{% endblock %}
+{% block title %}Certificate{% endblock %}
+{% block breadcrumb %}Certificate{% endblock %}
+{% block maintitle %}Certificate{% endblock %}
 
 {% block content %}
-    {% comment %} <div class="col-lg-4">
+    <div class="col-lg-4">
         <div class="card">
-            <div class="card-header">Add Library</div>
+            <div class="card-header">Request Certificate</div>
             <div class="card-body">
                 {% with messages=messages %}
                     {% include 'dashboard/alert.html' %}
@@ -18,24 +18,24 @@
 
                     {{ form.as_p }}
 
-                    <button type="submit" class="btn btn-primary w-100">{% if form.instance %}Update Library{% else %}Add Library{% endif %}</button>
+                    <button type="submit" class="btn btn-primary w-100">Request</button>
                 </form>
             </div>
         </div>
-    </div> {% endcomment %}
+    </div>
 
-    <div class="col-lg-12">
+    <div class="col-lg-8">
         <div class="card">
-            <div class="card-header">Library</div>
+            <div class="card-header">Certificates Requests</div>
             <div class="card-body">
                 <table
                         class="table ajaxdatatable table-bordered"
-                        data-ajax="{% url 'library_admin_urls:libraryajax' %}"
+                        data-ajax="{% url 'certificate:certificate_ajax' %}"
                 >
                 <thead>
                     <tr>
                         <th>Student</th>   
-                        <th>Book</th>  
+                        <th>Certificate</th>  
                         <th>Status</th>  
                         <th>Actions</th>  
                     </tr>
@@ -45,3 +45,4 @@
         </div>
     </div>
 {% endblock %}
+
