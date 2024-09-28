@@ -460,4 +460,16 @@
             window.location.href = downloadUrl;
         }
     });
+    function formatDate(date) {
+        const options = {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            weekday: 'long'
+        };
+        return date.toLocaleDateString('en-US', options);
+    }
+
+    // Set the current date in the #current-date element
+    document.getElementById('current-date').textContent = formatDate(new Date());
 })(jQuery);

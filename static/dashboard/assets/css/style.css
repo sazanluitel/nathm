@@ -4200,3 +4200,56 @@ h2 {
     color: red;
     margin-top: 10px;
 }
+
+/* dashboard  */
+
+.profile-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+}
+
+.assignment-grade {
+    background-color: #6f42c1;
+    color: white;
+    font-size: 2rem;
+    height: 100px;
+    width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+}
+
+.list-group-item {
+    border: none;
+}
+
+.no-payment {
+    background-color: #f0f9ff;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.notices ul {
+    padding-left: 0;
+}
+
+.notices ul li {
+    list-style: none;
+}
+
+.notices ul li::before {
+    content: "•";
+    color: #007bff;
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+}
+
+.class-list p {
+    margin-bottom: 0;
+}

@@ -7,8 +7,8 @@ urlpatterns = [
     path('kiosk-reg/', KioskView.as_view(), name='kiosk-reg'),
     path('kiosk-reg/<pk>/success/', KioskSuccessView.as_view(), name='kiosk-success'),
 
-    path('dashboard/', DashboardView.as_view(), name='studentdashboard'),
-    path('status/', StudentStatusView.as_view(), name='studentstatus'),
+    path('status/', DashboardView.as_view(), name='studentdashboard'),
+    path('dashboard/', StudentStatusView.as_view(), name='studentstatus'),
 
     path('record/', StudentRecordView.as_view(), name='studentdata'),
 
