@@ -1,4 +1,4 @@
-{% comment %} {% extends 'dashboard/admin-base.html' %}
+{% extends 'dashboard/admin-base.html' %}
 {% load static %}
 {% block title %}Edit Teacher{% endblock %}
 {% block breadcrumb %}Edit Teacher{% endblock %}
@@ -194,7 +194,7 @@
                         <div id="education_history_container" class="table-responsive">
                             <table
                                     class="table student-datatable table-bordered"
-                                    data-ajax="{% url 'student_admin:educational_history_json' pk=student_id %}"
+                                    data-ajax="{% url 'student_admin:educational_history_json' pk=teacher_id %}"
                             >
                                 <thead>
                                     <tr>
@@ -221,7 +221,7 @@
                         <div id="englishtest_history_container" class="table-responsive">
                             <table
                                     class="table student-datatable table-bordered"
-                                    data-ajax="{% url 'student_admin:english_test_json' pk=student_id %}"
+                                    data-ajax="{% url 'student_admin:english_test_json' pk=teacher_id %}"
                             >
                                 <thead>
                                 <tr>
@@ -248,7 +248,7 @@
                     <div class="card-body">
                         <div id="employment_history_container" class="table-responsive">
                             <table class="table table-bordered"
-                                data-ajax="{% url 'student_admin:employment_history_json' pk=student_id %}"
+                                data-ajax="{% url 'student_admin:employment_history_json' pk=teacher_id %}"
                             >
                                 <thead>
                                 <tr>
@@ -272,4 +272,9 @@
         </form>
     </div>
 </div>
-{% endblock %} {% endcomment %}
+    {% include "dashboard/teacher/modal.html" %}
+{% endblock %}
+
+{% block footer %}
+	<script src="{% static 'dashboard/assets/js/edit_student.js' %}"></script>
+{% endblock %}
