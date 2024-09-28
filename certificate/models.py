@@ -17,10 +17,11 @@ class RequestCertificate(models.Model):
     ]
     student = models.ForeignKey('students.Student', on_delete=models.CASCADE)
     certificate_type = models.CharField(max_length=100, choices=CERTIFICATE_TYPE)
-    created_at = models.DateTimeField(auto_now_add=True)
     description = models.TextField(blank=True, null=True)
     file = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=100,choices=STATUS, default='Pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_approved = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.student} - {self.get_certificate_type_display()}"
