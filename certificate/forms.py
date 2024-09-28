@@ -1,7 +1,7 @@
 from django import forms
 from .models import Templates
 
-class Template(forms.ModelForm):
+class TemplateForm(forms.ModelForm):
     class Meta:
         model = Templates
         fields = ['campus', 'header', 'content', 'footer']
@@ -9,9 +9,11 @@ class Template(forms.ModelForm):
             'campus': forms.Select(attrs={
                 'class': 'form-control',
                 'id': 'campus-select',
-                'data-placeholder': 'Select the campus',}),
+                'data-placeholder': 'Select the campus',
+            }),
             'content': forms.Textarea(attrs={
                 'class': 'form-control',
-                'id': 'header',
-                'placeholder': 'Content of the certificate'})
-        },
+                'id': 'content',
+                'placeholder': 'Content of the certificate',
+            }),
+        }
