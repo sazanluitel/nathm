@@ -15,24 +15,41 @@
                 <div class="card mb-4">
                     <div class="card-header h5 py-3">Personal Details</div>
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-9">
-                                <p><strong>Full Name:</strong> {{ student.user.get_full_name }}</p>
-                                <p><strong>Gender:</strong> {{ personalinfo.gender }}</p>
-                                <p><strong>Email:</strong> {{ student.user.email }}</p>
-                                <p><strong>Date of Birth:</strong> {{ personalinfo.date_of_birth_in_ad }}</p>
-                                <p><strong>Citizenship Number:</strong> {{ personalinfo.citizenship_number }}</p>
-                            </div>
+                        <!-- First Row: Profile Image Centered -->
+                        <div class="row justify-content-center">
                             <div class="col-3 text-center">
-                                <img src="{{ student.user.profile_image }}" alt="Student Image" class="img-fluid mb-2">
+                                <img src="{{ student.user.profile_image }}" alt="Student Image" class="img-fluid profile-img mb-2">
                                 <p><strong>Profile Image</strong></p>
                             </div>
                         </div>
+                        
+                        <!-- Second Row: Other Attributes -->
                         <div class="row mt-4">
-                            <div class="col-lg-4 text-center mb-3">
-                                <img src="{{ personalinfo.citizenship_img }}" alt="Citizenship Image" class="img-fluid">
-                                <p><strong>Citizenship</strong></p>
+                            <div class="col-4">
+                                <p><strong>Full Name:</strong> {{ student.user.get_full_name }}</p>
                             </div>
+                            <div class="col-4">
+                                <p><strong>Gender:</strong> {{ personalinfo.gender }}</p>
+                            </div>
+                            <div class="col-4">
+                                <p><strong>Email:</strong> {{ student.user.email }}</p>
+                            </div>
+                            <div class="col-4">
+                                <p><strong>Date of Birth:</strong> {{ personalinfo.date_of_birth_in_ad }}</p>
+                            </div>
+                            <div class="col-7">
+                                <p><strong>Citizenship Number:</strong> {{ personalinfo.citizenship_number }}</p>
+                            </div>
+                            <div class="col-12 text-center">
+                                {% if personalinfo.citizenship_img %}
+                                    <a href="{{ personalinfo.citizenship_img }}" target="_blank" class="btn btn-primary">
+                                        View Document
+                                    </a>
+                                {% else %}
+                                    <p>No Document Available</p>
+                                {% endif %}
+                            </div>
+
                         </div>
                     </div>
                 </div>
