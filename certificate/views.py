@@ -6,6 +6,7 @@ from .models import RequestCertificate
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.urls import reverse
+from mail.helpers import EmailHelper  
 
 class TemplateAddView(View):
     def post(self, request, *args, **kwargs):
@@ -90,11 +91,41 @@ class RequestCertificateAjaxView(View):
     
 class ApproveCertificateView(View):
     def post(self, request, id):
+    
         certificate = get_object_or_404(RequestCertificate, id=id)
+        
+        # Approve the certificate
         certificate.status = 'Approved'
         certificate.is_approved = True
-        messages.success(request,'Certificate approved')
         certificate.save()
+        messages.success(request, 'Certificate approved and email sent')
+        self.send_approval_email(certificate)
+       
+    
+    def send_approval_email(self, certificate):
+        email_helper = EmailHelper()
+        subject = "Your Certificate Request Has Been Approved"
+        context = {
+            'student_name': certificate.student.name,
+            'certificate_type': certificate.certificate_type,
+            'description': certificate.description,
+        }
+        
+        pdf_filename = certificate.file
+        with open(pdf_filename, 'rb') as pdf_file:
+            file_content = pdf_file.read()
+        
+        # Attachments (filename, file_content, and MIME type for PDF)
+        attachments = [(pdf_filename, file_content, 'certificate/nathm.pdf')]
+        
+     
+        email_helper.send_with_template(
+            template='certificate_approved', 
+            context=context,
+            subject=subject,
+            to_email=certificate.student.email,
+            attachments=attachments
+        )
 
 class DeclineCertificateView(View):
     def post(self, request, id):
