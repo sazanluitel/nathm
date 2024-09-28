@@ -19,8 +19,14 @@ class Book(models.Model):
         return f"{self.name} by {self.author}"
 
 class Library(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+    ]
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     borrowed_by = models.ForeignKey(Student, on_delete=models.CASCADE)
     borrow_date = models.DateField(auto_now_add=True)
     return_date = models.DateField(null=True, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+
 
