@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     "library",
     "payment",
     "certificate",
-    
+    "routine"
 ]
 
 MIDDLEWARE = [
