@@ -55,7 +55,8 @@ INSTALLED_APPS = [
     "library",
     "payment",
     "certificate",
-    "routine"
+    "routine",
+    "core"
 ]
 
 MIDDLEWARE = [
@@ -83,6 +84,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+
+                "core.context_processors.add_general_settings",
             ],
         },
     },
@@ -171,4 +174,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "info@hamroguru.host"
 EMAIL_HOST_PASSWORD = "pl}SbuKwIf5?"
 
-BACKEND_DOMAIN = "https://ismt.sunbi.com.np/"
+BACKEND_DOMAIN = config("BACKEND_DOMAIN", "http://localhost:8000")
+COLLEGE_NAME = config("COLLEGE_NAME", "ISMT")
+
