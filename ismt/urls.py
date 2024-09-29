@@ -11,6 +11,7 @@ urlpatterns = [
     path("admin/generic/", include("dashboard.generic_urls", namespace="generic")),
     path('admin/superuser', include('filehub.urls', namespace="filehub")),
     path("admin/superuser/", include("students.admin_urls", namespace="admin_urls")),
+    path("admin/superuser/", include("notices.admin_urls", namespace="notices_admin_urls")),
 
     path("student/", include("students.urls", namespace="students")),
     path("admin/itsupport/", include("itdepartment.urls", namespace="it_department")),

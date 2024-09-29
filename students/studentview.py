@@ -14,6 +14,7 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
+from notices.models import Notices
 
 
 class DashboardView(View):
@@ -28,8 +29,9 @@ class StudentStatusView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         student = get_object_or_404(Student, user=request.user)
+        notices = Notices.objects.order_by('-id')[:2]
 
-        # Filter only approved books
+
         borrowed_books = Library.objects.filter(borrowed_by=student, status='approved')
         borrowed_ebooks = borrowed_books.filter(book__e_book=True).count()
         borrowed_physical_books = borrowed_books.filter(book__e_book=False).count()
@@ -42,6 +44,7 @@ class StudentStatusView(LoginRequiredMixin, View):
             'library_form': library_form,
             'borrowed_ebooks': borrowed_ebooks,
             'borrowed_physical_books': borrowed_physical_books,
+            'notices': notices,
         })
 
     def post(self, request, *args, **kwargs):

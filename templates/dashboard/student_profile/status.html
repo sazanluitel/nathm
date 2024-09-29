@@ -110,21 +110,20 @@
                                     <a href="#" class="text-muted">View All</a>
                                 </div>
                                 <ul class="list-unstyled">
-                                    <li class="d-flex justify-content-between py-2 border-bottom">
-                                        <div>
-                                            <small class="text-muted">27th Sep</small>
-                                            <p class="mb-0"><strong>New Books Added to library</strong></p>
-                                        </div>
-                                    </li>
-                                    <li class="d-flex justify-content-between py-2 border-bottom">
-                                        <div>
-                                            <small class="text-muted">27th Sep</small>
-                                            <p class="mb-0"><strong>New Assignment from Bijay Sir with deadline on 15th Oct</strong></p>
-                                        </div>
-                                    </li>
+                                    {% for notice in notices %}
+                                        <li class="d-flex justify-content-between py-2 border-bottom">
+                                            <div>
+                                                <small class="text-muted">{{ notice.created_at|date:"d M" }}</small>
+                                                <p class="mb-0"><strong>{{ notice.name }}</strong></p>
+                                            </div>
+                                        </li>
+                                    {% empty %}
+                                        <li class="text-muted">No notices available.</li>
+                                    {% endfor %}
                                 </ul>
                             </div>
                         </div>
+                        
                     </div>
                 </div> 
             </div> 

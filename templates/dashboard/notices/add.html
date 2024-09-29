@@ -1,0 +1,45 @@
+{% extends 'dashboard/admin-base.html' %}
+{% load static %}
+{% block title %}Notices{% endblock %}
+{% block breadcrumb %}Notices{% endblock %}
+{% block maintitle %}Notices{% endblock %}
+
+{% block content %}
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">Add Notices</div>
+            <div class="card-body">
+                {% with messages=messages %}
+                    {% include 'dashboard/alert.html' %}
+                {% endwith %}
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    {{ form.as_p }}
+
+                    <button type="submit" class="btn btn-primary w-100">{% if form.instance %}Update Notices{% else %}Add Notices{% endif %}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">Notices</div>
+            <div class="card-body">
+                <table
+                        class="table ajaxdatatable table-bordered"
+                        data-ajax="{% url 'notices_admin_urls:ajax' %}"
+                >
+                    <thead>
+                    <tr>
+                        <th>Notices</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
