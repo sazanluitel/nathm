@@ -339,7 +339,7 @@ class RolesAjaxView(View):
             data.append([
                 user.username,
                 user.email,
-                self.get_action(user)
+                self.get_action(user.id)
             ])
 
         # Return JSON response in DataTables format
@@ -350,13 +350,9 @@ class RolesAjaxView(View):
             "data": data,
         }, status=200)
 
-    def get_action(self, user):
-        user_id = user.id
-        # edit_url = reverse('user_admin:edit_user', kwargs={'pk': user_id})
+    def get_action(self, user_id):
         delete_url = reverse('generic:delete')
-        backurl = reverse('user_admin:users')
-
-                # <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
+        backurl = reverse('userauth_urls:userroles')
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
                 <input type="hidden" name="_selected_id" value="{user_id}" />

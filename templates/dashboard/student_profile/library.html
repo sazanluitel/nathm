@@ -4,31 +4,38 @@
 {% block maintitle %}Library Record{% endblock maintitle %}
 
 {% block content %}
-
 <div class="col-sm-12">
     {% with messages=messages %}
-    {% include 'dashboard/alert.html' %}
-{% endwith %}
+        {% include 'dashboard/alert.html' %}
+    {% endwith %}
+    
     <div class="card">
         <div class="card-body">
-            <div class="dt-responsive">
-                <table 
-                    class="ajaxdatatable table table-bordered nowrap"
-                >
-                   <thead>
+            <h5 class="card-title">Borrowed Books</h5>
+            {% if borrowed_books %}
+                <table class="table table-bordered">
+                    <thead>
                         <tr>
                             <th>Book Title</th>
-                            <th>Author</th>
-                            <th>Borrowed Date</th>
+                            <th>Borrow Date</th>
                             <th>Return Date</th>
                             <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                       
+                        {% for record in borrowed_books %}
+                            <tr>
+                                <td>{{ record.book.title }}</td>  <!-- Adjust the attribute according to your Book model -->
+                                <td>{{ record.borrow_date }}</td>
+                                <td>{{ record.return_date|default:"Not Returned" }}</td>
+                                <td>{{ record.get_status_display }}</td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
-            </div>
+            {% else %}
+                <p>No borrowed books found.</p>
+            {% endif %}
         </div>
     </div>
 </div>
