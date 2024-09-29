@@ -6,9 +6,9 @@ from filehub.fields import ImagePickerField
 # Create your models here.
 class RequestCertificate(models.Model):
     CERTIFICATE_TYPE = [
-        ('Character', 'Characher Certificate'),
-        ('Training', 'Training Certificate'),
-        ('Academic', 'Academic Certificate'),
+        ('character', 'Characher Certificate'),
+        ('training', 'Training Certificate'),
+        ('academic', 'Academic Certificate'),
     ]
     STATUS = [
         ('Pending', 'Pending'),
