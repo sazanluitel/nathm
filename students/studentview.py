@@ -1,13 +1,16 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404,redirect
 from django.views import View
 from weasyprint import HTML
 from userauth.forms import *
+from library.forms import *
 from userauth.models import *
 from students.models import *
 from dashboard.models import *
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Count
 
 
 class DashboardView(View):
@@ -17,17 +20,41 @@ class DashboardView(View):
         return render(request, self.template_name)
 
 
-class StudentStatusView(View):
+class StudentStatusView(LoginRequiredMixin, View):
     template_name = 'dashboard/student_profile/status.html'
 
     def get(self, request, *args, **kwargs):
         student = get_object_or_404(Student, user=request.user)
 
+        borrowed_books = Library.objects.filter(borrowed_by=student)
+        borrowed_ebooks = borrowed_books.filter(book__e_book=True).count()
+        borrowed_physical_books = borrowed_books.filter(book__e_book=False).count()
+
+        library_form = LibraryForm()
+        
         return render(request, self.template_name, {
             'student': student,
-            'student_id': student.id
+            'student_id': student.id,
+            'library_form': library_form,
+            'borrowed_ebooks': borrowed_ebooks,
+            'borrowed_physical_books': borrowed_physical_books,
         })
 
+    def post(self, request, *args, **kwargs):
+        student = get_object_or_404(Student, user=request.user)
+        library_form = LibraryForm(request.POST)
+
+        if library_form.is_valid():
+            library = library_form.save(commit=False)
+            library.borrowed_by = student  
+            library.save()
+            return redirect('students:studentstatus')  
+
+        return render(request, self.template_name, {
+            'student': student,
+            'student_id': student.id,
+            'library_form': library_form
+        })
 
 class StudentRecordView(View):
     template_name = 'dashboard/student_profile/profile.html'

@@ -78,10 +78,12 @@
                             <div class="col-md-4 text-center">
                                 <h5>Books</h5>
                                 <div class="d-flex justify-content-center">
-                                    <p class="border rounded py-2 px-3 mx-2"><strong>5</strong> eBooks</p>
-                                    <p class="border rounded py-2 px-3 mx-2"><strong>25</strong> Physical</p>
+                                    <p class="border rounded py-2 px-3 mx-2"><strong>{{ borrowed_ebooks }}</strong> eBooks</p>
+                                    <p class="border rounded py-2 px-3 mx-2"><strong>{{ borrowed_physical_books }}</strong> Physical</p>
                                 </div>
-                                <button class="btn btn-outline-primary mt-2 rounded-pill px-4">Request Books</button>
+                                <button type="button" class="btn btn-outline-primary mt-2 rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#libraryModal">
+                                    Request Books
+                                </button>
                             </div>
 
                             <div class="col-md-4 text-center">
@@ -130,42 +132,43 @@
     </div>
 </div>
 
-
- {% comment %} <div class="student-info">
-                <div class="row">
-                    <h2>Student Details</h2>
-                    <div class="col-6">
-                        <p><strong>Name:</strong> {{ student.user.get_full_name }}</p>
-                        <p><strong>Student ID:</strong> {{ student.student_id }}</p>
-                        <p><strong>Campus:</strong> {{ student.campus.name }}</p>
-                        <p><strong>Program:</strong> {{ student.program.name }}</p>
-                        <p><strong>Department:</strong> {{ student.department.name }}</p>
-                        <p><strong>Email:</strong> {{ student.user.email }}</p>
-                    </div>
-                    <div class="col-6 text-center">
-                        <img src="{{ student.user.profile_image }}" alt="Student Image" class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
-                    </div>
-                </div>
-
+<!-- Modal -->
+<div class="modal fade" id="libraryModal" tabindex="-1" aria-labelledby="libraryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="libraryModalLabel">Request a Book</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <div class="modal-body">
+                <form method="post" id="libraryForm">
+                    {% csrf_token %}
+                    
+                    {{ library_form.book.label_tag }} 
+                    {{ library_form.book }}                     
 
-            <div class="payment-info">
-                <h2>Payment Due</h2>
-                {% if student.payment_due > 0 %}
-                    <p><span>Amount Due:</span> NPR {{ student.payment_due }}</p>
-                {% else %}
-                    <p><span>Status:</span> All dues cleared</p>
+                    {{ library_form.return_date.label_tag }}
+                    {{ library_form.return_date }}  
+
+                    <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                </form>
+                {% if library_form.errors %}
+                    <div class="alert alert-danger mt-2">
+                        <ul>
+                        {% for field in library_form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in library_form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
                 {% endif %}
             </div>
+        </div>
+    </div>
+</div>
 
-            <!-- Certificate Selection Section -->
-            <div class="certificate-section">
-                <h2>Select Certificate</h2>
-                <select class="certificate-select" id="certificate_select">
-                    <option value="" disabled selected>Select a certificate</option>
-                    <option value="transcript">Transcript</option>
-                    <option value="recommendation">Recommendation Certificate</option>
-                </select>
-                <a href="{% url 'students:download_certificate' student_id=student_id %}" class="download-btn" id="downloadBtn">Download <i class="fas fa-download"></i></a>
-            </div> {% endcomment %}
 {% endblock %}
