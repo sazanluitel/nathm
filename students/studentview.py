@@ -16,7 +16,9 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
-
+from django.shortcuts import render, get_object_or_404
+from django.views import View
+from routine.models import Routine
 
 class DashboardView(View):
     template_name = 'dashboard/student_profile/index.html'
@@ -137,11 +139,16 @@ class StudentModuleAjaxView(View):
 
 
 class StudentRoutineView(View):
-    template_name = 'dashboard/student_profile/routine.html'
-
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
-
+        student = get_object_or_404(Student, user=request.user)
+        section = student.section
+        
+        routines = Routine.objects.filter(section=section)
+        
+        return render(request, "dashboard/student_profile/routine.html", {
+            "routines": routines,
+            "section": section
+        })
 
 class StudentLibraryView(View):
     template_name = 'dashboard/student_profile/library.html'
