@@ -1,5 +1,5 @@
 from django.urls import path
-from routine.views import *
+from .views import *
 
 app_name = "ismt"
 

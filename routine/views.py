@@ -3,8 +3,8 @@ from datetime import datetime
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import View
-from routine.forms import RoutineForm
-from routine.models import Routine
+from .forms import RoutineForm
+from .models import Routine
 from django.urls import reverse
 
 from userauth.models import Sections
