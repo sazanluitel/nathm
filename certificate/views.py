@@ -188,7 +188,7 @@ class CertificateRequestAction(View):
 
         context = self.get_context(certificate)
         email_helper.send_with_template(
-            template='certificate_approved',
+            template=f"certificates/{certificate.certificate_type}_approved",
             context=context,
             subject=subject,
             to_email=certificate.student.email,
@@ -215,7 +215,7 @@ class CertificateRequestAction(View):
         import os
 
         context = self.get_context(certificate)
-        html_content = render_to_string("certificates/training.html", context=context, request=request)
+        html_content = render_to_string(f"certificates/{certificate.certificate_type}.html", context=context, request=request)
 
         # Create a folder with the user ID
         user_folder = os.path.join(MEDIA_ROOT, "certificates", str(certificate.student.user.id))
@@ -230,6 +230,8 @@ class CertificateRequestAction(View):
 
         if not os.path.exists(pdf_path):
             raise Exception("Unable to generate Certificate")
+
+        certificate.file = "/media/" + os.path.relpath(pdf_path, MEDIA_ROOT)
         return pdf_path
 
     def save_to_pdf(self, html_file_path, pdf_path):
