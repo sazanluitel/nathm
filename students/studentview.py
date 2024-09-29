@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 
@@ -36,12 +38,15 @@ class StudentStatusView(LoginRequiredMixin, View):
 
         library_form = LibraryForm()
 
+        today = datetime.now()
+        today_date = today.strftime("%b %d, %Y %A")
         return render(request, self.template_name, {
             'student': student,
             'student_id': student.id,
             'library_form': library_form,
             'borrowed_ebooks': borrowed_ebooks,
             'borrowed_physical_books': borrowed_physical_books,
+            'today_date': today_date
         })
 
     def post(self, request, *args, **kwargs):
@@ -299,28 +304,3 @@ class EmploymentHistoryJsons(View):
             "recordsFiltered": paginator.count,
             "data": data,
         }, status=200)
-
-
-class GenerateCertificatePDF(View):
-    def get(self, request, *args, **kwargs):
-        student_id = kwargs.get('student_id')
-        certificate_type = request.GET.get('certificate')
-
-        student = get_object_or_404(Student, id=student_id)
-
-        if certificate_type == 'transcript':
-            template_name = 'dashboard/certificates/transcript.html'
-        elif certificate_type == 'recommendation':
-            template_name = 'dashboard/certificates/recommendation.html'
-
-        else:
-            return HttpResponse("Invalid certificate type", status=400)
-
-        html_content = render(request, template_name, {'student': student}).content.decode('utf-8')
-
-        pdf = ""
-
-        response = HttpResponse(pdf, content_type='application/pdf')
-        response[
-            'Content-Disposition'] = f'attachment; filename="{certificate_type}_certificate_{student.student_id}.pdf"'
-        return response

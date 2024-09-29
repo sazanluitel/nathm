@@ -16,12 +16,9 @@ urlpatterns = [
     path('modulesajax/', StudentModuleAjaxView.as_view(),name='modulesajax'),
 
     path('routine/', StudentRoutineView.as_view(), name='routine'),
-    # path('routinesajax/', StudentRoutineAjaxView.as_view(),name='routinesajax'),
     
     path('library/', StudentLibraryView.as_view(), name='library'),
-    # path('libraryajax/', StudentLibraryAjaxView.as_view(),name='libraryajax'),
     path('certificate/', CertificateView.as_view(), name='certificate'),
-    path('download_certificate/<int:student_id>/', GenerateCertificatePDF.as_view(), name='download_certificate'),
 
     path('student/educational/<pk>/history/json/', EducationalHistoryJsons.as_view(), name="educational_history_json"),
     path('student/test/history/<pk>/json/', EnglishTestHistoryJsons.as_view(), name="english_test_json"),
