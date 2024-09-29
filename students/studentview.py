@@ -5,9 +5,11 @@ from library.forms import *
 from userauth.models import *
 from students.models import *
 from dashboard.models import *
+from certificate.models import *
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
 
@@ -25,12 +27,13 @@ class StudentStatusView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         student = get_object_or_404(Student, user=request.user)
 
-        borrowed_books = Library.objects.filter(borrowed_by=student)
+        # Filter only approved books
+        borrowed_books = Library.objects.filter(borrowed_by=student, status='approved')
         borrowed_ebooks = borrowed_books.filter(book__e_book=True).count()
         borrowed_physical_books = borrowed_books.filter(book__e_book=False).count()
 
         library_form = LibraryForm()
-        
+
         return render(request, self.template_name, {
             'student': student,
             'student_id': student.id,
@@ -46,15 +49,16 @@ class StudentStatusView(LoginRequiredMixin, View):
         if library_form.is_valid():
             library = library_form.save(commit=False)
             library.borrowed_by = student  
+            library.status = 'pending'
             library.save()
-            return redirect('students:studentstatus')  
+
+            return redirect('students:studentstatus')
 
         return render(request, self.template_name, {
             'student': student,
             'student_id': student.id,
-            'library_form': library_form
+            'library_form': library_form,
         })
-
 class StudentRecordView(View):
     template_name = 'dashboard/student_profile/profile.html'
 
@@ -135,6 +139,32 @@ class StudentLibraryView(View):
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
+
+class CertificateView(LoginRequiredMixin, View):
+    template_name = 'dashboard/student_profile/certificate.html'
+
+    def get(self, request, *args, **kwargs):
+        student = get_object_or_404(Student, user=request.user)
+        certificate_requests = RequestCertificate.objects.filter(student=student)
+
+        return render(request, self.template_name, {
+            'certificate_requests': certificate_requests,
+        })
+
+    def post(self, request, *args, **kwargs):
+        student = get_object_or_404(Student, user=request.user)
+        certificate_type = request.POST.get('certificate_type')
+        description = request.POST.get('description')
+
+        RequestCertificate.objects.create(
+            student=student,
+            certificate_type=certificate_type,
+            description=description,
+            status='Pending'
+        )
+
+        messages.success(request, "Your certificate request has been submitted.")
+        return redirect('students:certificate')
 
 
 class EducationalHistoryJsons(View):
