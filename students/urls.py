@@ -15,7 +15,7 @@ urlpatterns = [
     path('modules/', StudentModulesView.as_view(), name='modules'),
     path('modulesajax/', StudentModuleAjaxView.as_view(),name='modulesajax'),
 
-    path('routine/', StudentRoutineView.as_view(), name='routine'),
+    path('routine/', StudentRoutineView.as_view(), name='routine_events'),
     
     path('library/', StudentLibraryView.as_view(), name='library'),
     path('certificate/', CertificateView.as_view(), name='certificate'),

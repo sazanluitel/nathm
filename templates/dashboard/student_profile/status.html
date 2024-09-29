@@ -128,7 +128,7 @@
                                         </div>
                                     </div>
                                     <button type="button" class="btn btn-outline-primary mt-2 rounded-pill px-4">
-                                        Request Books
+                                        View Details
                                     </button>
                                 </div>
 
@@ -185,25 +185,9 @@
                         {{ library_form.book.label_tag }}
                         {{ library_form.book }}
 
-                        {{ library_form.return_date.label_tag }}
-                        {{ library_form.return_date }}
 
                         <button type="submit" class="btn btn-primary mt-2">Submit</button>
                     </form>
-                    {% if library_form.errors %}
-                        <div class="alert alert-danger mt-2">
-                            <ul>
-                                {% for field in library_form %}
-                                    {% for error in field.errors %}
-                                        <li>{{ error }}</li>
-                                    {% endfor %}
-                                {% endfor %}
-                                {% for error in library_form.non_field_errors %}
-                                    <li>{{ error }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% endif %}
                 </div>
             </div>
         </div>
