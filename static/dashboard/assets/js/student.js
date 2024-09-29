@@ -65,19 +65,15 @@ $(document).ready(function () {
         event.preventDefault();
         $.ajax({
             type: 'POST',
-            url: '{% url "students:studentstatus" %}',
+            url: '{% url "students:studentstatus" %}',  // Make sure this is the correct URL for the form submission
             data: $(this).serialize(),
             success: function (response) {
-                $('#libraryModal').modal('hide');
-                alert('Book requested successfully!');
+                $('#libraryModal').modal('hide');  // Close modal on success
+                alert('Book request submitted successfully!');
+                location.reload();  // Refresh page to update counts
             },
             error: function (xhr) {
-                var errors = xhr.responseJSON.errors || {};
-                var errorMessage = 'Please fix the following errors:\n';
-                $.each(errors, function (field, messages) {
-                    errorMessage += field + ': ' + messages.join(', ') + '\n';
-                });
-                alert(errorMessage);
+                alert('There was an error submitting your request.');
             }
         });
     });
