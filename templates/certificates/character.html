@@ -36,17 +36,14 @@
     <div class="certificate-header">
         <h2 class="fw-bold">National Academy of Tourism and Hotel Management</h2>
         <h5>(NATHM)</h5>
-        <h3 class="mt-4">Training Certificate</h3>
+        <h3 class="mt-4">Certificate of Completion</h3>
     </div>
 
     <div class="certificate-body">
-        <p>This is to certify that <strong>{{ student_name }}</strong> has successfully completed the training program titled <strong>"{{ training_title }}"</strong>.</p>
-
-        <p>The training was conducted from <strong>{{ training_start_date }}</strong> to <strong>{{ training_end_date }}</strong> and aimed to equip participants with the necessary skills and knowledge in <strong>{{ training_focus }}</strong>.</p>
-
-        <p>We commend <strong>{{ student_name }}</strong> for their dedication and hard work throughout the training.</p>
-
-        <p class="mt-5"><strong>Issued on: {{ issue_date }}</strong></p>
+        <p>This is to certify that <strong>{{ student_name }}</strong> has successfully completed the <strong>{{ course_name }}</strong> course.</p>
+        <p>This course was organized by the {{ department_name }} to provide comprehensive knowledge and skills relevant to the field of <strong>{{ department_name }}</strong>. The program aimed to enhance the student's capabilities and prepare them for success in their career.</p>
+        <p>Course Duration: <strong>{{ course_start_date }}</strong> to <strong>{{ course_end_date }}</strong></p>
+        <p class="mt-5"><strong>Issued on: {{ course_end_date }}</strong></p>
     </div>
 
     <div class="certificate-footer">
