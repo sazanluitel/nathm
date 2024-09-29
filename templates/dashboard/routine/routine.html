@@ -1,13 +1,14 @@
 {% extends "dashboard/admin-base.html" %}
 {% load static %}
-{% block title %}Routines{% endblock title %}
-{% block breadcrumb %}Routines{% endblock breadcrumb %}
-{% block maintitle %}Routines{% endblock maintitle %}
+{% block title %}{{ section }} - Routines{% endblock title %}
+{% block breadcrumb %}{{ section }} - Routines{% endblock breadcrumb %}
+{% block maintitle %}{{ section }} - Routines{% endblock maintitle %}
 
 {% block content %}
     <div class="col-sm-12">
-        <div class="card">
+        <div class="card routines_card">
             <div class="card-body">
+                {% include 'dashboard/alert.html' %}
                 <div id="calendar" data-events-url="{% url 'routine_admin:routine_events' section_id=section_id %}"></div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 (function () {
     $(document).ready(function () {
 
-        function get_format_date(today){
+        function get_format_date(today) {
             return today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
         }
 
@@ -24,7 +24,7 @@
             },
             selectable: true,
             selectMirror: true,
-            events: function (obj, end, timezone, callback) {
+            events: function (obj, successCallback, failureCallback) {
                 console.log("Events", obj)
                 const start_date = get_format_date(obj.start);
                 const end_date = get_format_date(obj.end);
@@ -37,18 +37,10 @@
                         start_date: start_date,
                         end_date: end_date
                     },
-                    beforeSend: function(){},
+                    beforeSend: function () {
+                    },
                     success: function (response) {
-                        const events = response.data.map(function (event) {
-                            return {
-                                title: event.title,
-                                date: event.date,
-                                start: event.start,
-                                end: event.end,
-                                allDay: true
-                            }
-                        });
-                        callback(events);
+                        successCallback(response);
                     }
                 });
             }
@@ -56,12 +48,21 @@
         calendar.render();
 
         calendar.on('dateClick', function (info) {
+            const clickedDate = info.date;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (clickedDate < today) {
+                alert("You cannot select a past date.");
+                return;
+            }
+
             const format_date = get_format_date(info.date);
             addRoutineModal.find("[name=date]").val(format_date).trigger("change")
             addRoutineModal.modal("show");
         });
 
-        $(document).on("submit", "#addRoutineModal form", function(e){
+        $(document).on("submit", "#addRoutineModal form", function (e) {
             e.preventDefault();
             const form = $(this);
             const url = form.attr("action");
@@ -71,7 +72,7 @@
                 url: url,
                 type: 'POST',
                 data: form.serialize(),
-                beforeSend: function(){
+                beforeSend: function () {
                     btn.attr("disabled", false).html("Adding routine...");
                 },
                 success: function (response) {
@@ -81,7 +82,7 @@
                 error: function (response) {
                     alert("Unable to add routine");
                 },
-                complete: function(){
+                complete: function () {
                     btn.attr("disabled", false).html("Add routine");
                 }
             });
