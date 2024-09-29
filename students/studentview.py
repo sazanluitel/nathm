@@ -48,7 +48,7 @@ class StudentStatusView(LoginRequiredMixin, View):
             'library_form': library_form,
             'borrowed_ebooks': borrowed_ebooks,
             'borrowed_physical_books': borrowed_physical_books,
-            'today_date': today_date
+            'today_date': today_date,
             'notices': notices,
         })
 
