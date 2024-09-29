@@ -202,7 +202,7 @@ class EducationalHistoryJsons(View):
                 history.start_year,
                 history.end_year,
                 history.grade,
-                self.get_action(history.file)  # Assuming you want to show file action
+                self.get_action(history.file)
             ])
 
         return JsonResponse({

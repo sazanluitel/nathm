@@ -40,7 +40,7 @@
                                 <td>{{ request.created_at|date:"Y-m-d" }}</td>
                                 <td>
                                     {% if request.status == "Approved" %}
-                                        <a href="{{ request.file }}" class="btn btn-success">Download</a>
+                                        <a download href="{{ request.file }}" class="btn btn-success">Download</a>
                                     {% else %}
                                         <span class="text-muted">No action available</span>
                                     {% endif %}
