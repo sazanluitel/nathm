@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import *
+from .modules.settings import SettingsView
 
 app_name = "dashboard"
 
@@ -29,4 +30,5 @@ urlpatterns = [
     path('modules/edit/<int:id>', ModulesEdit.as_view(), name='modulesedit'),
     path('modules/ajax', ModulesAjax.as_view(), name='modulesajax'),
 
+    path("settings/<tab>/", SettingsView.as_view(), name="settings"),
 ]

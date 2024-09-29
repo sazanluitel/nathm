@@ -6,20 +6,20 @@ from filehub.fields import ImagePickerField
 # Create your models here.
 class RequestCertificate(models.Model):
     CERTIFICATE_TYPE = [
-        ('Character', 'Characher Certificate'),
-        ('Training', 'Training Certificate'),
-        ('Academic', 'Academic Certificate'),
+        ('character', 'Characher Certificate'),
+        ('recommendation', 'Recommendation Certificate'),
+        ('training', 'Training Certificate')
     ]
     STATUS = [
-        ('Pending', 'Pending'),
-        ('Approved', 'Approved'),
-        ('Denied', 'Denied'),
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('denied', 'Denied'),
     ]
     student = models.ForeignKey('students.Student', on_delete=models.CASCADE)
     certificate_type = models.CharField(max_length=100, choices=CERTIFICATE_TYPE)
     description = models.TextField(blank=True, null=True)
     file = models.TextField(blank=True, null=True)
-    status = models.CharField(max_length=100, choices=STATUS, default='Pending')
+    status = models.CharField(max_length=100, choices=STATUS, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     is_approved = models.BooleanField(default=False)
 

@@ -1,14 +1,17 @@
-from django.shortcuts import render, get_object_or_404,redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
-from weasyprint import HTML
+
+from certificate.forms import CertificateForm
 from userauth.forms import *
 from library.forms import *
 from userauth.models import *
 from students.models import *
 from dashboard.models import *
+from certificate.models import *
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
 
@@ -26,12 +29,13 @@ class StudentStatusView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         student = get_object_or_404(Student, user=request.user)
 
-        borrowed_books = Library.objects.filter(borrowed_by=student)
+        # Filter only approved books
+        borrowed_books = Library.objects.filter(borrowed_by=student, status='approved')
         borrowed_ebooks = borrowed_books.filter(book__e_book=True).count()
         borrowed_physical_books = borrowed_books.filter(book__e_book=False).count()
 
         library_form = LibraryForm()
-        
+
         return render(request, self.template_name, {
             'student': student,
             'student_id': student.id,
@@ -46,15 +50,18 @@ class StudentStatusView(LoginRequiredMixin, View):
 
         if library_form.is_valid():
             library = library_form.save(commit=False)
-            library.borrowed_by = student  
+            library.borrowed_by = student
+            library.status = 'pending'
             library.save()
-            return redirect('students:studentstatus')  
+
+            return redirect('students:studentstatus')
 
         return render(request, self.template_name, {
             'student': student,
             'student_id': student.id,
-            'library_form': library_form
+            'library_form': library_form,
         })
+
 
 class StudentRecordView(View):
     template_name = 'dashboard/student_profile/profile.html'
@@ -138,6 +145,32 @@ class StudentLibraryView(View):
         return render(request, self.template_name)
 
 
+class CertificateView(View):
+    template_name = 'dashboard/student_profile/certificate.html'
+
+    def get(self, request, *args, **kwargs):
+        student = get_object_or_404(Student, user=request.user)
+        certificate_requests = RequestCertificate.objects.filter(student=student).order_by("-id")
+        form = CertificateForm()
+
+        return render(request, self.template_name, {
+            'certificate_requests': certificate_requests,
+            'form': form
+        })
+
+    def post(self, request, *args, **kwargs):
+        student = get_object_or_404(Student, user=request.user)
+        form = CertificateForm(request.POST)
+        if form.is_valid():
+            certificate_request = form.save(commit=False)
+            certificate_request.student = student
+            certificate_request.save()
+            messages.success(request, "Your request has been submitted.")
+        else:
+            messages.error(request, "Failed to submit your request.")
+        return redirect('students:certificate')
+
+
 class EducationalHistoryJsons(View):
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
@@ -169,7 +202,7 @@ class EducationalHistoryJsons(View):
                 history.start_year,
                 history.end_year,
                 history.grade,
-                self.get_action(history.file)  # Assuming you want to show file action
+                self.get_action(history.file)
             ])
 
         return JsonResponse({
@@ -285,7 +318,7 @@ class GenerateCertificatePDF(View):
 
         html_content = render(request, template_name, {'student': student}).content.decode('utf-8')
 
-        pdf = HTML(string=html_content).write_pdf()
+        pdf = ""
 
         response = HttpResponse(pdf, content_type='application/pdf')
         response[

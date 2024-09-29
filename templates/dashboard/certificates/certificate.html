@@ -5,41 +5,34 @@
 {% block maintitle %}Certificate{% endblock %}
 
 {% block content %}
-    <div class="col-lg-4">
+    <div class="col-lg-12">
         <div class="card">
-            <div class="card-header">Request Certificate</div>
-            <div class="card-body">
-                {% with messages=messages %}
-                    {% include 'dashboard/alert.html' %}
-                {% endwith %}
-
-                <form method="POST">
-                    {% csrf_token %}
-
-                    {{ form.as_p }}
-
-                    <button type="submit" class="btn btn-primary w-100">Request</button>
-                </form>
+            <div class="card-header d-flex align-items-center justify-content-between py-3">
+                <div class="cards-title">Certificates Requests</div>
+                <div class="btn-group" role="group" aria-label="Basic outlined example">
+                    <a type="button" href="{% url 'certificate:certificatereq' %}"
+                       class="btn btn-outline-primary {% if status == None %}active{% endif %}">All</a>
+                    <a type="button" href="{% url 'certificate:certificatereq_status' status='pending' %}"
+                       class="btn btn-outline-warning {% if status == 'pending' %}active{% endif %}">Pending</a>
+                    <a type="button" href="{% url 'certificate:certificatereq_status' status='approved' %}"
+                       class="btn btn-outline-success {% if status == 'approved' %}active{% endif %}">Approved</a>
+                    <a type="button" href="{% url 'certificate:certificatereq_status' status='denied' %}"
+                       class="btn btn-outline-danger {% if status == 'denied' %}active{% endif %}">Denied</a>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header">Certificates Requests</div>
             <div class="card-body">
                 <table
                         class="table ajaxdatatable table-bordered"
-                        data-ajax="{% url 'certificate:certificate_ajax' %}"
                 >
-                <thead>
+                    <thead>
                     <tr>
-                        <th>Student</th>   
-                        <th>Certificate</th>  
-                        <th>Status</th>  
-                        <th>Actions</th>  
+                        <th>Student</th>
+                        <th>Certificate</th>
+                        <th>Status</th>
+                        <th>Actions</th>
                     </tr>
-                </thead>
+                    </thead>
                 </table>
             </div>
         </div>
