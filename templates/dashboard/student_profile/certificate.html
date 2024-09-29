@@ -3,90 +3,80 @@
 {% block breadcrumb %}Certificate{% endblock breadcrumb %}
 {% block maintitle %}Certificate{% endblock maintitle %}
 
+{% block rightbutton %}
+    <div class="text-end">
+        <button type="button" class="btn btn-outline-primary rounded-pill px-4 mb-3" data-bs-toggle="modal"
+                data-bs-target="#certificateModal">
+            Request Certificate
+        </button>
+    </div>
+{% endblock %}
+
 {% block content %}
-<div class="col-sm-12">
-    {% with messages=messages %}
-        {% include 'dashboard/alert.html' %}
-    {% endwith %}
-</div>
+    <!-- Certificate Request History Section -->
+    <div class="row mt-5">
+        {% with messages=messages %}
+            {% include 'dashboard/alert.html' %}
+        {% endwith %}
 
-<!-- Certificate Request Section -->
-<div class="row justify-content-center mt-4">
-    <div class="col-md-3 text-center">
-        <h5 class="mb-4">Request Certificate</h5>
-        <div class="d-flex flex-column align-items-center">
-            <button type="button" class="btn btn-outline-primary rounded-pill px-4 mb-3" data-bs-toggle="modal" data-bs-target="#certificateModal">
-                Request Certificate
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- Certificate Request History Section -->
-<div class="row mt-5">
-    <div class="col-sm-12">
-        <h5>Certificate Request History</h5>
-        <table class="table table-bordered mt-3">
-            <thead>
-                <tr>
-                    <th>Certificate Type</th>
-                    <th>Status</th>
-                    <th>Requested On</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for request in certificate_requests %}
-                    <tr>
-                        <td>{{ request.get_certificate_type_display }}</td>
-                        <td>{{ request.get_status_display }}</td>
-                        <td>{{ request.created_at|date:"Y-m-d" }}</td>
-                        <td>
-                            {% if request.status == "Approved" %}
-                                <a href="{{ request.file }}" class="btn btn-success">Download</a>
-                            {% else %}
-                                <span class="text-muted">No action available</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="4" class="text-center">No certificate requests found.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<!-- Certificate Modal -->
-<div class="modal fade" id="certificateModal" tabindex="-1" aria-labelledby="certificateModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="certificateModalLabel">Request a Certificate</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form method="post" id="certificateForm">
-                    {% csrf_token %}
-                    <div class="form-group mb-3">
-                        <label for="id_certificate_type">Certificate Type</label>
-                        <select name="certificate_type" id="id_certificate_type" class="form-control">
-                            <option value="Character">Character Certificate</option>
-                            <option value="Training">Training Certificate</option>
-                            <option value="Academic">Academic Certificate</option>
-                        </select>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label for="id_description">Description</label>
-                        <textarea name="description" id="id_description" class="form-control"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit Request</button>
-                </form>
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header py-3 text-lg"><strong>Request History</strong></div>
+                <div class="card-body">
+                    <table class="table table-bordered mt-3">
+                        <thead>
+                        <tr>
+                            <th>Certificate Type</th>
+                            <th>Status</th>
+                            <th>Requested On</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for request in certificate_requests %}
+                            <tr>
+                                <td>{{ request.get_certificate_type_display }}</td>
+                                <td>{{ request.get_status_display }}</td>
+                                <td>{{ request.created_at|date:"Y-m-d" }}</td>
+                                <td>
+                                    {% if request.status == "Approved" %}
+                                        <a href="{{ request.file }}" class="btn btn-success">Download</a>
+                                    {% else %}
+                                        <span class="text-muted">No action available</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">No certificate requests found.</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- Certificate Modal -->
+    <div class="modal fade" id="certificateModal" tabindex="-1" aria-labelledby="certificateModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="certificateModalLabel">Request a Certificate</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="certificateForm">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+
+                        <button type="submit" class="btn btn-primary">Submit Request</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}

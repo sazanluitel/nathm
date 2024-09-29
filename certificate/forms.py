@@ -1,6 +1,7 @@
 from django import forms
 from .models import Templates, RequestCertificate
 
+
 class TemplateForm(forms.ModelForm):
     class Meta:
         model = Templates
@@ -18,16 +19,12 @@ class TemplateForm(forms.ModelForm):
             }),
         }
 
+
 class CertificateForm(forms.ModelForm):
     class Meta:
         model = RequestCertificate
-        fields = ['student', 'certificate_type', 'description', 'file']
+        fields = ['certificate_type', 'description']
         widgets = {
-            'student': forms.Select(attrs={
-                'class': 'form-control',
-                'id': 'student-select',
-                'data-placeholder': 'Select the student',
-            }),
             'certificate_type': forms.Select(attrs={
                 'class': 'form-control',
                 'id': 'certificate-type-select',
@@ -37,10 +34,6 @@ class CertificateForm(forms.ModelForm):
                 'class': 'form-control',
                 'id': 'description',
                 'placeholder': 'Enter description',
-            }),
-            'file': forms.FileInput(attrs={
-                'class': 'form-control',
-                'id': 'file-input',
-            }),
+                'rows': 3
+            })
         }
-

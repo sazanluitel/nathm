@@ -1,5 +1,7 @@
-from django.shortcuts import render, get_object_or_404,redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
+
+from certificate.forms import CertificateForm
 from userauth.forms import *
 from library.forms import *
 from userauth.models import *
@@ -48,7 +50,7 @@ class StudentStatusView(LoginRequiredMixin, View):
 
         if library_form.is_valid():
             library = library_form.save(commit=False)
-            library.borrowed_by = student  
+            library.borrowed_by = student
             library.status = 'pending'
             library.save()
 
@@ -59,6 +61,8 @@ class StudentStatusView(LoginRequiredMixin, View):
             'student_id': student.id,
             'library_form': library_form,
         })
+
+
 class StudentRecordView(View):
     template_name = 'dashboard/student_profile/profile.html'
 
@@ -140,30 +144,30 @@ class StudentLibraryView(View):
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
 
-class CertificateView(LoginRequiredMixin, View):
+
+class CertificateView(View):
     template_name = 'dashboard/student_profile/certificate.html'
 
     def get(self, request, *args, **kwargs):
         student = get_object_or_404(Student, user=request.user)
-        certificate_requests = RequestCertificate.objects.filter(student=student)
+        certificate_requests = RequestCertificate.objects.filter(student=student).order_by("-id")
+        form = CertificateForm()
 
         return render(request, self.template_name, {
             'certificate_requests': certificate_requests,
+            'form': form
         })
 
     def post(self, request, *args, **kwargs):
         student = get_object_or_404(Student, user=request.user)
-        certificate_type = request.POST.get('certificate_type')
-        description = request.POST.get('description')
-
-        RequestCertificate.objects.create(
-            student=student,
-            certificate_type=certificate_type,
-            description=description,
-            status='Pending'
-        )
-
-        messages.success(request, "Your certificate request has been submitted.")
+        form = CertificateForm(request.POST)
+        if form.is_valid():
+            certificate_request = form.save(commit=False)
+            certificate_request.student = student
+            certificate_request.save()
+            messages.success(request, "Your request has been submitted.")
+        else:
+            messages.error(request, "Failed to submit your request.")
         return redirect('students:certificate')
 
 
