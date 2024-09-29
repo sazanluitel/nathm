@@ -20,7 +20,7 @@ urlpatterns = [
     
     path('library/', StudentLibraryView.as_view(), name='library'),
     # path('libraryajax/', StudentLibraryAjaxView.as_view(),name='libraryajax'),
-
+    path('certificate/', CertificateView.as_view(), name='certificate'),
     path('download_certificate/<int:student_id>/', GenerateCertificatePDF.as_view(), name='download_certificate'),
 
     path('student/educational/<pk>/history/json/', EducationalHistoryJsons.as_view(), name="educational_history_json"),
