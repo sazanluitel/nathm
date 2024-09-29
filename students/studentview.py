@@ -1,5 +1,9 @@
-from django.shortcuts import render, get_object_or_404,redirect
+from datetime import datetime
+
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
+
+from certificate.forms import CertificateForm
 from userauth.forms import *
 from library.forms import *
 from userauth.models import *
@@ -34,12 +38,15 @@ class StudentStatusView(LoginRequiredMixin, View):
 
         library_form = LibraryForm()
 
+        today = datetime.now()
+        today_date = today.strftime("%b %d, %Y %A")
         return render(request, self.template_name, {
             'student': student,
             'student_id': student.id,
             'library_form': library_form,
             'borrowed_ebooks': borrowed_ebooks,
             'borrowed_physical_books': borrowed_physical_books,
+            'today_date': today_date
         })
 
     def post(self, request, *args, **kwargs):
@@ -48,7 +55,7 @@ class StudentStatusView(LoginRequiredMixin, View):
 
         if library_form.is_valid():
             library = library_form.save(commit=False)
-            library.borrowed_by = student  
+            library.borrowed_by = student
             library.status = 'pending'
             library.save()
 
@@ -59,6 +66,8 @@ class StudentStatusView(LoginRequiredMixin, View):
             'student_id': student.id,
             'library_form': library_form,
         })
+
+
 class StudentRecordView(View):
     template_name = 'dashboard/student_profile/profile.html'
 
@@ -151,25 +160,24 @@ class CertificateView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         student = get_object_or_404(Student, user=request.user)
-        certificate_requests = RequestCertificate.objects.filter(student=student)
+        certificate_requests = RequestCertificate.objects.filter(student=student).order_by("-id")
+        form = CertificateForm()
 
         return render(request, self.template_name, {
             'certificate_requests': certificate_requests,
+            'form': form
         })
 
     def post(self, request, *args, **kwargs):
         student = get_object_or_404(Student, user=request.user)
-        certificate_type = request.POST.get('certificate_type')
-        description = request.POST.get('description')
-
-        RequestCertificate.objects.create(
-            student=student,
-            certificate_type=certificate_type,
-            description=description,
-            status='Pending'
-        )
-
-        messages.success(request, "Your certificate request has been submitted.")
+        form = CertificateForm(request.POST)
+        if form.is_valid():
+            certificate_request = form.save(commit=False)
+            certificate_request.student = student
+            certificate_request.save()
+            messages.success(request, "Your request has been submitted.")
+        else:
+            messages.error(request, "Failed to submit your request.")
         return redirect('students:certificate')
 
 
@@ -204,7 +212,7 @@ class EducationalHistoryJsons(View):
                 history.start_year,
                 history.end_year,
                 history.grade,
-                self.get_action(history.file)  # Assuming you want to show file action
+                self.get_action(history.file)
             ])
 
         return JsonResponse({
@@ -301,28 +309,3 @@ class EmploymentHistoryJsons(View):
             "recordsFiltered": paginator.count,
             "data": data,
         }, status=200)
-
-
-class GenerateCertificatePDF(View):
-    def get(self, request, *args, **kwargs):
-        student_id = kwargs.get('student_id')
-        certificate_type = request.GET.get('certificate')
-
-        student = get_object_or_404(Student, id=student_id)
-
-        if certificate_type == 'transcript':
-            template_name = 'dashboard/certificates/transcript.html'
-        elif certificate_type == 'recommendation':
-            template_name = 'dashboard/certificates/recommendation.html'
-
-        else:
-            return HttpResponse("Invalid certificate type", status=400)
-
-        html_content = render(request, template_name, {'student': student}).content.decode('utf-8')
-
-        pdf = ""
-
-        response = HttpResponse(pdf, content_type='application/pdf')
-        response[
-            'Content-Disposition'] = f'attachment; filename="{certificate_type}_certificate_{student.student_id}.pdf"'
-        return response

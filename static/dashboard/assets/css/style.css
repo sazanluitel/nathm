@@ -1394,7 +1394,7 @@ svg.feather:not([class*=hei-]) {
 
 .ps-sidebar .navbar-content {
     position: relative;
-    height: calc(100vh - 74px);
+    height: calc(100vh - 140px);
     padding: 10px 0;
     overflow: hidden scroll
 }
@@ -4212,9 +4212,10 @@ h2 {
 }
 
 .grade-box {
-    width: 80px;
+    width: 100px;
     height: 120px;
     border-radius: 10px;
+    background: #5C17EB;
 }
 
 .routine_event_custom {
@@ -4240,4 +4241,138 @@ h2 {
 
 .routine_event_custom form {
     margin-top: 5px;
+}
+
+.student_overview_profile h3 {
+    font-size: 25px;
+}
+
+.student_overview_profile .student_class {
+    font-size: 15px;
+    font-weight: 400;
+    background: #ECEFF0;
+    color: #ADB0B1;
+    padding: 4px 15px;
+    border-radius: 30px;
+    margin: 0;
+}
+
+.student_overview_profile .profile-img{
+    border: 2px solid #000;
+    padding: 5px;
+    width:90px;
+    height:90px;
+}
+
+.student_overview_profile #current-date{
+    color:#ADB0B1;
+    margin-bottom: 5px;
+}
+
+.student_overview_profile h5{
+    font-weight: 600;
+}
+
+.student_overview_profile .fa-calendar-days{
+    color:#ADB0B1;
+    font-size:20px;
+}
+
+.student_overview_profile .list-group{
+    margin-top:0.5rem;
+}
+
+.student_overview_profile .list-group .list-group-item{
+    background: #ECEFF0;
+    gap:10px;
+    border-radius: 10px;
+    margin-bottom:1rem !important;
+    padding:10px;
+}
+
+.student_overview_profile .list-group .list-group-item p{
+    margin:0;
+}
+
+.student_overview_profile .list-group .list-group-item p.time{
+    margin-bottom:3px;
+}
+
+.student_overview_profile .list-group .list-group-item p.course{
+    font-weight:600;
+}
+
+.student_overview_profile .list-group .list-group-item p.user{
+    font-style: italic;
+    font-size:12px;
+}
+
+.student_overview_profile .shareBtn {
+    background: transparent;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    color:#ADB0B1;
+}
+
+.student_overview_profile .shareBtn i{
+    font-size:30px;
+}
+
+.payment_card,
+.book_cards{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border: 2px solid #ECEFF0;
+    border-radius: 10px;
+    padding: 5px 10px;
+    background:#fff;
+}
+
+.payment_card .label{
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.student_overview_profile .card{
+    background: transparent;
+    border:none;
+}
+
+.student_overview_profile .card-body{
+    padding:0;
+}
+
+.student_overview_profile .row{
+    --bs-gutter-x: 3.5rem;
+}
+
+.requestBtn{
+    background: #FAC4C4;
+    color:#000;
+    border:none;
+    padding:6px;
+}
+
+.book_cards{
+    padding:10px 20px;
+    justify-content: space-between;
+    margin:10px 0;
+}
+
+.book_cards span{
+    display: block;
+    text-align: center;
+}
+
+.book_cards span.value{
+    font-weight: 600;
+    font-size: 25px;
+}
+
+.book_cards span.label{
+    color:#ADB0B1;
 }

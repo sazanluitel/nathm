@@ -1,0 +1,26 @@
+{% extends 'dashboard/admin-base.html' %}
+{% load static %}
+{% block title %}Sections{% endblock %}
+{% block breadcrumb %}Sections{% endblock %}
+{% block maintitle %}Sections{% endblock %}
+
+{% block content %}
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">Sections</div>
+            <div class="card-body">
+                <table
+                        class="table ajaxdatatable table-bordered"
+                        data-ajax="{% url 'routine_admin:class_routines' %}"
+                >
+                    <thead>
+                        <tr>
+                            <th>Section</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

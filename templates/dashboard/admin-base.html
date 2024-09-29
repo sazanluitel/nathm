@@ -8,9 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>{% block title %}{% endblock %} - ISMT College</title>
+    <title>{% block title %}{% endblock %} - {{ website_name }}</title>
     
-    <link rel="shortcut icon" href="{% static 'dashboard/assets/images/fav-icon.jpg' %}" type="image/x-icon" />
+    <link rel="shortcut icon" href="{{ website_fav }}" type="image/x-icon" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,7 +33,7 @@
         <div class="navbar-wrapper">
             <div class="m-header">
                 <a href="" class="b-brand text-primary">
-                    <img src="{% static 'dashboard/assets/images/logo.jpg' %}" class="img-fluid logo-lg opacity-100 h-full" alt="logo">
+                    <img src="{{ website_logo }}" class="img-fluid logo-lg opacity-100 h-full" alt="logo">
                 </a>
             </div>
             <div class="navbar-content">
@@ -41,7 +41,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1 ms-3 me-2">
-                                <h6 class="mb-0">ISMT College - {{request.user.username}}</h6>
+                                <h6 class="mb-0">Super User</h6>
                             </div>
                         </div>
                     </div>
@@ -181,18 +181,32 @@
                             <li class="ps-item"><a class="ps-link" href="{% url 'teacher:list' %}">List Teacher</a></li>
                         </ul>
                     </li>
+
+                    <li class="ps-item ps-caption">
+                        <label>Routines</label>
+                   </li>
+
+                    <li class="ps-item">
+                        <a href="{% url 'routine_admin:class_routines' %}" class="ps-link">
+                            <span class="ps-micon">
+                                <i class="fa-solid fa-table-list"></i>
+                            </span>
+                            <span class="ps-mtext">Class Routine</span>
+                        </a>
+                    </li>
+
+                    <li class="ps-item">
+                        <a href="" class="ps-link">
+                            <span class="ps-micon">
+                                <i class="fa-solid fa-table-list"></i>
+                            </span>
+                            <span class="ps-mtext">Exam Routine</span>
+                        </a>
+                    </li>
                     
                     <li class="ps-item ps-caption">
                         <label>Certificate</label>
                     </li>
-                    {% comment %} <li class="ps-item">
-                        <a href="{% url "certificate:templates" %}" class="ps-link">
-                            <span class="ps-micon">
-                                <i class="fa-solid fa-book"></i>
-                             </span>
-                            <span class="ps-mtext">Templates</span>
-                        </a>
-                    </li> {% endcomment %}
                     <li class="ps-item">
                         <a href="{% url 'certificate:certificatereq' %}" class="ps-link">
                             <span class="ps-micon">
@@ -201,8 +215,6 @@
                             <span class="ps-mtext">Certificate</span>
                         </a>
                     </li>
-
-                   
 
                     <li class="ps-item ps-caption">
                         <label>Library</label>
@@ -221,14 +233,6 @@
                                 <i class="fa-solid fa-book-open"></i>
                             </span>
                             <span class="ps-mtext">Library</span>
-                        </a>
-                    </li>
-                    <li class="ps-item">
-                        <a href="{% url "library_admin_urls:library" %}" class="ps-link">
-                            <span class="ps-micon">
-                                <i class="fa-solid fa-book-open"></i>
-                            </span>
-                            <span class="ps-mtext">Routines</span>
                         </a>
                     </li>
                     <li class="ps-item ps-caption">
@@ -250,6 +254,15 @@
                                 <i class="fa-solid fa-folder"></i>
                             </span>
                             <span class="ps-mtext">Media Manager</span>
+                        </a>
+                    </li>
+
+                    <li class="ps-item">
+                        <a href="{% url 'dashboard:settings' tab='general' %}" class="ps-link">
+                            <span class="ps-micon">
+                                <i class="fa-solid fa-cog"></i>
+                            </span>
+                            <span class="ps-mtext">Settings</span>
                         </a>
                     </li>
                 </ul>
