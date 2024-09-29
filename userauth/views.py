@@ -354,9 +354,8 @@ class RolesAjaxView(View):
         user_id = user.id
         # edit_url = reverse('user_admin:edit_user', kwargs={'pk': user_id})
         delete_url = reverse('generic:delete')
-        backurl = reverse('user_admin:users')
+        backurl = reverse('userauth_urls:userroles')
 
-                # <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
                 <input type="hidden" name="_selected_id" value="{user_id}" />

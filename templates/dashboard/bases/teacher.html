@@ -1,6 +1,5 @@
 {% load static %}
 {% include "dashboard/bases/header.html" %}
-
 <!-- [ Sidebar Menu ] start -->
 <nav class="ps-sidebar">
     <div class="navbar-wrapper">
@@ -15,7 +14,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1 ms-3 me-2">
-                            <h6 class="mb-0">Admission Department</h6>
+                            <h6 class="mb-0">Teacher</h6>
                         </div>
                     </div>
                 </div>
@@ -27,7 +26,7 @@
                 </li>
 
                 <li class="ps-item">
-                    <a href="{% url 'admission_department:index' %}" class="ps-link">
+                    <a href="{% url "students:studentstatus" %}" class="ps-link">
                             <span class="ps-micon">
                                 <i class="fa fa-home"></i>
                             </span>
@@ -35,20 +34,24 @@
                     </a>
                 </li>
 
-                <li class="ps-item ps-hasmenu">
-                    <a href="#!" class="ps-link">
+                <li class="ps-item">
+                    <a href="{% url 'students:modules' %}" class="ps-link">
                             <span class="ps-micon">
-                                <i class="fa-solid fa-user-graduate"></i>
+                                <i class="fa-solid fa-book-open"></i>
                             </span>
-                        <span class="ps-mtext">Students</span>
-                        <span class="ps-arrow"><i class="fa fa-angle-right"></i></span>
+                        <span class="ps-mtext">Modules</span>
                     </a>
-
-                    <ul class="ps-submenu">
-                        <li class="ps-item"><a class="ps-link" href="{% url 'admission_department:student_add' %}">Add New</a></li>
-                        <li class="ps-item"><a class="ps-link" href="{% url 'admission_department:students' %}">Students</a></li>
-                    </ul>
                 </li>
+
+                <li class="ps-item">
+                    <a href="{% url 'students:routine'%}" class="ps-link">
+                            <span class="ps-micon">
+                                <i class="fa-solid fa-calendar-day"></i>
+                            </span>
+                        <span class="ps-mtext">Routine</span>
+                    </a>
+                </li>
+
             </ul>
         </div>
     </div>

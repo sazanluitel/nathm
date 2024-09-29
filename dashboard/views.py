@@ -626,6 +626,14 @@ class DeleteHelper:
             return None
 
         return self.get_objects(ids, Book, "Book", None, book_title, book_kwargs)
+    def get_user(self, ids):
+        def user_title(obj):
+            return obj.user.get_full_name()
+
+        def user_kwargs(obj):
+            return None
+
+        return self.get_objects(ids, User, "User", None, user_title, user_kwargs)
 
     def get_routines(self, ids):
         return self.get_objects(ids, Routine, "Routine")
@@ -647,6 +655,8 @@ class DeleteHelper:
             return "Books" if total > 1 else "Book"
         elif post_type == "Library":
             return "Libraries" if total > 1 else "Library"
+        elif post_type == "User":
+            return "Users" if total > 1 else "User"
         return "Objects"
 
     def get_delete_objects(self, delete_type, selected_ids=None):
@@ -682,6 +692,8 @@ class DeleteHelper:
             elif delete_type == "book":
                 objects, originals = self.get_book(selected_ids)
             elif delete_type == "routine":
+                objects, originals = self.get_routines(selected_ids)
+            elif delete_type == "user":
                 objects, originals = self.get_routines(selected_ids)
 
         return objects, originals
