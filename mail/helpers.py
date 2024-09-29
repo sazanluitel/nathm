@@ -80,11 +80,12 @@ class EmailHelper:
         else:
             raise ValueError("Invalid 'to_email' argument. Must be a list or dictionary.")
 
-    def send_with_template(self, template, context, subject, to_email):
+    def send_with_template(self, template, context, subject, to_email, attachments=None):
         message = self.get_template_content(template, context=context)
 
         return self.send_email(
             subject=subject,
             to_email=to_email,
-            message=message
+            message=message,
+            attachments=attachments
         )

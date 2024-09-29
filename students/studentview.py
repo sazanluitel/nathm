@@ -1,6 +1,5 @@
 from django.shortcuts import render, get_object_or_404,redirect
 from django.views import View
-from weasyprint import HTML
 from userauth.forms import *
 from library.forms import *
 from userauth.models import *
@@ -315,7 +314,7 @@ class GenerateCertificatePDF(View):
 
         html_content = render(request, template_name, {'student': student}).content.decode('utf-8')
 
-        pdf = HTML(string=html_content).write_pdf()
+        pdf = ""
 
         response = HttpResponse(pdf, content_type='application/pdf')
         response[

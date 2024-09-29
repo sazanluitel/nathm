@@ -361,10 +361,12 @@ class SectionView(View):
         edit_url = reverse('student_service:edit_section', kwargs={'pk': section_id})
         delete_url = reverse('generic:delete')
         backurl = reverse('student_service:sections')
+        routine_url = reverse("routine_admin:routine", kwargs={'section_id': section_id})
 
         return f'''
                     <form method="post" action="{delete_url}" class="button-group">
                         <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
+                        <a href="{routine_url}" class="btn btn-warning btn-sm">Routines</a>
                         <input type="hidden" name="_selected_id" value="{section_id}" />
                         <input type="hidden" name="_selected_type" value="sections" />
                         <input type="hidden" name="_back_url" value="{backurl}" />

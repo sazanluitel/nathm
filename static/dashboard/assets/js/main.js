@@ -471,5 +471,8 @@
     }
 
     // Set the current date in the #current-date element
-    document.getElementById('current-date').textContent = formatDate(new Date());
+    const current_date = document.getElementById('current-date');
+    if( current_date ){
+        current_date.textContent = formatDate(new Date());
+    }
 })(jQuery);

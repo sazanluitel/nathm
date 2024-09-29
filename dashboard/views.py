@@ -8,6 +8,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.core.paginator import Paginator
 from django.db.models import Prefetch, Count
+
+from routine.models import Routine
 from .forms import *
 from .models import *
 from userauth.models import *
@@ -486,19 +488,18 @@ class ModulesAjax(View):
             </form>
         '''
 
+
 class DeleteHelper:
-    def get_objects(self, ids, model, type_title, reverse_name, title_generator, kwargs_generator):
+    def get_objects(self, ids, model, type_title, reverse_name=None, title_generator=None, kwargs_generator=None):
         objects = []
         objects_org = []
         try:
             for obj_id in ids:
                 try:
                     obj = model.objects.get(id=obj_id)
-                    title = title_generator(obj)
-                    if reverse_name:
-                        url = reverse(reverse_name, kwargs=kwargs_generator(obj))
-                    else:
-                        url = "#"
+                    title = title_generator(obj) if title_generator else obj.id
+                    url = reverse(reverse_name, kwargs=kwargs_generator(obj)) if reverse_name else "#"
+
                     objects_org.append(obj)
                     objects.append({
                         "id": obj.id,
@@ -557,7 +558,7 @@ class DeleteHelper:
         def student_kwargs(obj):
             return None
 
-        return self.get_objects(ids, Student, "Student",None, student_title, student_kwargs)
+        return self.get_objects(ids, Student, "Student", None, student_title, student_kwargs)
 
     def get_educational_history(self, ids):
         def student_title(obj):
@@ -598,7 +599,7 @@ class DeleteHelper:
 
         return self.get_objects(ids, Sections, "Sections", None, student_title,
                                 student_kwargs)
-    
+
     def get_teacher(self, ids):
         def teacher_title(obj):
             return obj.user.get_full_name()
@@ -606,7 +607,8 @@ class DeleteHelper:
         def teacher_kwargs(obj):
             return None
 
-        return self.get_objects(ids, Teacher, "Teacher",None, teacher_title, teacher_kwargs)
+        return self.get_objects(ids, Teacher, "Teacher", None, teacher_title, teacher_kwargs)
+
     def get_library(self, ids):
         def library_title(obj):
             return obj.book
@@ -614,7 +616,8 @@ class DeleteHelper:
         def library_kwargs(obj):
             return None
 
-        return self.get_objects(ids, Library, "Library",None, library_title, library_kwargs)
+        return self.get_objects(ids, Library, "Library", None, library_title, library_kwargs)
+
     def get_book(self, ids):
         def book_title(obj):
             return obj.name
@@ -622,7 +625,10 @@ class DeleteHelper:
         def book_kwargs(obj):
             return None
 
-        return self.get_objects(ids, Book, "Book",None, book_title, book_kwargs)
+        return self.get_objects(ids, Book, "Book", None, book_title, book_kwargs)
+
+    def get_routines(self, ids):
+        return self.get_objects(ids, Routine, "Routine")
 
     def get_titles(self, post_type: str, total):
         if post_type == "program":
@@ -642,7 +648,6 @@ class DeleteHelper:
         elif post_type == "Library":
             return "Libraries" if total > 1 else "Library"
         return "Objects"
-        
 
     def get_delete_objects(self, delete_type, selected_ids=None):
         if selected_ids is None:
@@ -676,6 +681,8 @@ class DeleteHelper:
                 objects, originals = self.get_library(selected_ids)
             elif delete_type == "book":
                 objects, originals = self.get_book(selected_ids)
+            elif delete_type == "routine":
+                objects, originals = self.get_routines(selected_ids)
 
         return objects, originals
 

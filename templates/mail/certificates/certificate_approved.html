@@ -1,0 +1,13 @@
+{% extends "mail/base.html" %}
+
+{% block content %}
+    <p style="margin-bottom: 20px;">Dear Student,</p>
+
+    <p style="margin-bottom: 20px;">Congratulations on completing your course!</p>
+
+    <p style="margin-bottom: 20px;">We are pleased to inform you that your Certificate of Completion for the <strong>{{ course_name }}</strong> course has been successfully generated.</p>
+
+    <p>You can find your certificate attached to this email. Here are the details:</p>
+
+    <p style="margin-bottom: 20px;">We hope this certificate serves as a testament to your hard work and dedication. If you have any questions or need further assistance, feel free to reach out.</p>
+{% endblock %}
