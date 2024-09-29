@@ -1394,7 +1394,7 @@ svg.feather:not([class*=hei-]) {
 
 .ps-sidebar .navbar-content {
     position: relative;
-    height: calc(100vh - 74px);
+    height: calc(100vh - 140px);
     padding: 10px 0;
     overflow: hidden scroll
 }

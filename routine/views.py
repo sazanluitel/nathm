@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from django.core.paginator import Paginator
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import View
@@ -72,6 +74,47 @@ class RoutineView(View):
                 "data": routine_object(routine)
             }, status=200)
         return JsonResponse({"message": "Failed to save routine."}, status=400)
+
+
+class ClassRoutineView(View):
+    def get(self, request, *args, **kwargs):
+        draw = request.GET.get('draw')
+        if draw:
+            return self.get_json(request)
+        return render(request, 'dashboard/routine/classes.html')
+
+    def get_json(self, request):
+        draw = int(request.GET.get("draw", 1))
+        start = int(request.GET.get("start", 0))
+        length = int(request.GET.get("length", 10))
+        search_value = request.GET.get("search[value]", None)
+        page_number = (start // length) + 1
+
+        sections = Sections.objects.order_by("-id")
+        if search_value:
+            sections = sections.filter(
+                Q(section_name__first_name__icontains=search_value)
+            )
+        paginator = Paginator(sections, length)
+        page_sections = paginator.page(page_number)
+
+        data = []
+        for section in page_sections:
+            data.append([
+                section.get_title(),
+                self.get_action(section)
+            ])
+
+        return JsonResponse({
+            "draw": draw,
+            "recordsTotal": paginator.count,
+            "recordsFiltered": paginator.count,
+            "data": data,
+        }, status=200)
+
+    def get_action(self, section):
+        routine_url = reverse("routine_admin:routine", kwargs={'section_id': section.id})
+        return f'''<a href="{routine_url}" class="btn btn-warning btn-sm">Manage Routines</a>'''
 
 
 class RoutineEventsView(View):
