@@ -10,13 +10,19 @@ urlpatterns = [
     path("admin/superuser/", include("certificate.urls", namespace="certificate")),
     path("admin/generic/", include("dashboard.generic_urls", namespace="generic")),
     path('admin/superuser', include('filehub.urls', namespace="filehub")),
-    path("student/", include("students.urls", namespace="students")),
     path("admin/superuser/", include("students.admin_urls", namespace="admin_urls")),
+
+    path("student/", include("students.urls", namespace="students")),
     path("admin/itsupport/", include("itdepartment.urls", namespace="it_department")),
+
     path("admin/studentservice/", include("student_service.urls", namespace="student_service")),
+
     path("admin/admission-department/", include("admission_department.urls", namespace="admission_department")),
     path("teacher/", include("teacher.urls", namespace="teacher")),
     path("", include("mail.urls", namespace="mail")),
+
+    # Routines
+    path("admin/superuser/", include("routine.admin_urls", namespace="routine_admin")),
 ]
 
 if settings.DEBUG:
