@@ -86,16 +86,24 @@ class StudentView(View):
                     print(f"Errors for {form_name} - {field}: {errors}")
 
 
+def get_or_none(model, *args, **kwargs):
+    try:
+        return model.objects.get(*args, **kwargs)
+    except model.DoesNotExist:
+        return None
+
+
 class StudentEditView(View):
     template_name = 'dashboard/students/edit.html'
 
     def get(self, request, *args, **kwargs):
         student_id = kwargs.pop('id', None)
         student = get_object_or_404(Student, id=student_id)
-        personalinfo = get_object_or_404(PersonalInfo, user=student.user)
+        personalinfo = get_or_none(PersonalInfo, user=student.user)
         education_history_form = EducationHistoryForm()
         english_test_form = EnglishTestForm()
         employment_history_form = EmploymentHistoryForm()
+
         form = StudentEditForm(instance=student, personalinfo_instance=personalinfo)
         return render(request, self.template_name,
                       {'form': form, 'student_id': student_id, 'education_history_form': education_history_form,

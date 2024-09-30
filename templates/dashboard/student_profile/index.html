@@ -16,16 +16,17 @@
                                 <img src="{{ request.user.profile_image }}" alt="Student Image" class="profile-img">
                                 <div class="ms-3">
                                     <h3><strong>Hello,</strong> {{ request.user.first_name }}</h3>
-                                    <p class="student_class">Class 2024</p>
+                                    <p class="student_class">{{ student.section.name }}</p>
                                 </div>
                             </div>
 
                             <p class="mt-4" id="current-date">{{ today_date }}</p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <h5>Today's Classes</h5>
+                                <h5>Latest Classes</h5>
                                 <i class="fa-solid fa-calendar-days"></i>
                             </div>
                             <div class="list-group">
+                                {% for routine in routines %}
                                 <div class="list-group-item d-flex mb-2">
                                     <div>
                                         <i class="fa-regular fa-clock"></i>
@@ -36,36 +37,7 @@
                                         <p class="user">By Prof. Bijay Baral</p>
                                     </div>
                                 </div>
-                                <div class="list-group-item d-flex mb-2">
-                                    <div>
-                                        <i class="fa-regular fa-clock"></i>
-                                    </div>
-                                    <div>
-                                        <p class="time">10:30 AM - 11:30 AM</p>
-                                        <p class="course">Masters in Computing</p>
-                                        <p class="user">By Prof. Bijay Baral</p>
-                                    </div>
-                                </div>
-                                <div class="list-group-item d-flex mb-2">
-                                    <div>
-                                        <i class="fa-regular fa-clock"></i>
-                                    </div>
-                                    <div>
-                                        <p class="time">10:30 AM - 11:30 AM</p>
-                                        <p class="course">Masters in Computing</p>
-                                        <p class="user">By Prof. Bijay Baral</p>
-                                    </div>
-                                </div>
-                                <div class="list-group-item d-flex mb-2">
-                                    <div>
-                                        <i class="fa-regular fa-clock"></i>
-                                    </div>
-                                    <div>
-                                        <p class="time">10:30 AM - 11:30 AM</p>
-                                        <p class="course">Masters in Computing</p>
-                                        <p class="user">By Prof. Bijay Baral</p>
-                                    </div>
-                                </div>
+                                {% endfor %}
                             </div>
                         </div>
 

@@ -24,7 +24,7 @@ class BookForm(forms.ModelForm):
                 attrs={'class': 'form-control', 'id': 'isbn', 'placeholder': 'ISBN'}),
         }
         labels = {
-            'isbn': 'ISBM',
+            'isbn': 'ISBN',
             'file': 'Select PDF',
         }
 

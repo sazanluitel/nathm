@@ -25,7 +25,17 @@ class DashboardView(View):
     template_name = 'dashboard/student_profile/index.html'
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        student = get_object_or_404(Student, user=request.user)
+        today_routines = Routine.objects.filter(
+            section=student.section
+        ).order_by("-date")
+        notices = Notices.objects.order_by('-id')[:2]
+
+        return render(request, self.template_name, context={
+            "notices": notices,
+            "routines": today_routines,
+            "student": student
+        })
 
 
 class StudentStatusView(LoginRequiredMixin, View):
