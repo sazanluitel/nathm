@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect,get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .forms import NoticeAddForm
 from django.contrib import messages
@@ -8,36 +8,38 @@ from django.db.models import Q
 from django.urls import reverse
 from .models import Notices
 
+
 class NoticeAddView(View):
     def post(self, request, *args, **kwargs):
         notice_id = kwargs.get("id", None)
-        
+
         if notice_id:
             notice = get_object_or_404(Notices, id=notice_id)
-            form = NoticeAddForm(request.POST, request.FILES, instance=notice)
+            form = NoticeAddForm(request.POST, instance=notice)
         else:
-            form = NoticeAddForm(request.POST, request.FILES)
+            form = NoticeAddForm(request.POST)
 
         if form.is_valid():
             form.save()
             messages.success(request, 'Notice saved successfully')
-            return redirect('notices_admin_urls:add') 
+            return redirect('notices_admin_urls:add')
         else:
             messages.error(request, 'Error in the form submission')
             return render(request, 'dashboard/notices/add.html', {'form': form})
-        
+
     def get(self, request, *args, **kwargs):
         notice_id = kwargs.get("id", None)
-        
+
         if notice_id:
             notice = get_object_or_404(Notices, id=notice_id)
             form = NoticeAddForm(instance=notice)
         else:
             form = NoticeAddForm()
 
-        notices = Notices.objects.all() 
+        notices = Notices.objects.all()
         return render(request, 'dashboard/notices/add.html', {'form': form, 'notices': notices})
-    
+
+
 class NoticeAjaxView(View):
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
@@ -86,7 +88,3 @@ class NoticeAjaxView(View):
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
         '''
-
-
-
-

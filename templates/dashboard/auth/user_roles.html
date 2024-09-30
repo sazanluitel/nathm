@@ -1,13 +1,13 @@
 {% extends 'dashboard/admin-base.html' %}
 {% load static %}
-{% block title %}Users{% endblock %}
-{% block breadcrumb %}Users{% endblock %}
-{% block maintitle %}Users{% endblock %}
+{% block title %}Users {% if role_title %}({{ role_title }}){% endif %}{% endblock %}
+{% block breadcrumb %}Users {% if role_title %}({{ role_title }}){% endif %}{% endblock %}
+{% block maintitle %}Users {% if role_title %}({{ role_title }}){% endif %}{% endblock %}
 
 {% block content %}
     <div class="col-lg-4">
         <div class="card">
-            <div class="card-header">Add Users</div>
+            <div class="card-header">Add User {% if role_title %}({{ role_title }}){% endif %}</div>
             <div class="card-body">
                 {% with messages=messages %}
                     {% include 'dashboard/alert.html' %}
@@ -18,7 +18,7 @@
 
                     {{ form.as_p }}
 
-                    <button type="submit" class="btn btn-primary w-100">{% if form.instance %}Update User{% else %}Add User{% endif %}</button>
+                    <button type="submit" class="btn btn-primary w-100">{% if form.instance.id %}Update User{% else %}Add User{% endif %}</button>
                 </form>
             </div>
         </div>
@@ -26,15 +26,15 @@
 
     <div class="col-lg-8">
         <div class="card">
-            <div class="card-header">List of user</div>
+            <div class="card-header">List of users {% if role_title %}({{ role_title }}){% endif %}</div>
             <div class="card-body">
                 <table
                         class="table ajaxdatatable table-bordered"
-                        data-ajax="{% url "userauth_urls:rolesajax" %}"
+                        data-ajax="{% url "userauth_urls:rolesajax" role=role %}"
                 >
                     <thead>
                     <tr>
-                        <th>User</th>
+                        <th>Full Name</th>
                         <th>email</th>
                         <th>Actions</th>
                     </tr>

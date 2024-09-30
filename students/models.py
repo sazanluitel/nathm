@@ -61,7 +61,7 @@ class Student(models.Model):
     organization = models.CharField(max_length=255, blank=True, null=True)
     authorize_person = models.CharField(max_length=255, blank=True, null=True)
     email = models.EmailField(max_length=100, blank=True, null=True)
-    payment_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE)
+    payment_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, blank=True, null=True)
 
     # Financial capacity
     annual_income = models.FloatField(max_length=100, blank=True, null=True)

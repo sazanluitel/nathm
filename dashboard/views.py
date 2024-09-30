@@ -9,6 +9,7 @@ from django.utils.decorators import method_decorator
 from django.core.paginator import Paginator
 from django.db.models import Prefetch, Count
 
+from notices.models import Notices
 from routine.models import Routine
 from .forms import *
 from .models import *
@@ -638,6 +639,15 @@ class DeleteHelper:
     def get_routines(self, ids):
         return self.get_objects(ids, Routine, "Routine")
 
+    def get_notices(self, ids):
+        def notice_title(obj):
+            return obj.name
+
+        def notice_kwargs(obj):
+            return None
+
+        return self.get_objects(ids, Notices, "Notice", None, notice_title, notice_kwargs)
+
     def get_titles(self, post_type: str, total):
         if post_type == "program":
             return "Programs" if total > 1 else "Program"
@@ -695,6 +705,8 @@ class DeleteHelper:
                 objects, originals = self.get_routines(selected_ids)
             elif delete_type == "user":
                 objects, originals = self.get_routines(selected_ids)
+            elif delete_type == "notice":
+                objects, originals = self.get_notices(selected_ids)
 
         return objects, originals
 

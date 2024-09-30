@@ -2,8 +2,8 @@ import json
 from io import BytesIO
 import qrcode
 from django.urls import reverse
-from django.http import Http404,JsonResponse
-from django.shortcuts import render, redirect, HttpResponse,get_object_or_404
+from django.http import Http404, JsonResponse
+from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.views.generic import View
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
@@ -15,7 +15,7 @@ from userauth.forms import (
     UserForm
 )
 from django.core.paginator import Paginator
-from userauth.models import User
+from userauth.models import User, ROLE_CHOICES
 from userauth.utils import send_verification_link
 import re
 from django.db.models import Q
@@ -295,24 +295,50 @@ class QRView(View):
             return HttpResponse(buffer, content_type="image/png")
         except User.DoesNotExist:
             raise Http404
-        
+
 
 class UserRoleView(View):
+    def get_role_title(self, role_key):
+        for key, title in ROLE_CHOICES:
+            if key == role_key:
+                return title
+        return None
+
     def get(self, request, *args, **kwargs):
-        form = RegisterForm()
-        return render(request, 'dashboard/auth/user_roles.html', context={'form': form})
+        role = kwargs.get('role', None)
+        role_title = self.get_role_title(role) if role else None
+
+        form = RegisterForm(initial={
+            "role": role
+        })
+        return render(request, 'dashboard/auth/user_roles.html', context={
+            'form': form,
+            'role': role,
+            'role_title': role_title
+        })
 
     def post(self, request, *args, **kwargs):
+        role = kwargs.get('role', None)
+        role_title = self.get_role_title(role) if role else None
+
         form = RegisterForm(request.POST)
         if form.is_valid():
-            form.save()
+            userinfo = form.save(commit=False)
+            userinfo.role = role
+            userinfo.save()
             messages.success(request, "User added successfully.")
             return redirect('userauth_urls:userroles')
-        return render(request, 'dashboard/auth/user_roles.html', context={'form': form})
+        return render(request, 'dashboard/auth/user_roles.html', context={
+            'form': form,
+            'role': role,
+            'role_title': role_title
+        })
+
 
 class RolesAjaxView(View):
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
+        role = kwargs.get('role', None)
         draw = int(request.GET.get("draw", 1))
         start = int(request.GET.get("start", 0))
         length = int(request.GET.get("length", 10))
@@ -328,6 +354,8 @@ class RolesAjaxView(View):
                 Q(username__icontains=search_value) |
                 Q(email__icontains=search_value)
             )
+        if role:
+            users = users.filter(role=role)
 
         # Paginate the result
         paginator = Paginator(users, length)
@@ -337,7 +365,7 @@ class RolesAjaxView(View):
         data = []
         for user in page_users:
             data.append([
-                user.username,
+                user.get_full_name(),
                 user.email,
                 self.get_action(user)
             ])
