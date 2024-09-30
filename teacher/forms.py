@@ -123,7 +123,7 @@ class TeacherAddForm:
             return None
 
 class TeacherEditForm:
-   def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         instance = kwargs.pop('instance', None)
         personalinfo_instance = kwargs.pop('personalinfo_instance', None)
         data = kwargs.pop('data', None)
@@ -133,62 +133,47 @@ class TeacherEditForm:
 
         if not personalinfo_instance:
             raise ValueError('Personal Info instance must be provided')
-        
-        self.user_form = UserForm(data=data)
-        self.personal_info_form = PersonalInfoForm(data=data)
-        self.address_info_form = AddressInfoForm(prefix="address", data=data)
-        self.education_history_form = EducationHistoryForm(data=data)
-        self.english_test_form = EnglishTestForm(data=data)
-        self.employment_history_form = EmploymentHistoryForm(data=data)
-        self.teacher_form = TeacherForm(data=data)
-        
-        def is_valid(self):
+
+        # Initialize forms
+        self.user_form = UserForm(instance=instance.user, data=data)
+        self.personal_info_form = PersonalInfoForm(instance=personalinfo_instance, data=data)
+        self.address_info_form = AddressInfoForm(prefix="address", instance=personalinfo_instance.permanent_address, data=data)
+        self.teacher_form = TeacherForm(instance=instance, data=data)
+
+    def is_valid(self):
         # Check if all forms are valid
-            forms_list = [
-                self.user_form,
-                self.personal_info_form,
-                self.address_info_form,
-                self.education_history_form,
-                self.english_test_form,
-                self.employment_history_form,
-                self.teacher_form,
-            ]
-            return all(form.is_valid() for form in forms_list)
-        
-        def save(self, commit=True):
-            with transaction.atomic():
-                user = self.user_form.save(commit=False)
-                if commit:
-                    user.save()
+        forms_list = [
+            self.user_form,
+            self.personal_info_form,
+            self.address_info_form,
+            self.teacher_form,
+        ]
+        return all(form.is_valid() for form in forms_list)
 
-                address_info = self.address_info_form.save()
+    def save(self, commit=True):
+        with transaction.atomic():
+            # Save the User form first
+            user = self.user_form.save(commit=False)
+            if commit:
+                user.save()
 
-                personal_info = self.personal_info_form.save(commit=False)
-                personal_info.user = user
-                personal_info.permanent_address = address_info 
-                if commit:
-                    personal_info.save()
+            # Save the AddressInfo form
+            address_info = self.address_info_form.save(commit=False)
+            if commit:
+                address_info.save()
 
-                education_history = self.education_history_form.save(commit=False)
-                education_history.user = user
-                if commit:
-                    education_history.save()
+            # Save PersonalInfo and link to User and AddressInfo
+            personal_info = self.personal_info_form.save(commit=False)
+            personal_info.user = user
+            personal_info.permanent_address = address_info
+            if commit:
+                personal_info.save()
 
-                english_test = self.english_test_form.save(commit=False)
-                english_test.user = user
-                if commit:
-                    english_test.save()
+            # Save the Teacher form and link it to User and PersonalInfo
+            teacher = self.teacher_form.save(commit=False)
+            teacher.user = user
+            teacher.personal_info = personal_info
+            if commit:
+                teacher.save()
 
-                employment_history = self.employment_history_form.save(commit=False)
-                employment_history.user = user
-                if commit:
-                    employment_history.save()
-
-                teacher = self.teacher_form.save(commit=False)
-                teacher.user = user
-                teacher.personal_info = personal_info
-
-                if commit:
-                    teacher.save()
-
-                return teacher
+            return teacher

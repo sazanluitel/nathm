@@ -51,7 +51,7 @@ class AccessCheck:
                     if request.user.role == "student":
                             return redirect("students:studentdashboard")
                     elif request.user.role == "teacher":
-                            return redirect("teacher:index")
+                            return redirect("teacherurl:teacherdashboard")
                     else:
                             return HttpResponseForbidden("You are not authorized to access this section.")
                 else:

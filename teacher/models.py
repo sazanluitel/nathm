@@ -1,5 +1,5 @@
 from django.db import models
-from userauth.models import PersonalInfo, EnglishTest, User
+from userauth.models import PersonalInfo,User
 from dashboard.models import Campus, Department, Program,Modules
 class Teacher(models.Model):
     SHIFT_CHOICES = [

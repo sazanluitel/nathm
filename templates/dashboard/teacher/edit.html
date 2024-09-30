@@ -194,7 +194,7 @@
                         <div id="education_history_container" class="table-responsive">
                             <table
                                     class="table student-datatable table-bordered"
-                                    data-ajax="{% url 'student_admin:educational_history_json' pk=teacher_id %}"
+                                    data-ajax="{% url 'teacher:educational_history_json' pk=teacher_id %}"
                             >
                                 <thead>
                                     <tr>
@@ -221,7 +221,7 @@
                         <div id="englishtest_history_container" class="table-responsive">
                             <table
                                     class="table student-datatable table-bordered"
-                                    data-ajax="{% url 'student_admin:english_test_json' pk=teacher_id %}"
+                                    data-ajax="{% url 'teacher:english_test_json' pk=teacher_id %}"
                             >
                                 <thead>
                                 <tr>
@@ -248,7 +248,7 @@
                     <div class="card-body">
                         <div id="employment_history_container" class="table-responsive">
                             <table class="table table-bordered"
-                                data-ajax="{% url 'student_admin:employment_history_json' pk=teacher_id %}"
+                                data-ajax="{% url 'teacher:employment_history_json' pk=teacher_id %}"
                             >
                                 <thead>
                                 <tr>
