@@ -274,7 +274,7 @@ class QRView(View):
             if student:
                 qr_data["college_email"] = student.college_email
                 qr_data["team_id"] = student.team_id
-                qr_data["campus"] = student.campus.name if student.campus.name else "Unknown"
+                qr_data["campus"] = student.campus.name if student.campus else "Unknown"
                 qr_data["department"] = student.department.name if student.department else "Unknown"
                 qr_data["program"] = student.program.name if student.program else "Unknown"
                 qr_data["shift"] = student.shift

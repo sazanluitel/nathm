@@ -69,6 +69,13 @@ class User(AbstractUser):
         super().save(*args, **kwargs)
 
     def get_full_name(self):
+        full_name = self.full_name_raw()
+        if full_name:
+            return full_name
+        else:
+            return ""
+
+    def full_name_raw(self):
         parts = [self.title or "", self.first_name or "", self.middle_name or "", self.last_name or ""]
         return " ".join(part for part in parts if part).strip()
 

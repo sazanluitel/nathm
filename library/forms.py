@@ -23,6 +23,10 @@ class BookForm(forms.ModelForm):
             'isbn': forms.TextInput(
                 attrs={'class': 'form-control', 'id': 'isbn', 'placeholder': 'ISBN'}),
         }
+        labels = {
+            'isbn': 'ISBM',
+            'file': 'Select PDF',
+        }
 
 
 class LibraryForm(forms.ModelForm):
