@@ -1,0 +1,17 @@
+{% extends "dashboard/bases/student-profile.html" %}
+{% load static %}
+{% block title %}Class Routines{% endblock title %}
+{% block breadcrumb %}Class Routines{% endblock breadcrumb %}
+{% block maintitle %}Class Routines{% endblock maintitle %}
+
+{% block content %}
+    <div id="calendar"
+        data-events-url="{% url 'students:class_routines' %}"
+         data-section="{{ student.section.id }}"
+    ></div>
+{% endblock %}
+
+{% block footer %}
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+    <script src="{% static 'dashboard/assets/js/student_routine.js' %}"></script>
+{% endblock %}

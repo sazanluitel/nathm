@@ -4,6 +4,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 
 from certificate.forms import CertificateForm
+from routine.models import Routine, ExamRoutine
+from routine.views import routine_object, exam_routine_object
 from userauth.forms import *
 from library.forms import *
 from userauth.models import *
@@ -95,7 +97,7 @@ class StudentModulesView(View):
 
     def get(self, request, *args, **kwargs):
         modules = Modules.objects.all()
-        return render(request, self.template_name, {'module': modules})
+        return render(request, self.template_name, {'modules': modules})
 
 
 class StudentModuleAjaxView(View):
@@ -137,6 +139,64 @@ class StudentModuleAjaxView(View):
             },
             status=200,
         )
+
+
+class ClassRoutineView(View):
+    def get(self, request, *args, **kwargs):
+        start_date = request.GET.get('start_date', None)
+        end_date = request.GET.get('end_date', None)
+        section = request.GET.get('section', None)
+        if start_date and end_date and section:
+            start_date = datetime.strptime(start_date, "%Y-%m-%d")
+            end_date = datetime.strptime(end_date, "%Y-%m-%d")
+
+            return self.render_routine_json(start_date, end_date, section)
+
+        student = get_object_or_404(Student, user=request.user)
+        return render(request, "dashboard/student_profile/class_routine.html", {
+            "student": student
+        })
+
+    def render_routine_json(self, start_date, end_date, section_id):
+        output = []
+        section = get_object_or_404(Sections, id=section_id)
+
+        routines = Routine.objects.filter(
+            section=section
+        )
+        for routine in routines:
+            output.append(routine_object(routine, False))
+
+        return JsonResponse(output, safe=False)
+
+
+class ExamRoutineView(View):
+    def get(self, request, *args, **kwargs):
+        start_date = request.GET.get('start_date', None)
+        end_date = request.GET.get('end_date', None)
+        program = request.GET.get('section', None)
+        if start_date and end_date and program:
+            start_date = datetime.strptime(start_date, "%Y-%m-%d")
+            end_date = datetime.strptime(end_date, "%Y-%m-%d")
+
+            return self.render_routine_json(start_date, end_date, program)
+
+        student = get_object_or_404(Student, user=request.user)
+        return render(request, "dashboard/student_profile/exam_routine.html", {
+            "student": student
+        })
+
+    def render_routine_json(self, start_date, end_date, program_id):
+        output = []
+        program = get_object_or_404(Program, id=program_id)
+
+        routines = ExamRoutine.objects.filter(
+            routine__program=program
+        )
+
+        for routine in routines:
+            output.append(exam_routine_object(routine, False))
+        return JsonResponse(output, safe=False)
 
 
 class StudentRoutineView(View):

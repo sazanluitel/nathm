@@ -1,6 +1,6 @@
 from django.db import models
 
-from dashboard.models import Modules
+from dashboard.models import Modules, Program
 from teacher.models import Teacher
 from userauth.models import Sections
 
@@ -13,3 +13,18 @@ class Routine(models.Model):
     end_time = models.TimeField()
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     module = models.ForeignKey(Modules, on_delete=models.CASCADE)
+
+
+class ExamProgramRoutine(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+
+class ExamRoutine(models.Model):
+    routine = models.ForeignKey(ExamProgramRoutine, on_delete=models.CASCADE)
+    module = models.ForeignKey(Modules, on_delete=models.CASCADE)
+    date = models.DateField()

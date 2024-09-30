@@ -6,7 +6,7 @@ from .models import Library
 class BookForm(forms.ModelForm):
     class Meta:
         model = Book
-        fields = '__all__'
+        fields = ['name', 'author', 'publication_year', 'publication_house', 'program', 'isbn', 'e_book', 'available', 'available_quantity', 'file']
         widgets = {
             'name': forms.TextInput(
                 attrs={'class': 'form-control', 'id': 'book_name', 'placeholder': 'Book Name'}),
@@ -14,10 +14,10 @@ class BookForm(forms.ModelForm):
                 attrs={'class': 'form-control', 'id': 'book_author', 'placeholder': 'Author Name'}),
             'publication_year': forms.NumberInput(
                 attrs={'class': 'form-control', 'id': 'publication_year', 'placeholder': 'Publication Year'}),
-            'available_quantity': forms.NumberInput(
-                attrs={'class': 'form-control', 'id': 'available_quantity', 'placeholder': 'Available Quantity'}),
             'publication_house': forms.TextInput(
                 attrs={'class': 'form-control', 'id': 'publication_house', 'placeholder': 'Publication House'}),
+            'available_quantity': forms.NumberInput(
+                attrs={'class': 'form-control', 'id': 'available_quantity', 'placeholder': 'Available Quantity'}),
             'program': forms.Select(
                 attrs={'class': 'form-control', 'id': 'program', 'data-placeholder': 'Please select a program'}),
             'isbn': forms.TextInput(

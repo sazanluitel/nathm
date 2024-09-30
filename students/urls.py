@@ -7,15 +7,14 @@ urlpatterns = [
     path('kiosk-reg/', KioskView.as_view(), name='kiosk-reg'),
     path('kiosk-reg/<pk>/success/', KioskSuccessView.as_view(), name='kiosk-success'),
 
-    path('status/', DashboardView.as_view(), name='studentdashboard'),
-    path('dashboard/', StudentStatusView.as_view(), name='studentstatus'),
-
+    path('dashboard/', DashboardView.as_view(), name='studentdashboard'),
     path('record/', StudentRecordView.as_view(), name='studentdata'),
 
-    path('modules/', StudentModulesView.as_view(), name='modules'),
+    path('syllabus/', StudentModulesView.as_view(), name='modules'),
     path('modulesajax/', StudentModuleAjaxView.as_view(),name='modulesajax'),
 
-    path('routine/', StudentRoutineView.as_view(), name='routine_events'),
+    path('routine/class/', ClassRoutineView.as_view(), name='class_routines'),
+    path('routine/exam/', ExamRoutineView.as_view(), name='exam_routines'),
     
     path('library/', StudentLibraryView.as_view(), name='library'),
     path('certificate/', CertificateView.as_view(), name='certificate'),

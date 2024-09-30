@@ -7,6 +7,11 @@
 
         const addRoutineModal = $(document).find("#addRoutineModal");
         const calendarEl = document.getElementById('calendar');
+
+        const visibleRange = {
+            start: calendarEl.getAttribute('data-start-date') ?? null,
+            end: calendarEl.getAttribute('data-end-date') ?? null
+        }
         const calendar = new FullCalendar.Calendar(calendarEl, {
             headerToolbar: {
                 center: 'title',
@@ -20,12 +25,11 @@
                 }
             },
             loading: function (bool) {
-                console.log("Loading", bool)
+                // console.log("Loading", bool)
             },
             selectable: true,
             selectMirror: true,
             events: function (obj, successCallback, failureCallback) {
-                console.log("Events", obj)
                 const start_date = get_format_date(obj.start);
                 const end_date = get_format_date(obj.end);
 
@@ -45,6 +49,14 @@
                 });
             }
         });
+
+        if (visibleRange.start && visibleRange.end) {
+            calendar.setOption('validRange', {
+                start: visibleRange.start,
+                end: visibleRange.end
+            });
+        }
+
         calendar.render();
 
         calendar.on('dateClick', function (info) {

@@ -460,4 +460,25 @@
             window.location.href = downloadUrl;
         }
     });
+
+    function handle_e_book_system(){
+        const id_available = $(document).find("#id_available").closest("div");
+        const available_quantity = $(document).find("#available_quantity").closest("div");
+        const image_picker_container = $(document).find(".image_picker_container").closest("div");
+        const id_e_book = $(document).find("#id_e_book").is(":checked");
+
+        if( id_e_book ){
+            id_available.hide();
+            available_quantity.hide();
+            image_picker_container.show();
+        }else{
+            id_available.show();
+            available_quantity.show();
+            image_picker_container.hide();
+        }
+
+        console.log("E Book", id_e_book);
+    }
+
+    $(document).on("change", "#id_e_book", handle_e_book_system);
 })(jQuery);

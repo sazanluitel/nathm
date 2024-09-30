@@ -10,7 +10,7 @@ from django.core.paginator import Paginator
 from django.db.models import Prefetch, Count
 
 from notices.models import Notices
-from routine.models import Routine
+from routine.models import Routine, ExamRoutine, ExamProgramRoutine
 from .forms import *
 from .models import *
 from userauth.models import *
@@ -639,6 +639,12 @@ class DeleteHelper:
     def get_routines(self, ids):
         return self.get_objects(ids, Routine, "Routine")
 
+    def get_exam_routines(self, ids):
+        return self.get_objects(ids, ExamRoutine, "Routine")
+
+    def get_examgrouproutines(self, ids):
+        return self.get_objects(ids, ExamProgramRoutine, "Routines")
+
     def get_notices(self, ids):
         def notice_title(obj):
             return obj.name
@@ -703,10 +709,12 @@ class DeleteHelper:
                 objects, originals = self.get_book(selected_ids)
             elif delete_type == "routine":
                 objects, originals = self.get_routines(selected_ids)
-            elif delete_type == "user":
-                objects, originals = self.get_routines(selected_ids)
+            elif delete_type == "exam_routine":
+                objects, originals = self.get_exam_routines(selected_ids)
             elif delete_type == "notice":
                 objects, originals = self.get_notices(selected_ids)
+            elif delete_type == "exam_routines":
+                objects, originals = self.get_examgrouproutines(selected_ids)
 
         return objects, originals
 
