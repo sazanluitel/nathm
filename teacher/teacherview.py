@@ -36,52 +36,6 @@ class DashboardView(View):
             "routines": today_routines,
             "teacher": teacher
         })
-
-
-class StudentStatusView(LoginRequiredMixin, View):
-    template_name = 'dashboard/student_profile/status.html'
-
-    def get(self, request, *args, **kwargs):
-        student = get_object_or_404(Student, user=request.user)
-        notices = Notices.objects.order_by('-id')[:2]
-
-
-        borrowed_books = Library.objects.filter(borrowed_by=student, status='approved')
-        borrowed_ebooks = borrowed_books.filter(book__e_book=True).count()
-        borrowed_physical_books = borrowed_books.filter(book__e_book=False).count()
-
-        library_form = LibraryForm()
-
-        today = datetime.now()
-        today_date = today.strftime("%b %d, %Y %A")
-        return render(request, self.template_name, {
-            'student': student,
-            'student_id': student.id,
-            'library_form': library_form,
-            'borrowed_ebooks': borrowed_ebooks,
-            'borrowed_physical_books': borrowed_physical_books,
-            'today_date': today_date,
-            'notices': notices,
-        })
-
-    def post(self, request, *args, **kwargs):
-        student = get_object_or_404(Student, user=request.user)
-        library_form = LibraryForm(request.POST)
-
-        if library_form.is_valid():
-            library = library_form.save(commit=False)
-            library.borrowed_by = student
-            library.status = 'pending'
-            library.save()
-
-            return redirect('students:studentstatus')
-
-        return render(request, self.template_name, {
-            'student': student,
-            'student_id': student.id,
-            'library_form': library_form,
-        })
-
 class StudentModulesView(View):
     template_name = 'dashboard/teacher_profile/modules.html'
 
@@ -94,11 +48,12 @@ class ClassRoutineView(View):
     def get(self, request, *args, **kwargs):
         start_date = request.GET.get('start_date', None)
         end_date = request.GET.get('end_date', None)
-        if start_date and end_date:
+        book = request.GET.get('book', None)
+        if start_date and end_date and book:
             start_date = datetime.strptime(start_date, "%Y-%m-%d")
             end_date = datetime.strptime(end_date, "%Y-%m-%d")
 
-            return self.render_routine_json(start_date, end_date)
+            return self.render_routine_json(start_date, end_date, book)
 
         teacher = get_object_or_404(Teacher, user=request.user)
         return render(request, "dashboard/teacher_profile/class_routine.html", {

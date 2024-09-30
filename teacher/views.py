@@ -17,13 +17,16 @@ class TeacherAddView(View):
     template_name = 'dashboard/teacher/add.html'
 
     def get(self, request, *args, **kwargs):
-        form = TeacherAddForm()
+        form = TeacherAddForm()  # Initialize without instance
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
-        form = TeacherAddForm(data=request.POST)
+        # Initialize form with POST data and any files (if applicable)
+        form = TeacherAddForm(data=request.POST, files=request.FILES)
+        
         if form.is_valid():
             try:
+                # Save the form and commit the changes
                 form.save()
                 messages.success(request, "Teacher added successfully")
                 return redirect('teacher:list')
@@ -36,7 +39,7 @@ class TeacherAddView(View):
         return render(request, self.template_name, {'form': form})
 
     def handle_errors(self, form):
-        # Print errors for each sub-form
+        # Print errors for each sub-form for debugging purposes
         form_instances = {
             'user_form': form.user_form,
             'personal_info_form': form.personal_info_form,
@@ -49,7 +52,7 @@ class TeacherAddView(View):
             if not form_instance.is_valid():
                 for field, errors in form_instance.errors.items():
                     print(f"Errors for {form_name} - {field}: {errors}")
-
+                    
 class TeacherList(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'dashboard/teacher/list.html')
@@ -66,13 +69,13 @@ class TeacherEditView(View):
         teacher_id = kwargs.pop('id', None)
         teacher = get_object_or_404(Teacher, id=teacher_id)
         personalinfo = get_or_none(PersonalInfo, user=teacher.user)
-        
-        # Initialize forms without existing instances
+
+        # Initialize forms with existing instances
         education_history_form = EducationHistoryForm()
         english_test_form = EnglishTestForm()
         employment_history_form = EmploymentHistoryForm()
 
-        # Pre-populate the teacher edit form with existing data
+        # Pre-populate the teacher edit form with existing data, including modules
         form = TeacherEditForm(instance=teacher, personalinfo_instance=personalinfo)
 
         return render(request, self.template_name, {
@@ -94,7 +97,7 @@ class TeacherEditView(View):
         employment_history_form = EmploymentHistoryForm()
 
         # Pass the personalinfo_instance during POST as well
-        form = TeacherEditForm(data=request.POST, instance=teacher, personalinfo_instance=personalinfo)
+        form = TeacherEditForm(data=request.POST, files=request.FILES, instance=teacher, personalinfo_instance=personalinfo)
 
         if form.is_valid():
             form.save()

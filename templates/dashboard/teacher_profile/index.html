@@ -1,5 +1,5 @@
 {% extends "dashboard/bases/teacher-profile.html" %}
-{% block title %}Student Profile{% endblock title %}
+{% block title %}Teacher Profile{% endblock title %}
 
 {% block content %}
     <div class="col-sm-12">
@@ -16,7 +16,7 @@
                                 <img src="{% if request.user.profile_image %}{{ request.user.profile_image }}{% else %}https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png{% endif %}" alt="Student Image" class="profile-img">
                                 <div class="ms-3">
                                     <h3><strong>Hello,</strong> {{ request.user.first_name }}</h3>
-                                    <p class="student_class">{{ teacher.module }}</p>
+                                    <p class="student_class">{{ teacher.department }}</p>
                                 </div>
                             </div>
 

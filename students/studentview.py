@@ -39,49 +39,49 @@ class DashboardView(View):
         })
 
 
-class StudentStatusView(LoginRequiredMixin, View):
-    template_name = 'dashboard/student_profile/status.html'
+# class StudentStatusView(LoginRequiredMixin, View):
+#     template_name = 'dashboard/student_profile/status.html'
 
-    def get(self, request, *args, **kwargs):
-        student = get_object_or_404(Student, user=request.user)
-        notices = Notices.objects.order_by('-id')[:2]
+#     def get(self, request, *args, **kwargs):
+#         student = get_object_or_404(Student, user=request.user)
+#         notices = Notices.objects.order_by('-id')[:2]
 
 
-        borrowed_books = Library.objects.filter(borrowed_by=student, status='approved')
-        borrowed_ebooks = borrowed_books.filter(book__e_book=True).count()
-        borrowed_physical_books = borrowed_books.filter(book__e_book=False).count()
+#         borrowed_books = Library.objects.filter(borrowed_by=student, status='approved')
+#         borrowed_ebooks = borrowed_books.filter(book__e_book=True).count()
+#         borrowed_physical_books = borrowed_books.filter(book__e_book=False).count()
 
-        library_form = LibraryForm()
+#         library_form = LibraryForm()
 
-        today = datetime.now()
-        today_date = today.strftime("%b %d, %Y %A")
-        return render(request, self.template_name, {
-            'student': student,
-            'student_id': student.id,
-            'library_form': library_form,
-            'borrowed_ebooks': borrowed_ebooks,
-            'borrowed_physical_books': borrowed_physical_books,
-            'today_date': today_date,
-            'notices': notices,
-        })
+#         today = datetime.now()
+#         today_date = today.strftime("%b %d, %Y %A")
+#         return render(request, self.template_name, {
+#             'student': student,
+#             'student_id': student.id,
+#             'library_form': library_form,
+#             'borrowed_ebooks': borrowed_ebooks,
+#             'borrowed_physical_books': borrowed_physical_books,
+#             'today_date': today_date,
+#             'notices': notices,
+#          })
 
-    def post(self, request, *args, **kwargs):
-        student = get_object_or_404(Student, user=request.user)
-        library_form = LibraryForm(request.POST)
+#     def post(self, request, *args, **kwargs):
+#         student = get_object_or_404(Student, user=request.user)
+#         library_form = LibraryForm(request.POST)
 
-        if library_form.is_valid():
-            library = library_form.save(commit=False)
-            library.borrowed_by = student
-            library.status = 'pending'
-            library.save()
+#         if library_form.is_valid():
+#             library = library_form.save(commit=False)
+#             library.borrowed_by = student
+#             library.status = 'pending'
+#             library.save()
 
-            return redirect('students:studentstatus')
+#             return redirect('students:studentstatus')
 
-        return render(request, self.template_name, {
-            'student': student,
-            'student_id': student.id,
-            'library_form': library_form,
-        })
+#         return render(request, self.template_name, {
+#             'student': student,
+#             'student_id': student.id,
+#             'library_form': library_form,
+#         })
 
 
 # class StudentRecordView(View):
