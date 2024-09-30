@@ -16,7 +16,7 @@
                                 <img src="{% if request.user.profile_image %}{{ request.user.profile_image }}{% else %}https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png{% endif %}" alt="Student Image" class="profile-img">
                                 <div class="ms-3">
                                     <h3><strong>Hello,</strong> {{ request.user.first_name }}</h3>
-                                    <p class="student_class">{{ student.section.name }}</p>
+                                    <p class="student_class">{{ student.section }}</p>
                                 </div>
                             </div>
 
