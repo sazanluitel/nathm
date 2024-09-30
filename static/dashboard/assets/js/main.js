@@ -464,7 +464,7 @@
     function handle_e_book_system(){
         const id_available = $(document).find("#id_available").closest("div");
         const available_quantity = $(document).find("#available_quantity").closest("div");
-        const image_picker_container = $(document).find(".image_picker_container").closest("div");
+        const image_picker_container = $(document).find(".image_picker_container").parent();
         const id_e_book = $(document).find("#id_e_book").is(":checked");
 
         if( id_e_book ){
@@ -480,5 +480,6 @@
         console.log("E Book", id_e_book);
     }
 
+    handle_e_book_system();
     $(document).on("change", "#id_e_book", handle_e_book_system);
 })(jQuery);
