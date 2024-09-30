@@ -25,7 +25,7 @@ class ImagePickerWidget(forms.widgets.TextInput):
 
         html += f"""
         <div class="empty_placeholder">
-            <a href="{filemanager_url}" class="select_{name}_url openImagePicker">Select Image</a>
+            <a href="{filemanager_url}" class="select_{name}_url openImagePicker">Select File</a>
         </div>
         """
 
@@ -36,7 +36,7 @@ class ImagePickerWidget(forms.widgets.TextInput):
                     <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" 
                           stroke-width="32" d="M368 368L144 144M368 144L144 368"></path>
                 </svg>
-                <img src="{value}" style="width:auto;max-width:100%;" alt="Preview Image"/>
+                <img src="{value}" style="width:auto;max-width:100%;" alt="Preview File"/>
             </div>
             """
         html += '</div>'

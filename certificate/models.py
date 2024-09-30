@@ -24,7 +24,7 @@ class RequestCertificate(models.Model):
     is_approved = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.student} - {self.get_certificate_type_display()}"
+        return f"{self.student.user.get_full_name()} - {self.get_certificate_type_display()}"
 
 
 class Templates(models.Model):

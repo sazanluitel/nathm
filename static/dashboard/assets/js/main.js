@@ -476,10 +476,11 @@
             available_quantity.show();
             image_picker_container.hide();
         }
-
-        console.log("E Book", id_e_book);
     }
 
-    handle_e_book_system();
+    if( $(document).find("#id_available").length > 0 ){
+        handle_e_book_system();
+    }
+
     $(document).on("change", "#id_e_book", handle_e_book_system);
 })(jQuery);
