@@ -54,10 +54,7 @@ class TeacherAddForm:
         self.user_form = UserForm(data=data)
         self.personal_info_form = PersonalInfoForm(data=data)
         self.address_info_form = AddressInfoForm(prefix="address", data=data)
-        # self.education_history_form = EducationHistoryForm(data=data)
-        # self.english_test_form = EnglishTestForm(data=data)
-        # self.employment_history_form = EmploymentHistoryForm(data=data)
-        self.teacher_form = TeacherForm(data=data)
+        self.teacher_form = TeacherForm(data=data)  # Teacher form includes the modules field
 
     def is_valid(self):
         # Check if all forms are valid
@@ -65,10 +62,7 @@ class TeacherAddForm:
             self.user_form,
             self.personal_info_form,
             self.address_info_form,
-            # self.education_history_form,
-            # self.english_test_form,
-            # self.employment_history_form,
-            self.teacher_form,
+            self.teacher_form,  # This includes validation for modules
         ]
         return all(form.is_valid() for form in forms_list)
 
@@ -86,29 +80,11 @@ class TeacherAddForm:
                 # Save Personal Info
                 personal_info = self.personal_info_form.save(commit=False)
                 personal_info.user = user
-                personal_info.permanent_address = address_info 
+                personal_info.permanent_address = address_info
                 if commit:
                     personal_info.save()
 
-                # Save Education History
-                # education_history = self.education_history_form.save(commit=False)
-                # education_history.user = user
-                # if commit:
-                #     education_history.save()
-
-                # Save English Test
-                # english_test = self.english_test_form.save(commit=False)
-                # english_test.user = user
-                # if commit:
-                #     english_test.save()
-
-                # Save Employment History
-                # employment_history = self.employment_history_form.save(commit=False)
-                # employment_history.user = user
-                # if commit:
-                #     employment_history.save()
-
-                # Saving the Teacher instance
+                # Save the Teacher instance
                 teacher = self.teacher_form.save(commit=False)
                 teacher.user = user
                 teacher.personal_info = personal_info
@@ -116,7 +92,11 @@ class TeacherAddForm:
                 if commit:
                     teacher.save()
 
+                # Save ManyToManyField (modules) after the Teacher instance is saved
+                self.teacher_form.save_m2m()  # This saves the selected modules
+
                 return teacher
+
         except Exception as e:
             # Handle or log the error as necessary
             print(f"Error while saving: {e}")
@@ -127,6 +107,7 @@ class TeacherEditForm:
         instance = kwargs.pop('instance', None)
         personalinfo_instance = kwargs.pop('personalinfo_instance', None)
         data = kwargs.pop('data', None)
+        files = kwargs.pop('files', None)  # For handling file uploads if necessary
 
         if not instance:
             raise ValueError('Instance must be provided')
@@ -138,7 +119,11 @@ class TeacherEditForm:
         self.user_form = UserForm(instance=instance.user, data=data)
         self.personal_info_form = PersonalInfoForm(instance=personalinfo_instance, data=data)
         self.address_info_form = AddressInfoForm(prefix="address", instance=personalinfo_instance.permanent_address, data=data)
-        self.teacher_form = TeacherForm(instance=instance, data=data)
+        self.teacher_form = TeacherForm(instance=instance, data=data, files=files)
+
+        # Pre-populate the modules field with the existing values
+        if not data:
+            self.teacher_form.fields['modules'].initial = instance.modules.all()
 
     def is_valid(self):
         # Check if all forms are valid
@@ -175,5 +160,8 @@ class TeacherEditForm:
             teacher.personal_info = personal_info
             if commit:
                 teacher.save()
+
+            # Save the ManyToMany field (modules)
+            self.teacher_form.save_m2m()
 
             return teacher
