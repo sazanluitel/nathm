@@ -184,6 +184,7 @@ class CertificateRequestAction(View):
             raise Exception("Unable to generate Certificate")
 
         certificate.file = "/media/" + os.path.relpath(pdf_path, MEDIA_ROOT)
+        certificate.save()
         return pdf_path
 
     def save_to_pdf(self, html_file_path, pdf_path):
