@@ -10,8 +10,7 @@ from userauth.models import *
 from userauth.forms import *
 from django.http import JsonResponse
 from django.urls import reverse
-
-
+from django.core.exceptions import ObjectDoesNotExist
 # Create your views here.
 
 class TeacherAddView(View):
@@ -55,19 +54,27 @@ class TeacherList(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'dashboard/teacher/list.html')
 
+def get_or_none(model_class, **kwargs):
+    try:
+        return model_class.objects.get(**kwargs)
+    except ObjectDoesNotExist:
+        return None
 class TeacherEditView(View):
     template_name = 'dashboard/teacher/edit.html'
 
     def get(self, request, *args, **kwargs):
         teacher_id = kwargs.pop('id', None)
         teacher = get_object_or_404(Teacher, id=teacher_id)
-        personalinfo = get_object_or_404(PersonalInfo, user=teacher.user)
-        form = TeacherEditForm(instance=teacher, personalinfo_instance=personalinfo)
+        personalinfo = get_or_none(PersonalInfo, user=teacher.user)
         
+        # Initialize forms without existing instances
         education_history_form = EducationHistoryForm()
         english_test_form = EnglishTestForm()
         employment_history_form = EmploymentHistoryForm()
-        
+
+        # Pre-populate the teacher edit form with existing data
+        form = TeacherEditForm(instance=teacher, personalinfo_instance=personalinfo)
+
         return render(request, self.template_name, {
             'form': form,
             'teacher_id': teacher_id,
@@ -80,19 +87,21 @@ class TeacherEditView(View):
         teacher_id = kwargs.pop('id', None)
         teacher = get_object_or_404(Teacher, id=teacher_id)
         personalinfo = get_object_or_404(PersonalInfo, user=teacher.user)
+
+        # Initialize forms without existing instances for the POST request
+        education_history_form = EducationHistoryForm()
+        english_test_form = EnglishTestForm()
+        employment_history_form = EmploymentHistoryForm()
+
+        # Pass the personalinfo_instance during POST as well
         form = TeacherEditForm(data=request.POST, instance=teacher, personalinfo_instance=personalinfo)
-        
+
         if form.is_valid():
             form.save()
             messages.success(request, "Teacher updated successfully")
             return redirect('teacher:list')
         else:
             messages.error(request, "Please correct the errors below.")
-            self.handle_errors(form)
-
-        education_history_form = EducationHistoryForm()
-        english_test_form = EnglishTestForm()
-        employment_history_form = EmploymentHistoryForm()
 
         return render(request, self.template_name, {
             'form': form,
@@ -101,21 +110,6 @@ class TeacherEditView(View):
             'english_test_form': english_test_form,
             'employment_history_form': employment_history_form
         })
-
-    def handle_errors(self, form):
-        # Your existing error handling logic
-        form_instances = {
-            'user_form': form.user_form,
-            'personal_info_form': form.personal_info_form,
-            'address_info_form': form.address_info_form,
-            'teacher_form': form.teacher_form,
-        }
-
-        for form_name, form_instance in form_instances.items():
-            print(f"{form_name} is valid: {form_instance.is_valid()}")
-            if not form_instance.is_valid():
-                for field, errors in form_instance.errors.items():
-                    print(f"Errors for {form_name} - {field}: {errors}")
 
 class TeacherAjax(View):
     def get(self, request, *args, **kwargs):
@@ -189,8 +183,7 @@ class TeacherAjax(View):
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
         '''
-
-
+    
 class EducationalHistoryJson(View):
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
@@ -326,7 +319,7 @@ class EmploymentHistoryJsons(View):
         length = int(request.GET.get("length", 10))
         page_number = (start // length) + 1
 
-        teacher = Teacher.objects.filter(teacher_id=kwargs.get("pk")).first()
+        teacher = Teacher.objects.filter(id=kwargs.get("pk")).first()
         english_test = EmploymentHistory.objects.filter(user=teacher.user).order_by('-id')
         paginator = Paginator(english_test, length)
         english_test_history = paginator.page(page_number)
@@ -368,7 +361,7 @@ class EmploymentHistoryJsons(View):
         form = EmploymentHistoryForm(request.POST, request.FILES)
         if form.is_valid():
             employment_form = form.save(commit=False)
-            teacher = Teacher.objects.filter(teacher_id=self.kwargs['pk']).first()
+            teacher = Teacher.objects.filter(id=kwargs.get("pk")).first()
             employment_form.user = teacher.user
             employment_form.save()
             return JsonResponse({'success': True, 'message': 'Employment history saved saved successfully.'})

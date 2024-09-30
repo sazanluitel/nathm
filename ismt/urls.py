@@ -14,7 +14,7 @@ urlpatterns = [
     path("admin/superuser/", include("students.admin_urls", namespace="admin_urls")),
     path("admin/superuser/", include("notices.admin_urls", namespace="notices_admin_urls")),
     path("admin/superuser/teacher/", include("teacher.urls", namespace="teacher")),
-
+    path("teacher/", include("teacher.teacherurl", namespace="teacherurl")),
     path("student/", include("students.urls", namespace="students")),
     path("admin/itsupport/", include("itdepartment.urls", namespace="it_department")),
 

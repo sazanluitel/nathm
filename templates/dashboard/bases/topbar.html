@@ -34,6 +34,7 @@
                     </a>
                 </li>
 
+                {% if request.user.role == "student" %}
                 <li class="ps-h-item mx-3">
                     <div class="payment_card">
                         <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
@@ -50,6 +51,7 @@
                         <div class="label">No Payment Due</div>
                     </div>
                 </li>
+                {% endif %}
 
                 {#                <li class="ps-h-item">#}
                 {#                    <a href="#" class="ps-head-link me-0" data-bs-toggle="offcanvas" data-bs-target="#announcement"#}
