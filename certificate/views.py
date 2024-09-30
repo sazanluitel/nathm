@@ -136,13 +136,16 @@ class CertificateRequestAction(View):
         attachments = [(os.path.basename(pdf_path), file_content, 'application/pdf')]
 
         context = self.get_context(certificate)
-        email_helper.send_with_template(
-            template=f"certificates/{certificate.certificate_type}_approved",
-            context=context,
-            subject=subject,
-            to_email=certificate.student.email,
-            attachments=attachments
-        )
+        try:
+            email_helper.send_with_template(
+                template=f"certificates/{certificate.certificate_type}_approved",
+                context=context,
+                subject=subject,
+                to_email=certificate.student.email,
+                attachments=attachments
+            )
+        except Exception as e:
+            print("Error sending email", e)
 
     def get_context(self, certificate):
         today = datetime.now()
@@ -171,6 +174,7 @@ class CertificateRequestAction(View):
 
         # Create a folder with the user ID
         user_folder = os.path.join(MEDIA_ROOT, "certificates", str(certificate.student.user.id))
+        print("User folder", user_folder)
         os.makedirs(user_folder, exist_ok=True)
 
         html_file_path = os.path.join(user_folder, f"{certificate.certificate_type}.html")
