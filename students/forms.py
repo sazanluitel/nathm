@@ -149,7 +149,7 @@ class StudentAddForm:
         self.personal_info_form = PersonalInfoForm(data=data)
         self.emergency_contact_form = EmergencyContactForm(prefix="emergency_contact", data=data)
         self.emergency_address_form = AddressInfoForm(prefix="emergency_address", data=data)
-        self.student_form = StudentForm(data=data)
+        self.student_form = StudentForm(data=data, prefix="student")
 
     def is_valid(self):
         registration_forms = [
@@ -233,7 +233,7 @@ class StudentEditForm:
         self.emergency_address_form = AddressInfoForm(prefix="emergency_address",
                                                       instance=personalinfo_instance.emergency_contact.address,
                                                       data=data)
-        self.student_form = StudentForm(instance=instance, data=data)
+        self.student_form = StudentForm(prefix="student", instance=instance, data=data)
 
     def is_valid(self):
         registration_forms = [
@@ -297,7 +297,7 @@ class StudentEditForm:
 class KioskForm:
     def __init__(self, data=None):
         self.user_form = UserForm(data)
-        self.student_form = StudentForm(data)
+        self.student_form = StudentForm(data, prefix="student")
         self.permanent_address_form = AddressInfoForm(data, prefix='permanent')
         self.temporary_address_form = AddressInfoForm(data, prefix='temporary')
 
