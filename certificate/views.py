@@ -112,8 +112,8 @@ class CertificateRequestAction(View):
             try:
                 self.send_approval_email(certificate, request)
             except Exception as e:
+                print("Error sending email", e)
                 messages.error(request, str(e))
-                return redirect('certificate:certificatereq')
 
         elif action == 'Decline':
             certificate.status = 'Denied'
@@ -151,7 +151,7 @@ class CertificateRequestAction(View):
         course_end_date = today - timedelta(days=4 * 365)
         course_end_date = course_end_date.strftime('%d %b %Y').upper()
 
-        general_settings = get_settings("general")
+        # general_settings = get_settings("general")
         return {
             "student_name": certificate.student.user.get_full_name(),
             "course_name": certificate.student.program.name,
@@ -159,8 +159,8 @@ class CertificateRequestAction(View):
             "course_start_date": formatted_date,
             "course_end_date": course_end_date,
             "department_name": certificate.student.department.name,
-            "college_name": general_settings.get("COLLEGE_NAME", "College Name"),
-            "college_logo": general_settings.get("COLLEGE_LOGO", "/static/img/logo.png"),
+            # "college_name": general_settings.get("COLLEGE_NAME", "College Name"),
+            # "college_logo": general_settings.get("COLLEGE_LOGO", "/static/img/logo.png"),
         }
 
     def save_pdf(self, certificate, request):
