@@ -154,11 +154,11 @@ class CertificateRequestAction(View):
         # general_settings = get_settings("general")
         return {
             "student_name": certificate.student.user.get_full_name(),
-            "course_name": certificate.student.program.name,
+            "course_name": certificate.student.program.name if certificate.student.program else "Not Assigned",
             "issue_date": formatted_date,
             "course_start_date": formatted_date,
             "course_end_date": course_end_date,
-            "department_name": certificate.student.department.name,
+            "department_name": certificate.student.department.name if certificate.student.department else "Not Assigned",
             # "college_name": general_settings.get("COLLEGE_NAME", "College Name"),
             # "college_logo": general_settings.get("COLLEGE_LOGO", "/static/img/logo.png"),
         }
