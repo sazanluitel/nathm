@@ -33,7 +33,7 @@
                                             <i class="fa-regular fa-clock"></i>
                                         </div>
                                         <div>
-                                            <p class="time">{{ routine.start_time }} - {{ routine.end_time }}</p>
+                                            <p class="time">{{ routine.start_time|time:"h:i A" }} - {{ routine.end_time|time:"h:i A" }}</p>
                                             <p class="course">{{ routine.module.name }}</p>
                                             <p class="user">
                                                 By {{ routine.teacher.user.get_full_name }}</p>
