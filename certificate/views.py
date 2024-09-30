@@ -59,7 +59,7 @@ class CertificateRequestView(View):
         data = []
         for certificate in page_certificates:
             data.append([
-                certificate.student.email,
+                f'''{certificate.student.user.get_full_name()}<br />{certificate.student.user.email}''',
                 certificate.get_certificate_type_display(),
                 certificate.get_status_display(),
                 self.get_action(certificate)
