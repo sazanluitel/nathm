@@ -13,7 +13,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="d-flex align-items-center">
-                                <img src="{{ request.user.profile_image }}" alt="Student Image" class="profile-img">
+                                <img src="{% if request.user.profile_image %}{{ request.user.profile_image }}{% else %}https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png{% endif %}" alt="Student Image" class="profile-img">
                                 <div class="ms-3">
                                     <h3><strong>Hello,</strong> {{ request.user.first_name }}</h3>
                                     <p class="student_class">{{ student.section.name }}</p>
@@ -36,7 +36,7 @@
                                             <p class="time">{{ routine.start_time }} - {{ routine.end_time }}</p>
                                             <p class="course">{{ routine.module.name }}</p>
                                             <p class="user">
-                                                By {{ routine.teacher.first_name }} {{ routine.teacher.last_name }}</p>
+                                                By {{ routine.teacher.user.get_full_name }}</p>
                                         </div>
                                     </div>
                                 {% endfor %}
