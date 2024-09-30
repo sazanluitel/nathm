@@ -28,7 +28,7 @@ class DashboardView(View):
         student = get_object_or_404(Student, user=request.user)
         today_routines = Routine.objects.filter(
             section=student.section
-        ).order_by("-date")
+        ).order_by("-date")[:5]
         notices = Notices.objects.order_by('-id')[:2]
 
         return render(request, self.template_name, context={
