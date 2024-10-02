@@ -1,0 +1,38 @@
+{% extends "dashboard/admin-base.html" %}
+{% block title %}Assignments{% endblock title %}
+{% block breadcrumb %}Assignments{% endblock breadcrumb %}
+{% block maintitle %}Assignments{% endblock maintitle %}
+
+{% block rightbutton %}
+    <div class="d-flex justify-content-end mb-2">
+        <a href="{% url 'assignment:add' %}" class="btn btn-primary mt-3">Add Assignment</a>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <div class="col-sm-12">
+        {% with messages=messages %}
+            {% include 'dashboard/alert.html' %}
+        {% endwith %}
+
+        <div class="card">
+            <div class="card-body">
+                <div class="dt-responsive">
+                    <table
+                            class="ajaxdatatable table table-bordered nowrap"
+                            data-nodata="No Assignments Found"
+                    >
+                        <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Sections</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
