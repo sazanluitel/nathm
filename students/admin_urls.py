@@ -18,5 +18,8 @@ urlpatterns = [
     path('get-ids/', AddStudentIds.as_view(), name='ids'),
     path('student/<pk>/educational/history/json/', EducationalHistoryJson.as_view(), name="educational_history_json"),
     path('student/<pk>/test/history/json/', EnglishTestHistoryJson.as_view(), name="english_test_json"),
-    path('student/<pk>/employment/history/json/', EmploymentHistoryJson.as_view(), name="employment_history_json")
+    path('student/<pk>/employment/history/json/', EmploymentHistoryJson.as_view(), name="employment_history_json"),
+
+    path('student/update_fee/<int:id>', UpdateFeeView.as_view(), name='update_fee'),
+
 ]

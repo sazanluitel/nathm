@@ -418,6 +418,29 @@
         });
     })
 
+
+    $(document).on('click', '.updateFeeModal', function () {
+        var studentId = $(this).data('studentid');
+        var url = $(this).data('url');
+        
+        $.ajax({
+            url: 'student/update_fee/<int:id>', 
+            type: 'GET',
+            success: function (data) {
+                $('#paymentModalToggle .modal-body').html(data.form);
+                
+                $('#paymentModalToggleLabel').text('Update Fee for Student ID: ' + studentId);
+                
+                $('#paymentModalToggle').modal('show');
+            },
+            error: function (error) {
+                console.error("There was an error loading the form:", error);
+            }
+        });
+    });
+
+
+
     $(document).on("click", ".sameAsPermanent", function () {
         const address = $(document).find("[name='permanent-address']").val();
         const city = $(document).find("[name='permanent-city']").val();

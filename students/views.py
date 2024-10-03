@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
-
+from payment.models import PaymentHistory
 from mail.modules.welcome import WelcomeMessage
 from students.forms import StudentAddForm, StudentEditForm
 from userauth.forms import *
@@ -208,6 +208,7 @@ class StudentAjax(View):
         edit_url = reverse('student_admin:edit', kwargs={'id': student_id})
         delete_url = reverse('generic:delete')
         backurl = reverse('student_admin:list')
+        fee_url = reverse('student_admin:update_fee', kwargs={'id': student_id})
 
         if not student.college_email:
             ids_button = (f'<button type="button" class="btn btn-primary btn-sm addIdsModal" '
@@ -216,17 +217,40 @@ class StudentAjax(View):
             ids_button = (f'<button type="button" class="btn btn-primary btn-sm addIdsModal" '
                           f'data-studentid="{student_id}" data-email="{student.college_email}"'
                           f' data-teamid="{student.team_id}">Update IDs</button>')
+        fee_button = (f'<button type="button" class="btn btn-warning btn-sm updateFeeModal" '
+              f'data-bs-toggle="modal" data-bs-target="#paymentModalToggle" '
+              f'data-studentid="{student_id}" data-url="{fee_url}">Update Fee</button>')
+
 
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
                 <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
                 {ids_button}
+                {fee_button} 
                 <input type="hidden" name="_selected_id" value="{student_id}" />
                 <input type="hidden" name="_selected_type" value="student" />
                 <input type="hidden" name="_back_url" value="{backurl}" />
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
         '''
+
+
+class UpdateFeeView(View):
+    def post(self, request, id):
+        student = get_object_or_404(Student, id=id)
+        amount = request.POST.get('amount')
+        remarks = request.POST.get('remarks', '')
+
+        payment, created = PaymentHistory.objects.update_or_create(
+            student=student,
+            defaults={
+                'amount': amount,
+                'remarks': remarks,
+                'payment_date': timezone.now(),  
+            }
+        )
+
+        return JsonResponse({'success': True})
 
 
 class StudentFilters(View):
