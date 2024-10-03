@@ -49,7 +49,7 @@
                 {% for student in students %}
                   <tr>
                     <td>{{ student.id }}</td>
-                    <td>{{ student.get_full_name }}</td>
+                    <td>{{ student.user.get_full_name }}</td>
                     <td>
                       <div class="input-group">
                         <input type="number" name="fee_amount_{{ student.id }}" class="form-control" placeholder="Enter Amount" required>
