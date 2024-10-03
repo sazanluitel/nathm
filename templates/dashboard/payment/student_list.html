@@ -34,7 +34,7 @@
       <div class="card-body">
         <h1 class="card-title">Section Name: {{ section.section_name }}</h1>
         
-        <form method="post" action="{% url 'student_admin:update_fee' section.id %}">
+        <form method="post" action="{% url 'payment:update_fee' section.id %}">
           {% csrf_token %}
           <div class="table-responsive">
             <table class="table table-bordered table-hover">

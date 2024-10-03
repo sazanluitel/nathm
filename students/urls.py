@@ -18,6 +18,9 @@ urlpatterns = [
     
     path('library/', StudentLibraryView.as_view(), name='library'),
     path('certificate/', CertificateView.as_view(), name='certificate'),
+    path('payment-support/', PaymentSupport.as_view(), name='paymenysupport'),
+
+
 
     # path('student/educational/<pk>/history/json/', EducationalHistoryJsons.as_view(), name="educational_history_json"),
     # path('student/test/history/<pk>/json/', EnglishTestHistoryJsons.as_view(), name="english_test_json"),
