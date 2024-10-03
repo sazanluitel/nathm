@@ -1,14 +1,37 @@
-<div class="modal fade" id="paymentModalToggle" aria-hidden="true" aria-labelledby="paymentModalToggleLabel" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="paymentModalToggleLabel">Update Fee</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="paymentFormContainer"></div>
+ <!-- Fee Modal -->
+    <div class="modal fade" id="paymentModalToggle" tabindex="-1" aria-labelledby="paymentModalToggleLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentModalToggleLabel">Update Fee</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="paymentForm" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="amount">Amount</label>
+                            <input type="number" class="form-control" id="amount" name="amount" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="payment_method">Payment Method</label>
+                            <input type="text" class="form-control" id="payment_method" name="payment_method">
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <select class="form-control" id="status" name="status">
+                                <option value="" disabled selected hidden>Select Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="paid">Paid</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="savePayment">Save changes</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-

@@ -236,17 +236,26 @@ class StudentAjax(View):
 
 
 class UpdateFeeView(View):
-    def post(self, request, id):
+    def post(self, request, section_id):
+        students = Student.objects.filter(section_id=section_id)
+        for student in students:
+            fee_amount_key = f'fee_amount_{student.id}'
+            fee_amount = request.POST.get(fee_amount_key)
+            if fee_amount:
+                PaymentHistory.objects.create(
+                    student=student,
+                    amount=fee_amount,
+                )
+        return JsonResponse({'success': True, 'message': 'Fees updated successfully.'})
+
+    def post_individual(self, request, id):
         student = get_object_or_404(Student, id=id)
         amount = request.POST.get('amount')
-        remarks = request.POST.get('remarks', '')
 
         payment, created = PaymentHistory.objects.update_or_create(
             student=student,
             defaults={
                 'amount': amount,
-                'remarks': remarks,
-                'payment_date': timezone.now(),  
             }
         )
 
