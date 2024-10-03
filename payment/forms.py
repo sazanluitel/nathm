@@ -9,4 +9,6 @@ class PaymentHistoryForm(forms.ModelForm):
         fields = ['amount', 'payment_method', 'status']
         widgets = {
             'amount': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'payment_method': forms.TextInput(attrs={'class': 'form-control'}),
+            'status': forms.Select(choices=PaymentHistory.STATUS, attrs={'class': 'form-control'}),
         }
