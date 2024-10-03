@@ -6,7 +6,7 @@ from .models import PaymentHistory
 class PaymentHistoryForm(forms.ModelForm):
     class Meta:
         model = PaymentHistory
-        fields = ("amount")
+        fields = ['amount', 'payment_method', 'status']
         widgets = {
-            'amount': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'step': '0.01'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
         }
