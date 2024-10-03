@@ -25,6 +25,9 @@ urlpatterns = [
 
     # Routines
     path("admin/superuser/", include("routine.admin_urls", namespace="routine_admin")),
+
+    # Assignment
+    path("admin/superuser/assignments/", include("assignment.urls")),
 ]
 
 if settings.DEBUG:

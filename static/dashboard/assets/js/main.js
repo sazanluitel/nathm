@@ -138,8 +138,8 @@
                 }
             ],
             table_class_list: [
-                { title: 'Table Bordered', value: 'table table-bordered' },
-                { title: 'None', value: '' }
+                {title: 'Table Bordered', value: 'table table-bordered'},
+                {title: 'None', value: ''}
             ],
             noneditable_noneditable_class: 'alert',
             min_height: 300
@@ -291,22 +291,53 @@
         try {
             const findImageEle = $(document).find(`[name="${id}"]`);
             if (findImageEle.length > 0) {
+                const fileExt = file.uri.split('.').pop().toLowerCase();
+                const imageExtensions = ['png', 'jpg', 'jpeg', 'svg', 'webp', 'gif', 'bmp'];
+
                 findImageEle.val(file.uri).trigger("change");
 
                 const container = findImageEle.closest(".image_picker_container");
                 if (container) {
                     container.addClass("added");
-                    container.append(`<div class="image_fill_placeholder">   
-                                <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M368 368L144 144M368 144L144 368"/></svg>
-                                <img src="${file.uri}" alt="PreView Image" />
-                            </div>`);
+                    container.find(".image_fill_placeholder").remove();
+
+                    if (imageExtensions.includes(fileExt)) {
+                        container.append(`
+                        <div class="image_fill_placeholder mt-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512">
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" 
+                                      stroke-width="32" d="M368 368L144 144M368 144L144 368"></path>
+                            </svg>
+                            <img src="${file.uri}" style="width:auto;max-width:100%;" alt="Preview File"/>
+                        </div>
+                    `);
+                    } else {
+                        const fileName = file.uri.split('/').pop();
+                        container.append(`
+                        <div class="image_fill_placeholder mt-2" style="border: 2px solid #eeeeee;border-radius: 10px;padding: 10px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512">
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" 
+                                      stroke-width="32" d="M368 368L144 144M368 144L144 368"></path>
+                            </svg>
+                            
+                            <div class="file_card" style="display: flex;align-items: center;gap: 10px;">
+                                <img style="width:50px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAACx0lEQVR4nO2bu2sVQRTGfzHgg2gaG41YmitYirGwFgTFFDYWuQFRY2HjK/ioJFhEbQQhGAOCCP4BaqcWtoqFiFWuNiqIYHwWBgNXBubCYVjjZvfM7sy988HhLlz2O+d8O68zuwPVYwAYBc4A55VtAthOoOgDJoFvQNuzPQUaBIRVwP0KEpf2FRghEEw6wbWAWWBa0a4DD4E/ws9HYEPdyQ84zX4OWOPRn3nqC8LfRWrGQRHMvOfkOzgufL6oaoA7BBy21xJnRTC3qggGGBI+f/h2thq4KxyOO/9fFv+Z66ogxxxv2Ag8c5wd7RUBhm2flo5u2imv6wXYA3wWDpbsSiwLXSfAEWBRkP+yIz3dLkCfk0xnobHzP/d1hQBrM5ayr4CtOe6NXoBNwHOH8AGwPuf9UQswCLxxyG4A/SvgiFqAK85If7IAR9QCzAuSEwU5ZgWH2QSJSoDfgsR0hyKD5zvBsZ/IBPggSPYVSP6OuN+UqOuITIAZZ8Ezk3Nv7rbz5I2dolqoCDAEfFpm2ymv3csok6NZB+wAXhdMfME++aqTV18J9gN77d5env2508CBivt85eVw6EgCkFoAqQtQcgy4Zuf/q/RoF1i0BOa3JwVoFyAxm6JND29+mxkbrtqxq5CMK6wc/2VGhOAFaHoUYMxz7GpdYEz5ze+05YyiC4SCJACpBZC6ADWMAcMZu0Ea9hbY5jl2FZJzHqdB87FFFC2g5SH5ViwtIBQkAUgtgNQFqKkWaKZyGC/TYCqH8dt61bpAKocDQJoGSdMgaR1AqgVIxRB1j6Q1IQ2CKDy8n4JkM/Fgi4j7exmil4LoGPFgQuvQ1CVB9CWkg4jLYLdzbO5CGbJBeyagQ2YOJT4CpjyUu2Vtysa2JOJ9r3FwcsQeQ21HZibmXSihATwJIKm89tjuTqujYU9lms/etd/+ljUTk4ltRYn/BZi9S5cZIajtAAAAAElFTkSuQmCC" alt="File Icon" />
+                                <div class="file_info">
+                                    <div class="file_name">${fileName}</div>
+                                    <div class="file_size" style="color:#ccc;">Size: ${file.size || 'Unknown'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                    }
                 }
             }
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
         $.fancybox.close();
-    }
+    };
+
 
     function init_fancybox() {
         const fancyboxfile = $(document).find(".openImagePicker");
@@ -484,24 +515,24 @@
         }
     });
 
-    function handle_e_book_system(){
+    function handle_e_book_system() {
         const id_available = $(document).find("#id_available").closest("div");
         const available_quantity = $(document).find("#available_quantity").closest("div");
         const image_picker_container = $(document).find(".image_picker_container").parent();
         const id_e_book = $(document).find("#id_e_book").is(":checked");
 
-        if( id_e_book ){
+        if (id_e_book) {
             id_available.hide();
             available_quantity.hide();
             image_picker_container.show();
-        }else{
+        } else {
             id_available.show();
             available_quantity.show();
             image_picker_container.hide();
         }
     }
 
-    if( $(document).find("#id_available").length > 0 ){
+    if ($(document).find("#id_available").length > 0) {
         handle_e_book_system();
     }
 
