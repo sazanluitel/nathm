@@ -48,7 +48,14 @@
                                 </g>
                             </g>
                         </svg>
-                        <div class="label">No Payment Due</div>
+                        <div class="d-flex justify-content-between align-items-center w-100">
+                            {% if payment.amount <= 0 %}
+                                <span class="text-muted">No Payment Due</span>
+                            {% else %}
+                                <span class="fw-bold">NRs.</span><span class="fw-bold"> {{ payment.amount }}</span>
+                                <a href="{% url "students:paymenysupport" %}" class="btn btn-primary ms-3">Pay Now</a>
+                            {% endif %}
+                        </div>
                     </div>
                 </li>
                 {% endif %}

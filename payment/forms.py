@@ -1,7 +1,5 @@
-from django.forms import forms
-from .models import PaymentHistory
-
-
+from django import forms
+from payment.models import PaymentHistory
 
 class PaymentHistoryForm(forms.ModelForm):
     class Meta:
