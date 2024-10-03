@@ -536,34 +536,12 @@
         handle_e_book_system();
     }
 
-    $(document).on("change", "#id_e_book", handle_e_book_system);
+    $('.updateFeeModal').on('click', function () {
+        var studentId = $(this).data('studentid');
+        var actionUrl = $(this).data('url');
 
-    $(document).ready(function () {
-        $('#paymentModalToggle').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var studentId = button.data('studentid');
-            var url = button.data('url');
-
-            $('#paymentForm').attr('action', url);
-            $('#paymentForm')[0].reset();
-        });
-
-        $('#savePayment').click(function () {
-            var form = $('#paymentForm');
-            $.ajax({
-                url: form.attr('action'),
-                type: 'POST',
-                data: form.serialize(),
-                success: function (response) {
-                    if (response.success) {
-                        alert("Payment updated successfully!");
-                        $('#paymentModalToggle').modal('hide');
-                    } else {
-                        alert("An error occurred. Please try again.");
-                    }
-                }
-            });
-        });
+        $('#paymentForm').attr('action', actionUrl.replace('0', studentId));
     });
+
 
 })(jQuery);
