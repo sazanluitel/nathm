@@ -90,6 +90,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
 
                 "core.context_processors.add_general_settings",
+                "core.context_processors.student_payment_processor",
             ],
         },
     },
