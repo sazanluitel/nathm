@@ -7,6 +7,7 @@ urlpatterns = [
     path('students/add/', StudentView.as_view(), name='add'),
     path('students/edit/<id>', StudentEditView.as_view(), name='edit'),
     path('students/', StudentList.as_view(), name='list'),
+    path('students/<filter_by>/', StudentList.as_view(), name='list_filter'),
     path('students/ajax', StudentAjax.as_view(), name='ajax'),
 
     path('sections/', SectionView.as_view(), name='sections'),

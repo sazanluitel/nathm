@@ -139,10 +139,12 @@ class StudentList(View):
     template_name = 'dashboard/students/list.html'
 
     def get(self, request, *args, **kwargs):
+        filter_by = kwargs.get('filter_by', None)
         payment_form = StudentPaymentForm()
 
         context = {
             'payment_form': payment_form,
+            'filter_by': filter_by
         }
 
         return render(request, self.template_name, context)
