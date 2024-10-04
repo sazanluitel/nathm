@@ -17,9 +17,7 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count
 from notices.models import Notices
-from exam.models import Result
 
 
 class DashboardView(View):
@@ -259,16 +257,6 @@ class CertificateView(LoginRequiredMixin, View):
         else:
             messages.error(request, "Failed to submit your request.")
         return redirect('students:certificate')
-    
-class ExamRoutineView(View):
-    def get(self, request, *args, **kwargs):
-        student = self.request.user
-        exam = Result.objects.filter(student=student)
-        for student in exam.students:
-            print(exam)
-
-
-
 
 
 # class EducationalHistoryJsons(View):

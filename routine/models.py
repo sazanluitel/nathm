@@ -23,8 +23,12 @@ class ExamProgramRoutine(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
 
+    def __str__(self):
+        return self.title
+
 
 class ExamRoutine(models.Model):
     routine = models.ForeignKey(ExamProgramRoutine, on_delete=models.CASCADE)
     module = models.ForeignKey(Modules, on_delete=models.CASCADE)
     date = models.DateField()
+

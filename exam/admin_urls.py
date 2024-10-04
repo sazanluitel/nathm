@@ -5,7 +5,6 @@ app_name = "exam_urls"
 
 urlpatterns = [
     path('exam/', ExamView.as_view(), name="exam"),
-    path('exam/<int:id>', ExamView.as_view(), name="edit"),
     path('examajax/', ExamAjaxView.as_view(), name="ajax"),
     path('exam/studentlist/<int:id>/', StudentsProgramListView.as_view(), name="studentlist"),
     path('exam/studentlist/<int:id>/exim/', StudentsExamTemplateDownloadView.as_view(), name="export_import"),
