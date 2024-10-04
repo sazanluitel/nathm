@@ -1,3 +1,4 @@
+
 {% extends "dashboard/bases/student-profile.html" %}
 {% block title %}Student Profile{% endblock title %}
 
@@ -23,7 +24,9 @@
                             <p class="mt-4" id="current-date">{{ today_date }}</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5>Today Classes</h5>
+                                <a href="{% url 'students:class_routines'%}">
                                 <i class="fa-solid fa-calendar-days"></i>
+                                </a>
                             </div>
                             <div class="list-group">
                                 {% if routines %}
@@ -52,13 +55,14 @@
                                     <h5>Books</h5>
                                     <div class="book_cards">
                                         <div>
-                                            <span class="value">20</span>
+                                            <span class="value">{{ total_e_books }}</span>
                                             <span class="label">eBooks</span>
                                         </div>
                                         <div>
-                                            <span class="value">59</span>
+                                            <span class="value">{{ borrowed_books }}</span>
                                             <span class="label">Physical</span>
                                         </div>
+                                        
                                     </div>
                                     <button type="button" class="btn btn-outline-primary mt-2 rounded-pill px-4"
                                             data-bs-toggle="modal" data-bs-target="#libraryModal">
@@ -70,17 +74,17 @@
                                     <h5>Assignments</h5>
                                     <div class="book_cards">
                                         <div>
-                                            <span class="value">10</span>
+                                            <span class="value">{{total_submitted}}</span>
                                             <span class="label">Submitted</span>
                                         </div>
                                         <div>
-                                            <span class="value text-danger">4</span>
+                                            <span class="value text-danger">{{ total_pending_assignments }}</span>
                                             <span class="label">Pending</span>
                                         </div>
                                     </div>
-                                    <button type="button" class="btn btn-outline-primary mt-2 rounded-pill px-4">
+                                    <a type="button" href="{% url 'students:assignments' %}" class="btn btn-outline-primary mt-2 rounded-pill px-4">
                                         View Details
-                                    </button>
+                                    </a>
                                 </div>
 
                                 <div class="col-md-4 text-center">
