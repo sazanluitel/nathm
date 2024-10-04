@@ -510,9 +510,10 @@
         }
     }
 
-    if ($(document).find("#id_available").length > 0) {
+    if ($(document).find("#id_e_book").length > 0) {
         handle_e_book_system();
     }
+    $(document).on('change', '#id_e_book', handle_e_book_system);
 
     $(document).on('click', '.updateFeeModal', function () {
         const studentId = $(this).data('studentid');
