@@ -15,7 +15,7 @@ urlpatterns = [
     path("admin/superuser/", include("notices.admin_urls", namespace="notices_admin_urls")),
     path("admin/superuser/teacher/", include("teacher.urls", namespace="teacher")),
     path("teacher/", include("teacher.teacherurl", namespace="teacherurl")),
-    path("student/", include("students.urls", namespace="students")),
+
     path("admin/itsupport/", include("itdepartment.urls", namespace="it_department")),
 
     path("admin/studentservice/", include("student_service.urls", namespace="student_service")),
@@ -26,8 +26,12 @@ urlpatterns = [
     # Routines
     path("admin/superuser/", include("routine.admin_urls", namespace="routine_admin")),
 
+    # student Dashboard urls
+    path("student/", include("students.urls", namespace="students")),
+
     # Assignment
-    path("admin/superuser/assignments/", include("assignment.urls")),
+    path("admin/superuser/assignments/", include("assignment.urls", namespace="admin_assignments")),
+    path("teacher/assignments/", include("assignment.urls", namespace="teacher_assignments")),
 ]
 
 if settings.DEBUG:

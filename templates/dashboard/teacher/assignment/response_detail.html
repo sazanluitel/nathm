@@ -1,0 +1,41 @@
+{% extends "dashboard/bases/teacher-profile.html" %}
+{% block title %}Student Response{% endblock title %}
+{% block breadcrumb %}Student Response{% endblock breadcrumb %}
+{% block maintitle %}Student Response{% endblock maintitle %}
+
+{% block content %}
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Student</th>
+                        <td>{{ response.student }}</td>
+                    </tr>
+                    <tr>
+                        <th>Assignment</th>
+                        <td>{{ response.assignment }}</td>
+                    </tr>
+                    <tr>
+                        <th>Submitted At</th>
+                        <td>{{ response.submission_date|date:"d M, Y h:i A" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Submitted File</th>
+                        <td>
+                            {% if response.file %}
+                                <a href="{{ response.file.url }}" target="_blank">{{ response.file.name }}</a><br>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary w-100">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
