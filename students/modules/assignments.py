@@ -67,15 +67,17 @@ class AssignmentsStudentView(View):
             output = [assignment.title, assignment.due_date.strftime("%d %b, %Y"),
                       assignment.module.name if assignment.module else "N/A"]
 
+            assignment_submit = AssignmentSubmit.objects.get(assignment=assignment, student=student)
             if filter_type == 'approved':
-                assignment_submit = AssignmentSubmit.objects.get(assignment=assignment, student=student)
                 output.append(assignment_submit.marks_obtained)
 
             if filter_type == "submitted":
-                assignment_submit = AssignmentSubmit.objects.get(assignment=assignment, student=student)
                 output.append(assignment_submit.submission_date.strftime("%d %b, %Y"))
                 output.append(assignment_submit.status)
                 output.append(assignment_submit.marks_obtained)
+
+            if filter_type == "rejected":
+                output.append(assignment_submit.remark)
 
             output.append(self.get_action(assignment, student))
             data.append(output)

@@ -175,6 +175,7 @@ class AssignmentResponsesView(View):
             data.append([
                 assignment.student.user.get_full_name(),
                 assignment.submission_date.strftime("%d %b, %Y %I:%M %p"),
+                self.get_status(assignment),
                 self.get_action(assignment)
             ])
 
@@ -194,6 +195,14 @@ class AssignmentResponsesView(View):
                 <a href="{response_url}" class="btn btn-success btn-sm">View Details</a>
             </div>
         '''
+
+    def get_status(self, assignment):
+        if assignment.status == "pending":
+            return '<span class="badge bg-warning">Pending</span>'
+        elif assignment.status == "accepted":
+            return '<span class="badge bg-success">Accepted</span>'
+        elif assignment.status == "rejected":
+            return '<span class="badge bg-danger">Rejected</span>'
 
 
 class AssignmentResponseDetailView(View):
