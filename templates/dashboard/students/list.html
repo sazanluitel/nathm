@@ -43,7 +43,7 @@
                 </div>
 
                 <div class="student_lists_table">
-                    <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'student_admin:ajax' %}"
+                    <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'student_admin:ajax' filter_by=filter_by %}"
                            data-nodata="No Data Found">
                         <thead>
                         <tr>

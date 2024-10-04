@@ -152,6 +152,7 @@ class StudentList(View):
 
 class StudentAjax(View):
     def get(self, request, *args, **kwargs):
+        filter_by = kwargs.get('filter_by', None)
         draw = int(request.GET.get("draw", 1))
         start = int(request.GET.get("start", 0))
         length = int(request.GET.get("length", 10))
@@ -162,6 +163,12 @@ class StudentAjax(View):
         page_number = (start // length) + 1
 
         students = Student.objects.select_related('campus', 'department', 'program').order_by("-id")
+        if filter_by == "kiosk":
+            students = students.filter(kiosk_id__isnull=False)
+        elif filter_by == "admin":
+            students = students.filter(kiosk_id__isnull=True)
+        elif filter_by == "online":
+            students = students.filter(kiosk_id="hello")
 
         if campus_id:
             students = students.filter(campus_id=campus_id)
