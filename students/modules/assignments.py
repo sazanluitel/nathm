@@ -126,11 +126,11 @@ class AssignmentsStudentView(View):
 
         if form.is_valid():
             submitted_assignment = form.save(commit=False)
+            submitted_assignment.assignment = assignment
+            submitted_assignment.student = student
             if submitted_id is None:
-                submitted_assignment.assignment = assignment
-                submitted_assignment.student = student
-            else:
                 submitted_assignment.status = "pending"
+
             submitted_assignment.save()
             messages.success(request, "Assignment submitted successfully.")
         else:
