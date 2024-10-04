@@ -8,7 +8,7 @@ class Book(models.Model):
     author = models.CharField(max_length=100)
     publication_year = models.IntegerField()
     publication_house = models.CharField(max_length=200)
-    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    program = models.ManyToManyField(Program)
     available_quantity = models.IntegerField(default=0)
     e_book = models.BooleanField(default=False)
     available = models.BooleanField(default=True)
