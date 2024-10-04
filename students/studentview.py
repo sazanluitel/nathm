@@ -27,8 +27,14 @@ class DashboardView(View):
     def get(self, request, *args, **kwargs):
         student = get_object_or_404(Student, user=request.user)
 
-        borrowed_books = Library.objects.filter(borrowed_by=student).count()
-        total_e_books = Book.objects.filter(e_book=True).count()
+        borrowed_books = Library.objects.filter(
+            borrowed_by=student,
+            book__e_book=False
+        ).count()
+        total_e_books = Library.objects.filter(
+            borrowed_by=student,
+            book__e_book= True
+        ).count()
 
         total_submitted = AssignmentSubmit.objects.filter(student=student, status="accepted").count()
         total_pending_assignments = AssignmentSubmit.objects.filter(student=student, status="pending").count()
