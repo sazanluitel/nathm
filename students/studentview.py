@@ -18,24 +18,38 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from notices.models import Notices
+from assignment.models import AssignmentSubmit
 
 
 class DashboardView(View):
     template_name = 'dashboard/student_profile/index.html'
 
     def get(self, request, *args, **kwargs):
-        student = get_object_or_404(Student, user=request.user)
-        today_routines = Routine.objects.filter(
-            section=student.section,
-            date=datetime.now().date()
-        ).order_by("-date")[:5]
-        notices = Notices.objects.order_by('-id')[:2]
+            student = get_object_or_404(Student, user=request.user)
 
-        return render(request, self.template_name, context={
-            "notices": notices,
-            "routines": today_routines,
-            "student": student
-        })
+            borrowed_books = Library.objects.filter(borrowed_by=student).count()
+            total_e_books = Book.objects.filter(e_book=True).count()
+
+            total_submitted = AssignmentSubmit.objects.filter(student=student, status="accepted").count()
+
+            total_pending_assignments = AssignmentSubmit.objects.filter(student=student, status="pending").count()
+
+            today_routines = Routine.objects.filter(
+                section=student.section,
+                date=datetime.now().date()
+            ).order_by("-date")[:5]
+
+            notices = Notices.objects.order_by('-id')[:2]
+
+            return render(request, self.template_name, context={
+                'borrowed_books': borrowed_books,
+                'total_e_books': total_e_books,
+                'total_submitted': total_submitted,  
+                'total_pending_assignments': total_pending_assignments,
+                'notices': notices,
+                'routines': today_routines,
+                'student': student
+            })
 
 
 # class StudentStatusView(LoginRequiredMixin, View):
