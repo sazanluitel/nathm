@@ -4,7 +4,8 @@ from django.db import models, transaction
 from django.utils import timezone
 
 from dashboard.models import Campus, Department, Program
-from exam.models import Result, Subject
+from exam.models import Subject
+from routine.models import ExamRoutine
 from userauth.models import AddressInfo, User, PersonalInfo, Sections
 
 
@@ -101,24 +102,12 @@ class Student(models.Model):
 
     def get_results(self, exam):
         """Fetches or creates the result for a given exam."""
+        output = []
         with transaction.atomic():
-            result, created = Result.objects.get_or_create(
-                student=self,
-                exam=exam,
-                defaults={'total_obtained_marks': 0, 'percentage': 0.0}
-            )
-
-            if created:
-                for module in exam.subjects.all():
-                    subject, _ = Subject.objects.get_or_create(
-                        module=module,
-                        defaults={
-                            'total_marks': 100,
-                            'theory_marks': 20,
-                            'practical_marks': 80,
-                            'marks_obtained': 0
-                        }
-                    )
-                    result.subjects.add(subject)
-            result.calculate_totals()
-        return result
+            for routine in ExamRoutine.objects.filter(routine=exam):
+                subject, _ = Subject.objects.get_or_create(
+                    routine=routine,
+                    student=self
+                )
+                output.append(subject)
+        return output

@@ -5,44 +5,22 @@ from openpyxl.reader.excel import load_workbook
 from openpyxl.styles import Alignment, PatternFill
 from openpyxl.workbook import Workbook
 
+from exam.models import Subject
 from ismt.settings import MEDIA_ROOT
-from .forms import *
 from django.views import View
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.urls import reverse
-from django.http import JsonResponse, HttpResponse, FileResponse
-from dashboard.models import Modules, Program
+from django.http import JsonResponse, FileResponse
+
+from routine.models import ExamProgramRoutine
 from students.models import Student
 
 
 class ExamView(View):
-    def get(self, request, id=None):
-        if id:
-            exam = get_object_or_404(Exam, id=id)
-            form = ExamForm(instance=exam)
-        else:
-            form = ExamForm()
-        return render(request, 'dashboard/exam/exam.html', {'form': form})
-
-    def post(self, request, id=None):
-        if id:
-            exam = get_object_or_404(Exam, id=id)
-            form = ExamForm(request.POST, instance=exam)
-        else:
-            form = ExamForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-            if id:
-                messages.success(request, "Exam updated successfully.")
-            else:
-                messages.success(request, "Exam added successfully.")
-            return redirect('exam_urls:exam')
-
-        messages.error(request, "Please check the form for errors.")
-        return render(request, 'dashboard/exam/exam.html', {'form': form})
+    def get(self, request):
+        return render(request, 'dashboard/exam/exam.html')
 
 
 class ExamAjaxView(View):
@@ -69,7 +47,7 @@ class ExamAjaxView(View):
             end_time = exam.end_time.strftime("%I:%M %p")
 
             data.append([
-                exam.exam_title,
+                exam.title,
                 exam.program.name if exam.program else "",
                 f"{start_date} to {end_date}",
                 f"{start_time} - {end_time}",
@@ -88,39 +66,34 @@ class ExamAjaxView(View):
         Returns the queryset of exams. 
         If search_value is provided, it filters the exams based on the search criteria.
         """
-        exams = Exam.objects.all().order_by('-id')  # Adjust order_by as needed
+        exams = ExamProgramRoutine.objects.all().order_by('-id')
         if search_value:
             exams = exams.filter(
-                Q(exam_title__icontains=search_value) |
+                Q(title__icontains=search_value) |
                 Q(program__name__icontains=search_value)
             )
         return exams
 
     def get_action(self, exam):
-        back_url = reverse("exam_urls:exam")
         student_list = reverse("exam_urls:studentlist", kwargs={'id': exam.id})
         return f'''
-            <form method="post" action="/admin/generic/delete/" class="btn-group">
+            <div class="btn-group">
                 <a href="{student_list}" class="btn btn-success btn-sm">View Students</a>
-                <input type="text" class="d-none" value="{exam.id}" name="_selected_id" />
-                <input type="text" class="d-none" value="exam" name="_selected_type" />
-                <input type="text" class="d-none" value="{back_url}" name="_back_url" />
-                <button type="submit" class="btn btn-sm delete btn-danger">Delete</button>
-            </form>
+            </div>
         '''
 
 
 class StudentsProgramListView(View):
     def get(self, request, *args, **kwargs):
         exam_id = kwargs.pop('id', None)
-        exam = get_object_or_404(Exam, id=exam_id)
+        exam = get_object_or_404(ExamProgramRoutine, id=exam_id)
         return render(request, 'dashboard/exam/studentlist.html', {'exam': exam})
 
 
 class StudentsExamTemplateDownloadView(View):
     def get(self, request, *args, **kwargs):
         exam_id = kwargs.pop('id', None)
-        exam = get_object_or_404(Exam, id=exam_id)
+        exam = get_object_or_404(ExamProgramRoutine, id=exam_id)
         students = Student.objects.filter(program=exam.program)
 
         wb = Workbook()
@@ -143,11 +116,11 @@ class StudentsExamTemplateDownloadView(View):
             ws[f"A{row}"] = f"{student.user.get_full_name()} - {student.user.email}"
             row += 1
 
-            result = student.get_results(exam)
-            if result:
-                for subject in result.subjects.all():
+            subjects = student.get_results(exam)
+            if subjects:
+                for subject in subjects:
                     ws[f"A{row}"] = subject.id
-                    ws[f"B{row}"] = subject.module.name
+                    ws[f"B{row}"] = subject.routine.module.name
                     ws[f"C{row}"] = subject.total_marks
                     ws[f"D{row}"] = subject.theory_marks
                     ws[f"E{row}"] = subject.practical_marks
@@ -164,8 +137,7 @@ class StudentsExamTemplateDownloadView(View):
 
     def post(self, request, *args, **kwargs):
         exam_id = kwargs.pop('id', None)
-        exam = get_object_or_404(Exam, id=exam_id)
-        students = Student.objects.filter(program=exam.program)
+        exam = get_object_or_404(ExamProgramRoutine, id=exam_id)
 
         uploaded_file = request.FILES.get("file")
         if not uploaded_file:
@@ -175,7 +147,6 @@ class StudentsExamTemplateDownloadView(View):
         wb = load_workbook(uploaded_file)
         ws = wb.active
 
-        data = []
         for row in ws.iter_rows(min_row=2, values_only=True):
             if row[1] is not None:
                 subject_id = row[0]
@@ -200,10 +171,9 @@ class StudentsProgramAjaxView(View):
         draw = int(request.GET.get("draw", 1))
         start = int(request.GET.get("start", 0))
         length = int(request.GET.get("length", self.paginate_by))
-        search_value = request.GET.get("search[value]", None)
         page_number = (start // length) + 1
 
-        exam = get_object_or_404(Exam, id=id)
+        exam = get_object_or_404(ExamProgramRoutine, id=id)
         students = Student.objects.filter(program=exam.program)
 
         paginator = Paginator(students, length)
@@ -235,7 +205,7 @@ class ResultView(View):
     def get(self, request, *args, **kwargs):
         exam_id = kwargs.get("exam_id", None)
         student_id = kwargs.get("student_id", None)
-        exam = get_object_or_404(Exam, id=exam_id)
+        exam = get_object_or_404(ExamProgramRoutine, id=exam_id)
         student = get_object_or_404(Student, id=student_id)
 
         results = student.get_results(exam)
@@ -248,11 +218,10 @@ class ResultView(View):
     def post(self, request, *args, **kwargs):
         exam_id = kwargs.get("exam_id", None)
         student_id = kwargs.get("student_id", None)
-        exam = get_object_or_404(Exam, id=exam_id)
+        exam = get_object_or_404(ExamProgramRoutine, id=exam_id)
         student = get_object_or_404(Student, id=student_id)
 
-        results = student.get_results(exam)
-        subjects = results.subjects.all()
+        subjects = student.get_results(exam)
         for subject in subjects:
             total_marks = request.POST.get(f"subjects[{subject.id}][total_marks]")
             theory_marks = request.POST.get(f"subjects[{subject.id}][theory_marks]")
@@ -265,6 +234,5 @@ class ResultView(View):
             subject.marks_obtained = marks_obtained
             subject.save()
 
-        results.calculate_totals()
         messages.success(request, "Result updated successfully.")
         return redirect('exam_urls:results', exam_id=exam_id, student_id=student_id)
