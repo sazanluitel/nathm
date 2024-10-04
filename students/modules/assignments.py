@@ -67,18 +67,22 @@ class AssignmentsStudentView(View):
             output = [assignment.title, assignment.due_date.strftime("%d %b, %Y"),
                       assignment.module.name if assignment.module else "N/A"]
 
-            assignment_submit = AssignmentSubmit.objects.get(assignment=assignment, student=student)
+            try:
+                assignment_submit = AssignmentSubmit.objects.get(assignment=assignment, student=student)
+            except AssignmentSubmit.DoesNotExist:
+                assignment_submit = None
+
             if filter_type == 'approved':
-                output.append(assignment_submit.marks_obtained)
+                output.append(assignment_submit.marks_obtained if assignment_submit else "N/A")
 
             if filter_type == "submitted":
-                output.append(assignment_submit.submission_date.strftime("%d %b, %Y"))
-                output.append(assignment_submit.status)
-                output.append(assignment_submit.marks_obtained)
-                output.append(assignment_submit.remark)
+                output.append(assignment_submit.submission_date.strftime("%d %b, %Y") if assignment_submit else "N/A")
+                output.append(assignment_submit.status if assignment_submit else "N/A")
+                output.append(assignment_submit.marks_obtained if assignment_submit else "N/A")
+                output.append(assignment_submit.remark if assignment_submit else "N/A")
 
             if filter_type == "rejected":
-                output.append(assignment_submit.remark)
+                output.append(assignment_submit.remark if assignment_submit else "N/A")
 
             output.append(self.get_action(assignment, student))
             data.append(output)
@@ -119,7 +123,11 @@ class AssignmentsStudentView(View):
 
         student = get_object_or_404(Student, user=request.user)
         if submitted_id:
-            submitted_assignment = AssignmentSubmit.objects.get(id=submitted_id)
+            try:
+                submitted_assignment = AssignmentSubmit.objects.get(id=submitted_id)
+            except AssignmentSubmit.DoesNotExist:
+                submitted_assignment = None
+
             if submitted_assignment:
                 form = AssignmentSubmitForm(request.POST, request.FILES, instance=submitted_assignment)
             else:
