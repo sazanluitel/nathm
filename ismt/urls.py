@@ -29,6 +29,7 @@ urlpatterns = [
 
     # student Dashboard urls
     path("student/", include("students.urls", namespace="students")),
+    path("", include("students.website_urls", namespace="students_website")),
 
     # Assignment
     path("admin/superuser/assignments/", include("assignment.urls", namespace="admin_assignments")),
