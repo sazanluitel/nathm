@@ -32,10 +32,4 @@ class BookForm(forms.ModelForm):
 class LibraryForm(forms.ModelForm):
     class Meta:
         model = Library
-        fields = ['book', 'borrowed_by',]
-        widgets = {
-            'book': forms.Select(
-                attrs={'class': 'form-control', 'id': 'library_book'}),
-            'borrowed_by': forms.Select(
-                attrs={'class': 'form-control', 'id': 'library_borrowed_by'}),
-        }
+        fields = ['book']

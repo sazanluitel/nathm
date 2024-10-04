@@ -25,31 +25,53 @@ class DashboardView(View):
     template_name = 'dashboard/student_profile/index.html'
 
     def get(self, request, *args, **kwargs):
-            student = get_object_or_404(Student, user=request.user)
+        student = get_object_or_404(Student, user=request.user)
 
-            borrowed_books = Library.objects.filter(borrowed_by=student).count()
-            total_e_books = Book.objects.filter(e_book=True).count()
+        borrowed_books = Library.objects.filter(borrowed_by=student).count()
+        total_e_books = Book.objects.filter(e_book=True).count()
 
-            total_submitted = AssignmentSubmit.objects.filter(student=student, status="accepted").count()
+        total_submitted = AssignmentSubmit.objects.filter(student=student, status="accepted").count()
+        total_pending_assignments = AssignmentSubmit.objects.filter(student=student, status="pending").count()
 
-            total_pending_assignments = AssignmentSubmit.objects.filter(student=student, status="pending").count()
+        # Fetch all books
+        books = Book.objects.all()
 
-            today_routines = Routine.objects.filter(
-                section=student.section,
-                date=datetime.now().date()
-            ).order_by("-date")[:5]
+        today_routines = Routine.objects.filter(
+            section=student.section,
+            date=datetime.now().date()
+        ).order_by("-date")[:5]
 
-            notices = Notices.objects.order_by('-id')[:2]
+        notices = Notices.objects.order_by('-id')[:2]
 
-            return render(request, self.template_name, context={
-                'borrowed_books': borrowed_books,
-                'total_e_books': total_e_books,
-                'total_submitted': total_submitted,  
-                'total_pending_assignments': total_pending_assignments,
-                'notices': notices,
-                'routines': today_routines,
-                'student': student
-            })
+        return render(request, self.template_name, context={
+            'borrowed_books': borrowed_books,
+            'total_e_books': total_e_books,
+            'total_submitted': total_submitted,
+            'total_pending_assignments': total_pending_assignments,
+            'notices': notices,
+            'routines': today_routines,
+            'student': student,
+            'books': books  
+        })
+
+class BookRequestView(View):
+     def post(self, request, *args, **kwargs):
+        id = kwargs.get("id", None)
+        if id:
+            library = get_object_or_404(Library, id=id)
+            form = LibraryForm(request.POST, instance=library)
+        else:
+            form = LibraryForm(request.POST)
+
+        if form.is_valid():
+            library_instance = form.save(commit=False) 
+            library_instance.borrowed_by = get_object_or_404(Student, user=request.user) 
+            library_instance.save()
+            messages.success(request, 'Request added successfully')
+            return redirect('students:studentdashboard')
+        else:
+            messages.error(request, 'Error in the forms')
+            return render(request, 'dashboard/library/library.html', {'form': form})
 
 
 # class StudentStatusView(LoginRequiredMixin, View):

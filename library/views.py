@@ -103,22 +103,7 @@ class BookAjaxView(View):
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
         '''
-class LibraryView(View):
-    def post(self, request, *args, **kwargs):
-        id = kwargs.get("id", None)
-        if id:
-            library = Library.objects.get(id=id)
-            form = LibraryForm(request.POST, instance=library)
-        else:
-            form = LibraryForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Library added successfully')
-            return redirect('library_admin_urls:library')
-        else:
-            messages.error(request, 'Error in the forms')
-            return render(request, 'dashboard/library/library.html', {'form': form})
-        
+class LibraryView(View):       
     def get(self, request, *args, **kwargs):
         id = kwargs.get("id", None)
         if id:

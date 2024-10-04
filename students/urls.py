@@ -19,4 +19,6 @@ urlpatterns = [
 
     path('result/', ExamRoutineView.as_view(), name="result"),
     path('resultajax', ExamRoutineAjaxView.as_view(), name="resultajax"),
+
+    path('requestbook/', BookRequestView.as_view(), name='requestbook'),
 ]
