@@ -1,12 +1,19 @@
 {% extends 'dashboard/admin-base.html' %}
 {% block title %}
-  Students
+  Students - {{ exam }}
 {% endblock %}
 {% block breadcrumb %}
-  Students
+  Students - {{ exam }}
 {% endblock %}
 {% block maintitle %}
-  Students
+  Students - {{ exam }}
+{% endblock %}
+
+{% block rightbutton %}
+    <div class="btn-row text-end">
+        <button type="button" class="btn btn-success">Import Result</button>
+        <a href="{% url 'exam_urls:export_import' id=exam.id %}" class="btn btn-warning ml-2">Download Template</a>
+    </div>
 {% endblock %}
 
 {% block content %}

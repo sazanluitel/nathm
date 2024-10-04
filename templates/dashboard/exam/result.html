@@ -1,59 +1,72 @@
 {% extends 'dashboard/admin-base.html' %}
 {% load static %}
 {% block title %}
-  Result
+    Result - {{ student }}
 {% endblock %}
 {% block breadcrumb %}
-  Result
+    Result - {{ student }}
 {% endblock %}
 {% block maintitle %}
-  Result
+    Result - {{ student }}
 {% endblock %}
 
 {% block content %}
-  <div class="row">
-    <div class="col-sm-12">
-      <form method="post" action="#">
-        {% csrf_token %}
-        <div class="card mb-4">
-            <div class="card-header py-3">Result</div>
-            <div class="card-body">
-                {{ result_form.as_p }}
-                <table class="table table-bordered" id="subjectsTable">
-                    <thead>
-                        <tr>
-                            <th style="width: 40%;">Subject</th>
-                            <th style="width: 10%;">Total Marks</th>
-                            <th style="width: 10%;">Theory Marks</th>
-                            <th style="width: 10%;">Practical Marks</th>
-                            <th style="width: 10%;">Marks Obtained</th>
-                            <th style="width: 20%;">Remarks</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{ subject_formset.management_form }}
-                        {% for form in subject_formset %}
-                        <tr>
-                            <td>{{ form.module }}</td>
-                            <td>{{ form.total_marks }}</td>
-                            <td>{{ form.theory_marks }}</td>
-                            <td>{{ form.practical_marks }}</td>
-                            <td>{{ form.marks_obtained }}</td>
-                            <td>{{ form.remarks }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-    
-                <button type="button" class="btn btn-primary" id="resultAddMoreFields">Add More Fields</button>
-            </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-    
-    
-    </div>
-  </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <form method="post">
+                {% csrf_token %}
 
-  <script src="{% static 'dashboard/assets/js/exam.js' %}"></script>
+                <div class="card mb-4">
+                    <div class="card-header py-3">Result</div>
+                    <div class="card-body">
+                        {% include "dashboard/alert.html" %}
+
+                        <table class="table table-bordered" id="subjectsTable">
+                            <thead>
+                            <tr>
+                                <th style="width: 40%;">Subject</th>
+                                <th style="width: 10%;">Total Marks</th>
+                                <th style="width: 10%;">Theory Marks</th>
+                                <th style="width: 10%;">Practical Marks</th>
+                                <th style="width: 10%;">Marks Obtained</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for subject in results.subjects.all %}
+                                <tr>
+                                    <td>{{ subject.module }}</td>
+                                    <td>
+                                        <input class="form-control" type="number"
+                                               name="subjects[{{ subject.id }}][total_marks]"
+                                               value="{{ subject.total_marks }}">
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="number"
+                                               name="subjects[{{ subject.id }}][theory_marks]"
+                                               value="{{ subject.theory_marks }}">
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="number"
+                                               name="subjects[{{ subject.id }}][practical_marks]"
+                                               value="{{ subject.practical_marks }}">
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="number"
+                                               name="subjects[{{ subject.id }}][marks_obtained]"
+                                               value="{{ subject.marks_obtained }}">
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Information</button>
+            </form>
+
+
+        </div>
+    </div>
+
+    <script src="{% static 'dashboard/assets/js/exam.js' %}"></script>
 {% endblock %}
