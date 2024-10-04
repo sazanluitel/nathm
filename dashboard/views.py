@@ -10,7 +10,6 @@ from django.core.paginator import Paginator
 from django.db.models import Prefetch, Count
 
 from assignment.models import Assignment
-from exam.models import Exam
 from notices.models import Notices
 from routine.models import Routine, ExamRoutine, ExamProgramRoutine
 from .forms import *
@@ -665,9 +664,6 @@ class DeleteHelper:
 
         return self.get_objects(ids, Assignment, "Assignment", None, assignment_title, assignment_kwargs)
 
-    def get_exams(self, ids):
-        return self.get_objects(ids, Exam, "Exam", None, None, None)
-
     def get_titles(self, post_type: str, total):
         if post_type == "program":
             return "Programs" if total > 1 else "Program"
@@ -731,8 +727,6 @@ class DeleteHelper:
                 objects, originals = self.get_examgrouproutines(selected_ids)
             elif delete_type == "assignment":
                 objects, originals = self.get_assignments(selected_ids)
-            elif delete_type == "exam":
-                objects, originals = self.get_exams(selected_ids)
 
         return objects, originals
 

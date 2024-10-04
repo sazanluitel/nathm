@@ -17,9 +17,7 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count
 from notices.models import Notices
-from exam.models import Result
 
 
 class DashboardView(View):

@@ -214,7 +214,7 @@ class StudentAjax(View):
         edit_url = reverse('student_admin:edit', kwargs={'id': student_id})
         delete_url = reverse('generic:delete')
         backurl = reverse('student_admin:list')
-        fee_url = reverse('payment:update_fee', kwargs={'id': student_id})
+        fee_url = reverse('payment:update_fee')
 
         if not student.college_email:
             ids_button = (f'<button type="button" class="btn btn-primary btn-sm addIdsModal" '
@@ -223,9 +223,10 @@ class StudentAjax(View):
             ids_button = (f'<button type="button" class="btn btn-primary btn-sm addIdsModal" '
                           f'data-studentid="{student_id}" data-email="{student.college_email}"'
                           f' data-teamid="{student.team_id}">Update IDs</button>')
-        fee_button = (f'<button type="button" class="btn btn-warning btn-sm updateFeeModal" '
-              f'data-bs-toggle="modal" data-bs-target="#paymentModalToggle" '
-              f'data-studentid="{student_id}" data-url="{fee_url}">Update Fee</button>')
+        fee_button = (
+                        f'<button type="button" class="btn btn-primary updateFeeModal" '
+                        f'data-studentid="{student_id}">Update Fee</button>'
+                    )
 
         return f'''
             <form method="post" action="{delete_url}" class="button-group">

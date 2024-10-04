@@ -32,9 +32,9 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for subject in results.subjects.all %}
+                            {% for subject in results %}
                                 <tr>
-                                    <td>{{ subject.module }}</td>
+                                    <td>{{ subject.routine.module }}</td>
                                     <td>
                                         <input class="form-control" type="number"
                                                name="subjects[{{ subject.id }}][total_marks]"

@@ -1,12 +1,16 @@
 from django import forms
 from payment.models import PaymentHistory
+from students.models import Student
 
 class PaymentHistoryForm(forms.ModelForm):
     class Meta:
         model = PaymentHistory
-        fields = ['amount', 'payment_method', 'status']
+        fields = ['amount']
         widgets = {
             'amount': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
-            'payment_method': forms.TextInput(attrs={'class': 'form-control'}),
-            'status': forms.Select(choices=PaymentHistory.STATUS, attrs={'class': 'form-control'}),
         }
+
+class StudentPaymentForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = ['payment_due']
