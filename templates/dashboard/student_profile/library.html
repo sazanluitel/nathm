@@ -25,7 +25,7 @@
                     <tbody>
                         {% for record in borrowed_books %}
                             <tr>
-                                <td>{{ record.book.title }}</td>  <!-- Adjust the attribute according to your Book model -->
+                                <td>{{ record.book.title }}</td> 
                                 <td>{{ record.borrow_date }}</td>
                                 <td>{{ record.return_date|default:"Not Returned" }}</td>
                                 <td>{{ record.get_status_display }}</td>
