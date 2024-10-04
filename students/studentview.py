@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from django.urls import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 
@@ -213,26 +213,29 @@ class StudentRoutineView(View):
     def get(self, request, *args, **kwargs):
         student = get_object_or_404(Student, user=request.user)
         section = student.section
-        
+
         routines = Routine.objects.filter(section=section)
-        
+
         return render(request, "dashboard/student_profile/routine.html", {
             "routines": routines,
             "section": section
         })
+
 
 class StudentLibraryView(View):
     template_name = 'dashboard/student_profile/library.html'
 
     def get(self, request, *args, **kwargs):
         student = get_object_or_404(Student, user=request.user)
-        
+
         borrowed_books = Library.objects.filter(borrowed_by=student)
 
         context = {
             'borrowed_books': borrowed_books
         }
         return render(request, self.template_name, context)
+
+
 class CertificateView(LoginRequiredMixin, View):
     template_name = 'dashboard/student_profile/certificate.html'
 
@@ -257,6 +260,56 @@ class CertificateView(LoginRequiredMixin, View):
         else:
             messages.error(request, "Failed to submit your request.")
         return redirect('students:certificate')
+    
+class ExamRoutineView(View):
+     def get(self, request, *args, **kwargs):
+        return render(request, 'dashboard/student_profile/result.html')
+     
+class ExamRoutineAjaxView(View):
+    paginate_by = 10 
+
+    def get(self, request, *args, **kwargs):
+        draw = int(request.GET.get("draw", 1))
+        start = int(request.GET.get("start", 0))
+        length = int(request.GET.get("length", self.paginate_by))
+        page_number = (start // length) + 1
+        
+        student = get_object_or_404(Student, user=request.user)
+        results = Subject.objects.filter(student=student) 
+        
+        paginator = Paginator(results, length)
+        page_results = paginator.page(page_number)
+        
+        data = []
+        for result in page_results:
+            exam = result.exam 
+            subjects = ", ".join([subject.name for subject in result.subjects.all()])
+            data.append([
+                exam.name,  
+                subjects,  
+                result.total_obtained_marks,
+                result.percentage, 
+                self.get_action(result.id)
+            ])
+        
+        return JsonResponse({
+            "draw": draw,
+            "recordsTotal": paginator.count,
+            "recordsFiltered": paginator.count,
+            "data": data,
+        }, status=200)
+
+    def get_action(self, result_id):
+        """Generate the action buttons for each result entry (e.g., View or Update Result)."""
+        result_url = reverse("#", kwargs={'result_id': result_id})
+        return f'''
+            <a href="{result_url}" class="btn btn-primary btn-sm">View Result</a>
+        '''
+
+        
+
+
+
 
 
 # class EducationalHistoryJsons(View):
