@@ -91,11 +91,31 @@ class PaymentAjax(View):
 
 
 class StudentListView(View):
+    def get_section(self, section_id):
+        """ Helper method to get the section object. """
+        return get_object_or_404(Sections, id=section_id)
+
+    def post(self, request, *args, **kwargs):
+        section_id = kwargs.get('section_id')
+        section = self.get_section(section_id)
+        students = Student.objects.filter(section=section)
+
+        for student in students:
+            due = request.POST.get(f"fee_amount_{student.id}", 0)
+            try:
+                student.fee_due = int(due)
+                student.save()
+            except ValueError:
+                pass
+        
+        messages.success(request,"Fees of this section updated successfully")
+        return redirect('payment:payments')
+    
     def get(self, request, section_id):
-        section = get_object_or_404(Sections, id=section_id)
-        students = Student.objects.filter(
-            section=section)  # Assuming there's a foreign key to Sections in Student model
+        section = self.get_section(section_id)
+        students = Student.objects.filter(section=section)
+
         return render(request, 'dashboard/payment/student_list.html', {
             'section': section,
-            'students': students,
+            'students': students
         })
