@@ -43,25 +43,27 @@
                 </div>
 
                 <div class="student_lists_table">
-                    <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'student_admin:ajax' filter_by=filter_by %}"
-                           data-nodata="No Data Found">
-                        <thead>
-                        <tr>
-                            <th>
-                                <div class="form-check">
-                                    <label for="allCheckbox"></label>
-                                    <input class="form-check-input" type="checkbox" id="allCheckbox"/>
-                                </div>
-                            </th>
-                            <th>Student</th>
-                            <th>Campus</th>
-                            <th>Department</th>
-                            <th>Program</th>
-                            <th>Section</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'student_admin:ajax' filter_by=filter_by %}"
+                            data-nodata="No Data Found">
+                            <thead>
+                            <tr>
+                                <th>
+                                    <div class="form-check">
+                                        <label for="allCheckbox"></label>
+                                        <input class="form-check-input" type="checkbox" id="allCheckbox"/>
+                                    </div>
+                                </th>
+                                <th>Student</th>
+                                <th>Campus</th>
+                                <th>Department</th>
+                                <th>Program</th>
+                                <th>Section</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
