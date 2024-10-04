@@ -25,31 +25,61 @@ class DashboardView(View):
     template_name = 'dashboard/student_profile/index.html'
 
     def get(self, request, *args, **kwargs):
-            student = get_object_or_404(Student, user=request.user)
+        student = get_object_or_404(Student, user=request.user)
 
-            borrowed_books = Library.objects.filter(borrowed_by=student).count()
-            total_e_books = Book.objects.filter(e_book=True).count()
+        borrowed_books = Library.objects.filter(
+            borrowed_by=student,
+            book__e_book=False
+        ).count()
+        total_e_books = Library.objects.filter(
+            borrowed_by=student,
+            book__e_book= True
+        ).count()
 
-            total_submitted = AssignmentSubmit.objects.filter(student=student, status="accepted").count()
+        total_submitted = AssignmentSubmit.objects.filter(student=student, status="accepted").count()
+        total_pending_assignments = AssignmentSubmit.objects.filter(student=student, status="pending").count()
 
-            total_pending_assignments = AssignmentSubmit.objects.filter(student=student, status="pending").count()
+        # Fetch all books
+        books = Book.objects.all()
 
-            today_routines = Routine.objects.filter(
-                section=student.section,
-                date=datetime.now().date()
-            ).order_by("-date")[:5]
+        today_routines = Routine.objects.filter(
+            section=student.section,
+            date=datetime.now().date()
+        ).order_by("-date")[:5]
 
-            notices = Notices.objects.order_by('-id')[:2]
+        notices = Notices.objects.order_by('-id')[:2]
+        notices = Notices.objects.order_by('-id')[:2]
 
-            return render(request, self.template_name, context={
-                'borrowed_books': borrowed_books,
-                'total_e_books': total_e_books,
-                'total_submitted': total_submitted,  
-                'total_pending_assignments': total_pending_assignments,
-                'notices': notices,
-                'routines': today_routines,
-                'student': student
-            })
+        return render(request, self.template_name, context={
+            'borrowed_books': borrowed_books,
+            'total_e_books': total_e_books,
+            'total_submitted': total_submitted,
+            'total_pending_assignments': total_pending_assignments,
+            'notices': notices,
+            'routines': today_routines,
+            'student': student,
+            'books': books
+        })
+
+
+class BookRequestView(View):
+    def post(self, request, *args, **kwargs):
+        id = kwargs.get("id", None)
+        if id:
+            library = get_object_or_404(Library, id=id)
+            form = LibraryForm(request.POST, instance=library)
+        else:
+            form = LibraryForm(request.POST)
+
+        if form.is_valid():
+            library_instance = form.save(commit=False)
+            library_instance.borrowed_by = get_object_or_404(Student, user=request.user)
+            library_instance.save()
+            messages.success(request, 'Request added successfully')
+            return redirect('students:studentdashboard')
+        else:
+            messages.error(request, 'Error in the forms')
+            return render(request, 'dashboard/library/library.html', {'form': form})
 
 
 # class StudentStatusView(LoginRequiredMixin, View):
@@ -274,38 +304,40 @@ class CertificateView(LoginRequiredMixin, View):
         else:
             messages.error(request, "Failed to submit your request.")
         return redirect('students:certificate')
-    
+
+
 class ExamRoutineView(View):
-     def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         return render(request, 'dashboard/student_profile/result.html')
-     
+
+
 class ExamRoutineAjaxView(View):
-    paginate_by = 10 
+    paginate_by = 10
 
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
         start = int(request.GET.get("start", 0))
         length = int(request.GET.get("length", self.paginate_by))
         page_number = (start // length) + 1
-        
+
         student = get_object_or_404(Student, user=request.user)
-        results = Subject.objects.filter(student=student) 
-        
+        results = Subject.objects.filter(student=student)
+
         paginator = Paginator(results, length)
         page_results = paginator.page(page_number)
-        
+
         data = []
         for result in page_results:
-            exam = result.exam 
+            exam = result.exam
             subjects = ", ".join([subject.name for subject in result.subjects.all()])
             data.append([
-                exam.name,  
-                subjects,  
+                exam.name,
+                subjects,
                 result.total_obtained_marks,
-                result.percentage, 
+                result.percentage,
                 self.get_action(result.id)
             ])
-        
+
         return JsonResponse({
             "draw": draw,
             "recordsTotal": paginator.count,
@@ -319,11 +351,6 @@ class ExamRoutineAjaxView(View):
         return f'''
             <a href="{result_url}" class="btn btn-primary btn-sm">View Result</a>
         '''
-
-        
-
-
-
 
 
 # class EducationalHistoryJsons(View):
@@ -459,4 +486,15 @@ class PaymentSupport(View):
     template_name = 'dashboard/payment/payment_support.html'
 
     def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {})
+
+
+class PaymentSuccessView(View):
+    template_name = 'dashboard/payment/payment_success.html'
+
+    def get(self, request, *args, **kwargs):
+        student = get_object_or_404(Student, user=request.user)
+        student.payment_due = 0.0
+        student.save()
+
         return render(request, self.template_name, {})

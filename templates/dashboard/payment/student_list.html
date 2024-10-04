@@ -34,7 +34,7 @@
       <div class="card-body">
         <h4 class="card-title">Section Name: {{ section.section_name }}</h4>
         
-        <form method="post" action="{% url 'payment:update_fee' %}">
+        <form method="post" action="{% url 'payment:student_list_by_section' section_id=section.id %}">
           {% csrf_token %}
           <div class="table-responsive">
             <table class="table table-bordered table-hover">
@@ -56,7 +56,7 @@
                     <td>{{ student.user.email }}</td>
                     <td>
                       <div class="input-group">
-                        <input type="number" name="fee_amount_{{ student.id }}" class="form-control" placeholder="Enter Amount" required>
+                        <input type="number" name="fee_amount_{{ student.id }}" class="form-control" value="{{ student.payment_due }}" placeholder="Enter Amount" required>
                       </div>
                     </td>
                   </tr>

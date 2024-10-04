@@ -33,6 +33,19 @@ class AssignmentSubmitForm(forms.ModelForm):
             'file': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
 
+    def clean_file(self):
+        file = self.cleaned_data.get('file')
+
+        if file:
+            file_type = file.content_type
+            if file_type not in ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png']:
+                raise forms.ValidationError('Only PDF, JPEG, and PNG files are allowed.')
+
+            if file.size > 10 * 1024 * 1024:
+                raise forms.ValidationError('File size cannot exceed 10MB.')
+
+        return file
+
 
 class AssignmentViewForm(forms.ModelForm):
     class Meta:

@@ -1,0 +1,33 @@
+{% extends "dashboard/bases/student-profile.html" %}
+{% block title %}
+    Payment Success
+{% endblock %}
+{% block breadcrumb %}
+    Payment Success
+{% endblock %}
+{% block maintitle %}
+    Payment Success
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title pb-4">Thank You for Your Payment!</h4>
+
+                <div class="pt-4 pb-3 text-center">
+                    <p class="text-center">
+                        Dear {{ user.first_name }}, your payment of the remaining college fees has been successfully processed.
+                    </p>
+                    <p class="text-center">
+                        Your payment ensures that you are up to date with your fee obligations. We appreciate your prompt action.
+                    </p>
+                    <p class="text-center">
+                        If you need any further information or assistance, feel free to reach out to the college administration.
+                    </p>
+                    <a href="{% url "students:studentdashboard" %}" class="btn btn-primary mt-3">Go to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
