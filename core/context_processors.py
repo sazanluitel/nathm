@@ -2,7 +2,7 @@ from django.conf import settings
 
 from core.models import Options
 from userauth.models import User
-from payment.models import PaymentHistory
+from students.models import Student
 
 
 
@@ -26,6 +26,6 @@ def add_general_settings(request):
 
 def student_payment_processor(request):
     if request.user.is_authenticated and request.user.role == 'student':
-        payment = PaymentHistory.objects.filter(user=request.user).first()
+        payment = Student.objects.filter(user=request.user).first()
         return {'payment': payment}
     return {}
