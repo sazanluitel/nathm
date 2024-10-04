@@ -8,18 +8,17 @@ from django.db.models import Q
 from django.urls import reverse
 from students.models import Sections 
 from .models import PaymentHistory
-from .forms import PaymentHistoryForm
+from .forms import PaymentHistoryForm, StudentPaymentForm
 from userauth.models import User
 from django.contrib import messages
 
 
 
 class UpdateFeeView(View):
-    def get(self, request, student_id):
+    def get(self, request, *args, **kwargs):
+        student_id = kwargs.get('student_id')
         student = get_object_or_404(Student, id=student_id)
-        payment_history = get_object_or_404(PaymentHistory, student=student)
-
-        form = PaymentHistoryForm(instance=payment_history)
+        form = StudentPaymentForm()
         
         context = {
             'payment_form': form,
@@ -27,26 +26,18 @@ class UpdateFeeView(View):
         }
         return render(request, 'dashboard/students/list.html', context)
 
-    def post(self, request):
-        student_id = request.POST.get("user_id", None)  # Changed from student_id
-        user = get_object_or_404(User, student__id=student_id)
-        student = get_object_or_404(Student, id=student_id)
-        payment_history = get_object_or_404(PaymentHistory, student=student)
-
-        form = PaymentHistoryForm(request.POST, instance=payment_history)
+    def post(self, request, *args, **kwargs):
+        student_id = kwargs.get('student_id', None)
+        student = get_object_or_404(Student)
+        form = StudentPaymentForm(request.POST, instance=student)
 
         if form.is_valid():
             form.save()
             messages.success(request, "Fee updated successfully")
-            return redirect('student_admin:list')
         else:
-            messages.error(request, "Please correct the errors.")
-            # Return the same form with errors to the template
-            context = {
-                'payment_form': form,
-                'student_id': student_id,
-            }
-            return render(request, 'dashboard/students/list.html', context)
+            messages.error(request, "Unable to update fee.")
+        return redirect('student_admin:list')
+            
 
 class PaymentListView(View):
     def get(self, request):

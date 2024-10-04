@@ -1,5 +1,6 @@
 from django import forms
 from payment.models import PaymentHistory
+from students.models import Student
 
 class PaymentHistoryForm(forms.ModelForm):
     class Meta:
@@ -8,3 +9,8 @@ class PaymentHistoryForm(forms.ModelForm):
         widgets = {
             'amount': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
         }
+
+class StudentPaymentForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = ['payment_due']

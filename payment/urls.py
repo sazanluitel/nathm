@@ -7,4 +7,5 @@ urlpatterns = [
     path('student/ajax/', PaymentAjax.as_view(), name='payment_ajax'),
     path('students/section/<int:section_id>/', StudentListView.as_view(), name='student_list_by_section'),
     path('student/update_fee/', UpdateFeeView.as_view(), name='update_fee'),
+    
 ]
