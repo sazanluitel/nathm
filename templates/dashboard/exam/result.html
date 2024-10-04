@@ -1,0 +1,72 @@
+{% extends 'dashboard/admin-base.html' %}
+{% load static %}
+{% block title %}
+    Result - {{ student }}
+{% endblock %}
+{% block breadcrumb %}
+    Result - {{ student }}
+{% endblock %}
+{% block maintitle %}
+    Result - {{ student }}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="card mb-4">
+                    <div class="card-header py-3">Result</div>
+                    <div class="card-body">
+                        {% include "dashboard/alert.html" %}
+
+                        <table class="table table-bordered" id="subjectsTable">
+                            <thead>
+                            <tr>
+                                <th style="width: 40%;">Subject</th>
+                                <th style="width: 10%;">Total Marks</th>
+                                <th style="width: 10%;">Theory Marks</th>
+                                <th style="width: 10%;">Practical Marks</th>
+                                <th style="width: 10%;">Marks Obtained</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for subject in results.subjects.all %}
+                                <tr>
+                                    <td>{{ subject.module }}</td>
+                                    <td>
+                                        <input class="form-control" type="number"
+                                               name="subjects[{{ subject.id }}][total_marks]"
+                                               value="{{ subject.total_marks }}">
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="number"
+                                               name="subjects[{{ subject.id }}][theory_marks]"
+                                               value="{{ subject.theory_marks }}">
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="number"
+                                               name="subjects[{{ subject.id }}][practical_marks]"
+                                               value="{{ subject.practical_marks }}">
+                                    </td>
+                                    <td>
+                                        <input class="form-control" type="number"
+                                               name="subjects[{{ subject.id }}][marks_obtained]"
+                                               value="{{ subject.marks_obtained }}">
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Information</button>
+            </form>
+
+
+        </div>
+    </div>
+
+    <script src="{% static 'dashboard/assets/js/exam.js' %}"></script>
+{% endblock %}

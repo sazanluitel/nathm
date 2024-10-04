@@ -59,7 +59,8 @@ INSTALLED_APPS = [
     "routine",
     "core",
     "notices",
-    "assignment"
+    "assignment",
+    "exam",
 ]
 
 MIDDLEWARE = [

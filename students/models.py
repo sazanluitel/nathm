@@ -1,9 +1,10 @@
 import uuid
 
-from django.db import models
+from django.db import models, transaction
 from django.utils import timezone
 
 from dashboard.models import Campus, Department, Program
+from exam.models import Result, Subject
 from userauth.models import AddressInfo, User, PersonalInfo, Sections
 
 
@@ -82,6 +83,8 @@ class Student(models.Model):
     section = models.ForeignKey(Sections, on_delete=models.CASCADE, null=True, blank=True)
     # signature = models.ImageField(upload_to='signatures/', blank=True, null=True)
 
+    payment_due = models.FloatField(default=0.0)
+
     def __str__(self):
         return self.email
 
@@ -95,3 +98,27 @@ class Student(models.Model):
             new_kiosk_id = str(uuid.uuid4())[:10].upper()
             if not Student.objects.filter(kiosk_id=new_kiosk_id).exists():
                 return new_kiosk_id
+
+    def get_results(self, exam):
+        """Fetches or creates the result for a given exam."""
+        with transaction.atomic():
+            result, created = Result.objects.get_or_create(
+                student=self,
+                exam=exam,
+                defaults={'total_obtained_marks': 0, 'percentage': 0.0}
+            )
+
+            if created:
+                for module in exam.subjects.all():
+                    subject, _ = Subject.objects.get_or_create(
+                        module=module,
+                        defaults={
+                            'total_marks': 100,
+                            'theory_marks': 20,
+                            'practical_marks': 80,
+                            'marks_obtained': 0
+                        }
+                    )
+                    result.subjects.add(subject)
+            result.calculate_totals()
+        return result

@@ -1,0 +1,50 @@
+{% extends 'dashboard/admin-base.html' %}
+{% block title %}
+  Students - {{ exam }}
+{% endblock %}
+{% block breadcrumb %}
+  Students - {{ exam }}
+{% endblock %}
+{% block maintitle %}
+  Students - {{ exam }}
+{% endblock %}
+
+{% block rightbutton %}
+    <div class="btn-row text-end">
+        <button type="button" class="btn btn-success">Import Result</button>
+        <a href="{% url 'exam_urls:export_import' id=exam.id %}" class="btn btn-warning ml-2">Download Template</a>
+    </div>
+{% endblock %}
+
+{% block content %}
+  <style>
+    .dt-responsive {
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    
+    .dt-responsive table th,
+    .dt-responsive table td {
+      padding: 10px;
+      text-align: left;
+    }
+  </style>
+
+  <div class="col-sm-12">
+    {% with messages=messages %}
+      {% include 'dashboard/alert.html' %}
+    {% endwith %}
+    <div class="card">
+      <div class="card-body">
+        <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'exam_urls:studentprogramajax' exam.id %}" data-nodata="No Data Found">
+          <thead>
+            <tr>
+              <th>Student Name</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

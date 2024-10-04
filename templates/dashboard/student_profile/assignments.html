@@ -1,0 +1,121 @@
+{% extends "dashboard/bases/student-profile.html" %}
+{% load static %}
+{% block title %}Assignments{% endblock title %}
+{% block breadcrumb %}Assignments{% endblock breadcrumb %}
+{% block maintitle %}Assignments{% endblock maintitle %}
+
+{% block rightbutton %}
+    <div class="text-end">
+        <div class="btn-group" role="group" aria-label="Basic outlined example">
+            <a href="{% url 'students:assignments' %}" type="button"
+               class="btn btn-outline-primary {% if not status %}active{% endif %}">
+                All ({{ counts.all }})
+            </a>
+
+            <a href="{% url 'students:assignments_status' status='submitted' %}" type="button"
+               class="btn btn-outline-success {% if status == 'submitted' %}active{% endif %}">
+                Submitted ({{ counts.submitted }})
+            </a>
+
+            <a href="{% url 'students:assignments_status' status='not_submitted' %}" type="button"
+               class="btn btn-outline-danger {% if status == 'not_submitted' %}active{% endif %}">
+                Not Submitted ({{ counts.not_submitted }})
+            </a>
+
+        </div>
+        <div class="btn-group" role="group" aria-label="Basic outlined example">
+            <a href="{% url 'students:assignments_status' status='pending' %}" type="button"
+               class="btn btn-outline-warning {% if status == 'pending' %}active{% endif %}">
+                Pending ({{ counts.pending }})
+            </a>
+
+            <a href="{% url 'students:assignments_status' status='approved' %}" type="button"
+               class="btn btn-outline-success {% if status == 'approved' %}active{% endif %}">
+                Approved ({{ counts.approved }})
+            </a>
+
+            <a href="{% url 'students:assignments_status' status='rejected' %}" type="button"
+               class="btn btn-outline-danger {% if status == 'rejected' %}active{% endif %}">
+                Rejected ({{ counts.rejected }})
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block content %}
+    <div class="col-sm-12">
+        {% with messages=messages %}
+            {% include 'dashboard/alert.html' %}
+        {% endwith %}
+
+        <style>
+            .dt-container > div:first-child {
+                display: none !important;
+            }
+        </style>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="dt-responsive">
+                    <table
+                            class="ajaxdatatable table table-bordered nowrap"
+                            data-nodata="No Assignments Found"
+                            data-search="hide"
+                            data-length="hide"
+                    >
+                        <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Due Date</th>
+                            <th>Subject</th>
+                            {% if status == "approved" %}
+                                <th>Marks</th>
+                            {% endif %}
+                            {% if status == "submitted" %}
+                                <th>Submitted At</th>
+                                <th>Status</th>
+                                <th>Marks</th>
+                            {% endif %}
+
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="submitAssignmentModal" tabindex="-1" aria-labelledby="submitAssignmentModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="assignmentSubmitForm" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="submitAssignmentModalLabel">Submit Assignment</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="assignment_id" id="assignmentId">
+                        <input type="hidden" name="submitted_id" id="submittedId">
+                        <div class="form-group">
+                            <label for="file">Upload your assignment file</label>
+                            <input type="file" name="file" id="file" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit Assignment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <script src="{% static 'dashboard/assets/js/student.js' %}"></script>
+{% endblock %}

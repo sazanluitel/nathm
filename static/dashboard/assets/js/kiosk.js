@@ -1,5 +1,77 @@
 (function ($) {
     $(document).ready(function () {
+        let currentStep = 9;
+        const stepContent = $('.step-content');
+        const prevBtn = $('.prev-btn');
+        const nextBtn = $('.next-btn');
+        const totalSteps = stepContent.length;
+
+        function updateStepIndicator(step) {
+            $('.modal-steps .step').each(function () {
+                const stepIndex = parseInt($(this).attr('data-step'));
+                if (stepIndex === step) {
+                    $(this).addClass('current').removeClass('completed');
+                }
+                else if (stepIndex < step) {
+                    $(this).addClass('completed').removeClass('current');
+                }
+                else {
+                    $(this).removeClass('completed current');
+                }
+            });
+        }
+
+        function showStep(step) {
+            stepContent.hide();
+            $(`.step-content[data-step="${step}"]`).show();
+            updateStepIndicator(step);
+            updateStepButtons(step);
+        }
+
+        function updateStepButtons(step) {
+            prevBtn.prop('disabled', step === 1);
+            nextBtn.toggle(step !== totalSteps);
+            $('button[type="submit"]').toggle(step === totalSteps);
+        }
+
+        const validateEmail = (email) => {
+            return String(email)
+                .toLowerCase()
+                .match(
+                    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                );
+        };
+
+        function validateStep(step) {
+            let isValid = true;
+            // $(`.step-content[data-step="${step}"]`).find('input, select, textarea').each(function () {
+            //     const fieldType = $(this).attr('type');
+            //     if ($(this).prop('required') && $(this).val() === '') {
+            //         $(this).addClass('is-invalid');
+            //         isValid = false;
+            //     } else if (fieldType === 'email' && !emailPattern.test($(this).val())) {
+            //         $(this).addClass('is-invalid');
+            //         isValid = false;
+            //     } else {
+            //         $(this).removeClass('is-invalid');
+            //     }
+            // });
+            return isValid;
+        }
+
+        nextBtn.click(function () {
+            if (validateStep(currentStep)) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        });
+
+        prevBtn.click(function () {
+            currentStep--;
+            showStep(currentStep);
+        });
+        showStep(currentStep);
+
         function handle_about_us_change() {
             const about_us = $(document).find("#about_us");
             if (about_us.length > 0) {
@@ -41,14 +113,15 @@
         })
 
         const canvas = document.querySelector("canvas");
-        console.log("Canvas", canvas)
         if (canvas) {
             const signaturePad = new SignaturePad(canvas);
 
             $(document).on("click", "#signatureModal .btn-primary", function () {
                 if (!signaturePad.isEmpty()) {
                     const dataURL = signaturePad.toDataURL("image/png");
-                    $(document).find("#signature_preview").attr("src", dataURL);
+                    const signature_preview = $(document).find("#signature_preview");
+                    signature_preview.attr("src", dataURL)
+                    signature_preview.parent().addClass("added");
 
                     fetch(dataURL)
                         .then(res => res.blob())
