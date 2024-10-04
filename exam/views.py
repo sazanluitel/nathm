@@ -1,17 +1,25 @@
+import os
+
 from django.shortcuts import render, redirect, get_object_or_404
+from openpyxl.reader.excel import load_workbook
+from openpyxl.styles import Alignment, PatternFill
+from openpyxl.workbook import Workbook
+
+from ismt.settings import MEDIA_ROOT
 from .forms import *
 from django.views import View
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.urls import reverse
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, FileResponse
 from dashboard.models import Modules, Program
 from students.models import Student
 
+
 class ExamView(View):
     def get(self, request, id=None):
-        if id:  
+        if id:
             exam = get_object_or_404(Exam, id=id)
             form = ExamForm(instance=exam)
         else:
@@ -27,17 +35,18 @@ class ExamView(View):
 
         if form.is_valid():
             form.save()
-            if id:  
+            if id:
                 messages.success(request, "Exam updated successfully.")
-            else: 
+            else:
                 messages.success(request, "Exam added successfully.")
-            return redirect('exam_urls:exam')  
+            return redirect('exam_urls:exam')
 
         messages.error(request, "Please check the form for errors.")
         return render(request, 'dashboard/exam/exam.html', {'form': form})
 
+
 class ExamAjaxView(View):
-    paginate_by = 10  
+    paginate_by = 10
 
     def get(self, request):
         draw = int(request.GET.get("draw", 1))
@@ -88,26 +97,105 @@ class ExamAjaxView(View):
         return exams
 
     def get_action(self, exam):
-        back_url = reverse("routine_admin:exam_routines")
+        back_url = reverse("exam_urls:exam")
         student_list = reverse("exam_urls:studentlist", kwargs={'id': exam.id})
         return f'''
             <form method="post" action="/admin/generic/delete/" class="btn-group">
                 <a href="{student_list}" class="btn btn-success btn-sm">View Students</a>
                 <input type="text" class="d-none" value="{exam.id}" name="_selected_id" />
-                <input type="text" class="d-none" value="exam_routines" name="_selected_type" />
+                <input type="text" class="d-none" value="exam" name="_selected_type" />
                 <input type="text" class="d-none" value="{back_url}" name="_back_url" />
                 <button type="submit" class="btn btn-sm delete btn-danger">Delete</button>
             </form>
         '''
 
+
 class StudentsProgramListView(View):
-    def get(self, request, id):
-        exam = get_object_or_404(Exam, id=id)
+    def get(self, request, *args, **kwargs):
+        exam_id = kwargs.pop('id', None)
+        exam = get_object_or_404(Exam, id=exam_id)
         return render(request, 'dashboard/exam/studentlist.html', {'exam': exam})
+
+
+class StudentsExamTemplateDownloadView(View):
+    def get(self, request, *args, **kwargs):
+        exam_id = kwargs.pop('id', None)
+        exam = get_object_or_404(Exam, id=exam_id)
+        students = Student.objects.filter(program=exam.program)
+
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Student Results"
+
+        ws["A1"] = "ID"
+        ws["B1"] = "Subject"
+        ws["C1"] = "Total Marks"
+        ws["D1"] = "Theory Marks"
+        ws["E1"] = "Practical Marks"
+        ws["F1"] = "Marks Obtained"
+
+        row = 3
+        for student in students:
+            ws.merge_cells(f"A{row}:F{row}")
+            top_left_cell = ws[f"A{row}"]
+            top_left_cell.alignment = Alignment(horizontal="center",
+                                                vertical="center")
+            ws[f"A{row}"] = f"{student.user.get_full_name()} - {student.user.email}"
+            row += 1
+
+            result = student.get_results(exam)
+            if result:
+                for subject in result.subjects.all():
+                    ws[f"A{row}"] = subject.id
+                    ws[f"B{row}"] = subject.module.name
+                    ws[f"C{row}"] = subject.total_marks
+                    ws[f"D{row}"] = subject.theory_marks
+                    ws[f"E{row}"] = subject.practical_marks
+                    ws[f"F{row}"] = subject.marks_obtained
+                    row += 1
+            row += 1
+
+        directory = os.path.join(MEDIA_ROOT, 'exim')
+        os.makedirs(directory, exist_ok=True)
+        file_path = os.path.join(directory, f'exam_{exam_id}.xlsx')
+        wb.save(file_path)
+
+        return FileResponse(open(file_path, 'rb'), as_attachment=True, filename=f'Exam_Results_{exam_id}.xlsx')
+
+    def post(self, request, *args, **kwargs):
+        exam_id = kwargs.pop('id', None)
+        exam = get_object_or_404(Exam, id=exam_id)
+        students = Student.objects.filter(program=exam.program)
+
+        uploaded_file = request.FILES.get("file")
+        if not uploaded_file:
+            return JsonResponse({"error": "No file uploaded."}, status=400)
+
+        # Load the workbook and extract data
+        wb = load_workbook(uploaded_file)
+        ws = wb.active
+
+        data = []
+        for row in ws.iter_rows(min_row=2, values_only=True):
+            if row[1] is not None:
+                subject_id = row[0]
+                try:
+                    subject = Subject.objects.get(id=subject_id)
+                    subject.total_marks = row[2]
+                    subject.theory_marks = row[3]
+                    subject.practical_marks = row[4]
+                    subject.marks_obtained = row[5]
+                    subject.save()
+                except Subject.DoesNotExist:
+                    pass
+
+        messages.success(request, "Results updated successfully.")
+        return redirect("exam_urls:studentlist", id=exam.id)
+
 
 class StudentsProgramAjaxView(View):
     paginate_by = 10
-    
+
     def get(self, request, id):
         draw = int(request.GET.get("draw", 1))
         start = int(request.GET.get("start", 0))
@@ -125,8 +213,8 @@ class StudentsProgramAjaxView(View):
         for student in page_students:
             full_name = f"{student.user.first_name} {student.user.last_name}"
             data.append([
-                full_name,                   
-                self.get_action(student.id, exam.id)  
+                full_name,
+                self.get_action(student.id, exam.id)
             ])
 
         return JsonResponse({
@@ -144,51 +232,39 @@ class StudentsProgramAjaxView(View):
 
 
 class ResultView(View):
-    def get(self, request, exam_id, student_id, *args, **kwargs):
-        # Get the Exam instance
+    def get(self, request, *args, **kwargs):
+        exam_id = kwargs.get("exam_id", None)
+        student_id = kwargs.get("student_id", None)
         exam = get_object_or_404(Exam, id=exam_id)
-        # Get the Student instance
         student = get_object_or_404(Student, id=student_id)
 
-        result_form = ResultForm()
-        subject_formset = SubjectFormSet(queryset=Subject.objects.none()) 
-
+        results = student.get_results(exam)
         return render(request, 'dashboard/exam/result.html', {
-            'result_form': result_form,
-            'subject_formset': subject_formset,
             'exam': exam,
-            'student': student,  # Pass student to the template if needed
+            'student': student,
+            'results': results
         })
 
-    def post(self, request, exam_id, student_id, *args, **kwargs):
-        # Get the Exam instance
+    def post(self, request, *args, **kwargs):
+        exam_id = kwargs.get("exam_id", None)
+        student_id = kwargs.get("student_id", None)
         exam = get_object_or_404(Exam, id=exam_id)
-        # Get the Student instance
         student = get_object_or_404(Student, id=student_id)
 
-        result_form = ResultForm(request.POST)
-        subject_formset = SubjectFormSet(request.POST)
+        results = student.get_results(exam)
+        subjects = results.subjects.all()
+        for subject in subjects:
+            total_marks = request.POST.get(f"subjects[{subject.id}][total_marks]")
+            theory_marks = request.POST.get(f"subjects[{subject.id}][theory_marks]")
+            practical_marks = request.POST.get(f"subjects[{subject.id}][practical_marks]")
+            marks_obtained = request.POST.get(f"subjects[{subject.id}][marks_obtained]")
 
-        if result_form.is_valid() and subject_formset.is_valid():
-            result = result_form.save(commit=False)
-            result.exam = exam 
-            result.student = student 
-            result.save()
+            subject.total_marks = total_marks
+            subject.theory_marks = theory_marks
+            subject.practical_marks = practical_marks
+            subject.marks_obtained = marks_obtained
+            subject.save()
 
-            subject_formset.instance = result
-            subject_formset.save()
-
-            result.calculate_totals()
-
-            messages.success(request, "Result added successfully!")
-            return redirect('exam_urls:exam', id=exam_id)
-
-        else:
-            # Handle form errors
-            messages.error(request, "Please check the forms and try again.")
-            return render(request, 'dashboard/exam/result.html', {
-                'result_form': result_form,
-                'subject_formset': subject_formset,
-                'exam': exam,
-                'student': student,  # Pass student to the template if needed
-            })
+        results.calculate_totals()
+        messages.success(request, "Result updated successfully.")
+        return redirect('exam_urls:results', exam_id=exam_id, student_id=student_id)

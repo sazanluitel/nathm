@@ -1,12 +1,21 @@
 {% extends 'dashboard/admin-base.html' %}
 {% block title %}
-  Students
+  Students - {{ exam }}
 {% endblock %}
 {% block breadcrumb %}
-  Students
+  Students - {{ exam }}
 {% endblock %}
 {% block maintitle %}
-  Students
+  Students - {{ exam }}
+{% endblock %}
+
+{% block rightbutton %}
+    <form class="btn-row text-end" method="post" action="{% url 'exam_urls:export_import' id=exam.id %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="file" class="form-control-file" required>
+        <button type="submit" class="btn btn-success importResult">Import Result</button>
+        <a href="{% url 'exam_urls:export_import' id=exam.id %}" class="btn btn-warning ml-2">Download Template</a>
+    </form>
 {% endblock %}
 
 {% block content %}

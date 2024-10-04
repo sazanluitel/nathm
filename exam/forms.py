@@ -7,7 +7,7 @@ from django.forms import inlineformset_factory
 class ExamForm(forms.ModelForm):
     class Meta:
         model = Exam
-        fields = ['exam_title', 'program', 'semester', 'start_date', 'end_date', 'start_time', 'end_time']
+        fields = ['exam_title', 'program', 'subjects', 'start_date', 'end_date', 'start_time', 'end_time']
         
         widgets = {
             'exam_title': forms.TextInput(attrs={
@@ -20,10 +20,9 @@ class ExamForm(forms.ModelForm):
                 'class': 'form-control',
                 'data-placeholder': 'Select the program'
             }),
-            'semester': forms.Select(attrs={
-                'id': 'semesterSelect', 
+            'subjects': forms.SelectMultiple(attrs={
                 'class': 'form-control',
-                'data-placeholder': 'Select the semester'
+                'data-placeholder': 'Select the subjects'
             }),
             'start_date': forms.DateInput(attrs={
                 'id': 'startDate', 
