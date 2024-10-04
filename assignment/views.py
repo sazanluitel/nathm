@@ -231,7 +231,10 @@ class AssignmentResponseDetailView(View):
             messages.success(request, "Response Updated successfully")
             return redirect('assignment:responses', assignment_id=response.assignment.id)
         else:
-            messages.error(request, "Error occurred while updating response")
+            error_message = "Error occurred while updating response: " + ", ".join(
+                [f"{field}: {error[0]}" for field, error in form.errors.items()]
+            )
+            messages.error(request, error_message)
 
         template = "dashboard/teacher" if request.user.role == "teacher" else "dashboard"
         return render(request, f"{template}/assignment/response_detail.html", context={

@@ -75,6 +75,7 @@ class AssignmentsStudentView(View):
                 output.append(assignment_submit.submission_date.strftime("%d %b, %Y"))
                 output.append(assignment_submit.status)
                 output.append(assignment_submit.marks_obtained)
+                output.append(assignment_submit.remark)
 
             if filter_type == "rejected":
                 output.append(assignment_submit.remark)
@@ -135,6 +136,9 @@ class AssignmentsStudentView(View):
             submitted_assignment.save()
             messages.success(request, "Assignment submitted successfully.")
         else:
-            messages.error(request, "Unable to submit assignment. Please try again.")
+            error_message = "Error occurred while updating response: " + ", ".join(
+                [f"{field}: {error[0]}" for field, error in form.errors.items()]
+            )
+            messages.error(request, error_message)
         return redirect("students:assignments")
 
