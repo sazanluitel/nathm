@@ -1,12 +1,18 @@
-import pandas as pd
+import os
+
 from django.shortcuts import render, redirect, get_object_or_404
+from openpyxl.reader.excel import load_workbook
+from openpyxl.styles import Alignment, PatternFill
+from openpyxl.workbook import Workbook
+
+from ismt.settings import MEDIA_ROOT
 from .forms import *
 from django.views import View
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.urls import reverse
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, FileResponse
 from dashboard.models import Modules, Program
 from students.models import Student
 
@@ -116,27 +122,75 @@ class StudentsExamTemplateDownloadView(View):
         exam_id = kwargs.pop('id', None)
         exam = get_object_or_404(Exam, id=exam_id)
         students = Student.objects.filter(program=exam.program)
-        data = []
+
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Student Results"
+
+        ws["A1"] = "ID"
+        ws["B1"] = "Subject"
+        ws["C1"] = "Total Marks"
+        ws["D1"] = "Theory Marks"
+        ws["E1"] = "Practical Marks"
+        ws["F1"] = "Marks Obtained"
+
+        row = 3
         for student in students:
+            ws.merge_cells(f"A{row}:F{row}")
+            top_left_cell = ws[f"A{row}"]
+            top_left_cell.alignment = Alignment(horizontal="center",
+                                                vertical="center")
+            ws[f"A{row}"] = f"{student.user.get_full_name()} - {student.user.email}"
+            row += 1
+
             result = student.get_results(exam)
             if result:
                 for subject in result.subjects.all():
-                    data.append({
-                        'ID': subject.id,
-                        'Name': student.user.get_full_name(),
-                        'Email': student.user.email,
-                        'Subject': subject.module.name,
-                        'Total Marks': subject.total_marks,
-                        'Theory Marks': subject.theory_marks,
-                        'Practical Marks': subject.practical_marks,
-                        'Marks Obtained': subject.marks_obtained,
-                    })
+                    ws[f"A{row}"] = subject.id
+                    ws[f"B{row}"] = subject.module.name
+                    ws[f"C{row}"] = subject.total_marks
+                    ws[f"D{row}"] = subject.theory_marks
+                    ws[f"E{row}"] = subject.practical_marks
+                    ws[f"F{row}"] = subject.marks_obtained
+                    row += 1
+            row += 1
 
-        df = pd.DataFrame(data)
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename="students_results.xlsx"'
+        directory = os.path.join(MEDIA_ROOT, 'exim')
+        os.makedirs(directory, exist_ok=True)
+        file_path = os.path.join(directory, f'exam_{exam_id}.xlsx')
+        wb.save(file_path)
 
-        return JsonResponse(data, safe=False)
+        return FileResponse(open(file_path, 'rb'), as_attachment=True, filename=f'Exam_Results_{exam_id}.xlsx')
+
+    def post(self, request, *args, **kwargs):
+        exam_id = kwargs.pop('id', None)
+        exam = get_object_or_404(Exam, id=exam_id)
+        students = Student.objects.filter(program=exam.program)
+
+        uploaded_file = request.FILES.get("file")
+        if not uploaded_file:
+            return JsonResponse({"error": "No file uploaded."}, status=400)
+
+        # Load the workbook and extract data
+        wb = load_workbook(uploaded_file)
+        ws = wb.active
+
+        data = []
+        for row in ws.iter_rows(min_row=2, values_only=True):
+            if row[1] is not None:
+                subject_id = row[0]
+                try:
+                    subject = Subject.objects.get(id=subject_id)
+                    subject.total_marks = row[2]
+                    subject.theory_marks = row[3]
+                    subject.practical_marks = row[4]
+                    subject.marks_obtained = row[5]
+                    subject.save()
+                except Subject.DoesNotExist:
+                    pass
+
+        messages.success(request, "Results updated successfully.")
+        return redirect("exam_urls:studentlist", id=exam.id)
 
 
 class StudentsProgramAjaxView(View):
