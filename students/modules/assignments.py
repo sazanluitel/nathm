@@ -110,8 +110,8 @@ class AssignmentsStudentView(View):
         '''
 
     def post(self, request, *args, **kwargs):
-        assignment_id = request.POST.get('assignment_id')
-        submitted_id = request.POST.get('submitted_id')
+        assignment_id = request.POST.get('assignment_id', None)
+        submitted_id = request.POST.get('submitted_id', None)
         assignment = Assignment.objects.get(id=assignment_id)
 
         student = get_object_or_404(Student, user=request.user)
@@ -128,8 +128,7 @@ class AssignmentsStudentView(View):
             submitted_assignment = form.save(commit=False)
             submitted_assignment.assignment = assignment
             submitted_assignment.student = student
-            if submitted_id is None:
-                submitted_assignment.status = "pending"
+            submitted_assignment.status = "pending"
 
             submitted_assignment.save()
             messages.success(request, "Assignment submitted successfully.")
