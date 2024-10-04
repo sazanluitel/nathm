@@ -1,0 +1,46 @@
+{% extends 'dashboard/admin-base.html' %}
+{% load static %}
+{% block title %}Exam{% endblock %}
+{% block breadcrumb %}Exam{% endblock %}
+{% block maintitle %}Exam{% endblock %}
+
+{% block content %}
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">Add Exam</div>
+            <div class="card-body">
+                {% with messages=messages %}
+                    {% include 'dashboard/alert.html' %}
+                {% endwith %}
+
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary w-100">{% if form.instance.id %}Update
+                        Exam{% else %}Add Exam{% endif %}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">Program</div>
+            <div class="card-body">
+                <table
+                        class="table ajaxdatatable table-bordered"
+                        data-ajax="{% url 'exam_urls:ajax' %}"
+                >
+                    <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Program</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

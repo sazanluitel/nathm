@@ -12,6 +12,7 @@ urlpatterns = [
     path("admin/superuser/", include("certificate.urls", namespace="certificate")),
     path('admin/superuser', include('filehub.urls', namespace="filehub")),
     path("admin/superuser/", include("students.admin_urls", namespace="admin_urls")),
+    path("admin/superuser/", include("exam.admin_urls", namespace="exam_urls")),
     path("admin/superuser/", include("notices.admin_urls", namespace="notices_admin_urls")),
     path("admin/superuser/teacher/", include("teacher.urls", namespace="teacher")),
     path("teacher/", include("teacher.teacherurl", namespace="teacherurl")),
