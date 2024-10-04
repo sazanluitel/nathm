@@ -30,9 +30,9 @@
       {% include 'dashboard/alert.html' %}
     {% endwith %}
     
-    <div class="card shadow">
+    <div class="card">
       <div class="card-body">
-        <h1 class="card-title">Section Name: {{ section.section_name }}</h1>
+        <h4 class="card-title">Section Name: {{ section.section_name }}</h4>
         
         <form method="post" action="{% url 'payment:update_fee' %}">
           {% csrf_token %}
@@ -42,7 +42,9 @@
                 <tr>
                   <th>ID</th>
                   <th>Name</th>
+                  <th>Program</th>
                   <th>Payable Amount</th>
+                  <th>Contact</th>
                 </tr>
               </thead>
               <tbody>
@@ -50,6 +52,8 @@
                   <tr>
                     <td>{{ student.id }}</td>
                     <td>{{ student.user.get_full_name }}</td>
+                    <td>{{ student.program.name }}</td>
+                    <td>{{ student.user.email }}</td>
                     <td>
                       <div class="input-group">
                         <input type="number" name="fee_amount_{{ student.id }}" class="form-control" placeholder="Enter Amount" required>

@@ -42,6 +42,7 @@ class DashboardView(View):
         ).order_by("-date")[:5]
 
         notices = Notices.objects.order_by('-id')[:2]
+        notices = Notices.objects.order_by('-id')[:2]
 
         return render(request, self.template_name, context={
             'borrowed_books': borrowed_books,
@@ -296,38 +297,40 @@ class CertificateView(LoginRequiredMixin, View):
         else:
             messages.error(request, "Failed to submit your request.")
         return redirect('students:certificate')
-    
+
+
 class ExamRoutineView(View):
-     def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         return render(request, 'dashboard/student_profile/result.html')
-     
+
+
 class ExamRoutineAjaxView(View):
-    paginate_by = 10 
+    paginate_by = 10
 
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
         start = int(request.GET.get("start", 0))
         length = int(request.GET.get("length", self.paginate_by))
         page_number = (start // length) + 1
-        
+
         student = get_object_or_404(Student, user=request.user)
-        results = Subject.objects.filter(student=student) 
-        
+        results = Subject.objects.filter(student=student)
+
         paginator = Paginator(results, length)
         page_results = paginator.page(page_number)
-        
+
         data = []
         for result in page_results:
-            exam = result.exam 
+            exam = result.exam
             subjects = ", ".join([subject.name for subject in result.subjects.all()])
             data.append([
-                exam.name,  
-                subjects,  
+                exam.name,
+                subjects,
                 result.total_obtained_marks,
-                result.percentage, 
+                result.percentage,
                 self.get_action(result.id)
             ])
-        
+
         return JsonResponse({
             "draw": draw,
             "recordsTotal": paginator.count,
@@ -341,11 +344,6 @@ class ExamRoutineAjaxView(View):
         return f'''
             <a href="{result_url}" class="btn btn-primary btn-sm">View Result</a>
         '''
-
-        
-
-
-
 
 
 # class EducationalHistoryJsons(View):
@@ -481,4 +479,15 @@ class PaymentSupport(View):
     template_name = 'dashboard/payment/payment_support.html'
 
     def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {})
+
+
+class PaymentSuccessView(View):
+    template_name = 'dashboard/payment/payment_success.html'
+
+    def get(self, request, *args, **kwargs):
+        student = get_object_or_404(Student, user=request.user)
+        student.payment_due = 0.0
+        student.save()
+
         return render(request, self.template_name, {})

@@ -76,6 +76,10 @@
                                 <th>Submitted At</th>
                                 <th>Status</th>
                                 <th>Marks</th>
+                                <th>Reason</th>
+                            {% endif %}
+                            {% if status == "rejected" %}
+                                <th>Reason</th>
                             {% endif %}
 
                             <th>Actions</th>

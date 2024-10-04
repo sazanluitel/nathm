@@ -67,15 +67,18 @@ class AssignmentsStudentView(View):
             output = [assignment.title, assignment.due_date.strftime("%d %b, %Y"),
                       assignment.module.name if assignment.module else "N/A"]
 
+            assignment_submit = AssignmentSubmit.objects.get(assignment=assignment, student=student)
             if filter_type == 'approved':
-                assignment_submit = AssignmentSubmit.objects.get(assignment=assignment, student=student)
                 output.append(assignment_submit.marks_obtained)
 
             if filter_type == "submitted":
-                assignment_submit = AssignmentSubmit.objects.get(assignment=assignment, student=student)
                 output.append(assignment_submit.submission_date.strftime("%d %b, %Y"))
                 output.append(assignment_submit.status)
                 output.append(assignment_submit.marks_obtained)
+                output.append(assignment_submit.remark)
+
+            if filter_type == "rejected":
+                output.append(assignment_submit.remark)
 
             output.append(self.get_action(assignment, student))
             data.append(output)
@@ -110,8 +113,8 @@ class AssignmentsStudentView(View):
         '''
 
     def post(self, request, *args, **kwargs):
-        assignment_id = request.POST.get('assignment_id')
-        submitted_id = request.POST.get('submitted_id')
+        assignment_id = request.POST.get('assignment_id', None)
+        submitted_id = request.POST.get('submitted_id', None)
         assignment = Assignment.objects.get(id=assignment_id)
 
         student = get_object_or_404(Student, user=request.user)
@@ -128,12 +131,14 @@ class AssignmentsStudentView(View):
             submitted_assignment = form.save(commit=False)
             submitted_assignment.assignment = assignment
             submitted_assignment.student = student
-            if submitted_id is None:
-                submitted_assignment.status = "pending"
+            submitted_assignment.status = "pending"
 
             submitted_assignment.save()
             messages.success(request, "Assignment submitted successfully.")
         else:
-            messages.error(request, "Unable to submit assignment. Please try again.")
+            error_message = "Error occurred while updating response: " + ", ".join(
+                [f"{field}: {error[0]}" for field, error in form.errors.items()]
+            )
+            messages.error(request, error_message)
         return redirect("students:assignments")
 
