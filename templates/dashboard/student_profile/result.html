@@ -1,31 +1,50 @@
-{% extends "dashboard/bases/student-profile.html" %}
+{% extends 'dashboard/bases/student-profile.html' %}
 {% load static %}
-{% block title %}Exam Result{% endblock title %}
-{% block breadcrumb %}Exam Result{% endblock breadcrumb %}
-{% block maintitle %}Exam Result{% endblock maintitle %}
-
-{% block content %}
-<div class="col-lg-5">
-    <div class="card">
-        <div class="card-header">Sections</div>
-        <div class="card-body">
-            <table
-                  class="table ajaxdatatable table-bordered"
-                    data-ajax="{% url 'students:resultajax' %}" 
-            >
-                <thead>
-                <tr>
-                    <th>Section</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-            </table>
-        </div>
-    </div>
-</div>
-
-
-
+{% block title %}
+  Exam Result
+{% endblock %}
+{% block breadcrumb %}
+  Exam Result
+{% endblock %}
+{% block maintitle %}
+  Exam Result
 {% endblock %}
 
-
+{% block content %}
+  <div class="col-lg-5">
+    <div class="card">
+      <div class="card-header">Sections</div>
+      <div class="card-body">
+        <table class="table ajaxdatatable table-bordered" data-ajax="{% url 'students:resultajax' %}">
+          <thead>
+            <tr>
+              <th>Section</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header">Result</div>
+      <div class="card-body">
+        <table class="table table-bordered" id="subjectsTable">
+            <thead>
+            <tr>
+                <th style="width: 40%;">Subject</th>
+                <th style="width: 10%;">Total Marks</th>
+                <th style="width: 10%;">Theory Marks</th>
+                <th style="width: 10%;">Practical Marks</th>
+                <th style="width: 10%;">Marks Obtained</th>
+            </tr>
+            </thead>
+            <tbody>
+            
+            </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

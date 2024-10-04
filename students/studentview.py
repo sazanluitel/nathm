@@ -272,7 +272,7 @@ class ExamRoutineAjaxView(View):
         page_number = (start // length) + 1
         
         student = get_object_or_404(Student, user=request.user)
-        results = Result.objects.filter(student=student) 
+        results = Subject.objects.filter(student=student) 
         
         paginator = Paginator(results, length)
         page_results = paginator.page(page_number)
@@ -286,7 +286,7 @@ class ExamRoutineAjaxView(View):
                 subjects,  
                 result.total_obtained_marks,
                 result.percentage, 
-                # self.get_action(result.id)
+                self.get_action(result.id)
             ])
         
         return JsonResponse({
@@ -296,12 +296,12 @@ class ExamRoutineAjaxView(View):
             "data": data,
         }, status=200)
 
-    # def get_action(self, result_id):
-    #     """Generate the action buttons for each result entry (e.g., View or Update Result)."""
-    #     result_url = reverse("exam_urls:results_detail", kwargs={'result_id': result_id})
-    #     return f'''
-    #         <a href="{result_url}" class="btn btn-primary btn-sm">View Result</a>
-    #     '''
+    def get_action(self, result_id):
+        """Generate the action buttons for each result entry (e.g., View or Update Result)."""
+        result_url = reverse("#", kwargs={'result_id': result_id})
+        return f'''
+            <a href="{result_url}" class="btn btn-primary btn-sm">View Result</a>
+        '''
 
         
 
