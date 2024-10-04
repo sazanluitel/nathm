@@ -7,9 +7,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.urls import reverse
 from students.models import Sections
-from .models import PaymentHistory
-from .forms import PaymentHistoryForm, StudentPaymentForm
-from userauth.models import User
+from .forms import StudentPaymentForm
 from django.contrib import messages
 
 
@@ -56,7 +54,7 @@ class PaymentAjax(View):
         # Apply search filter
         if search_value:
             sections = sections.filter(
-                Q(section_name__icontains=search_value)  # Adjust based on your model
+                Q(section_name__icontains=search_value)
             )
 
         paginator = Paginator(sections, length)
