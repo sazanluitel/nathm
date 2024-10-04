@@ -117,15 +117,18 @@ class AssignmentsStudentView(View):
         student = get_object_or_404(Student, user=request.user)
         if submitted_id:
             submitted_assignment = AssignmentSubmit.objects.get(id=submitted_id)
-            form = AssignmentSubmitForm(request.POST, request.FILES, instance=submitted_assignment)
+            if submitted_assignment:
+                form = AssignmentSubmitForm(request.POST, request.FILES, instance=submitted_assignment)
+            else:
+                form = AssignmentSubmitForm(request.POST, request.FILES)
         else:
             form = AssignmentSubmitForm(request.POST, request.FILES)
         if form.is_valid():
             submitted_assignment = form.save(commit=False)
-            if submitted_id is None:
-                submitted_assignment.assignment = assignment
-                submitted_assignment.student = student
-            else:
+            submitted_assignment.assignment = assignment
+            submitted_assignment.student = student
+
+            if submitted_id is not None:
                 submitted_assignment.status = "pending"
             submitted_assignment.save()
             messages.success(request, "Assignment submitted successfully.")

@@ -1,0 +1,31 @@
+{% extends "dashboard/bases/student-profile.html" %}
+{% load static %}
+{% block title %}Exam Result{% endblock title %}
+{% block breadcrumb %}Exam Result{% endblock breadcrumb %}
+{% block maintitle %}Exam Result{% endblock maintitle %}
+
+{% block content %}
+<div class="col-lg-5">
+    <div class="card">
+        <div class="card-header">Sections</div>
+        <div class="card-body">
+            <table
+                  class="table ajaxdatatable table-bordered"
+                    data-ajax="{% url 'students:resultajax' %}" 
+            >
+                <thead>
+                <tr>
+                    <th>Section</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+
