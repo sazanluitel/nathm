@@ -517,6 +517,9 @@
 
     $(document).on('click', '.updateFeeModal', function () {
         const studentId = $(this).data('studentid');
+        const paymentFee = $(this).data('fee');
+
+        $(document).find('#id_payment_due').val(paymentFee).trigger("change");
         $(document).find('#paymentForm input[name="student_id"]').val(studentId).trigger("change");
         $(document).find("#paymentModalToggle").modal("show");
     });

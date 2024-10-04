@@ -127,7 +127,7 @@
                     <form id="paymentForm" method="post" action="{% url 'payment:update_fee' %}">
                         {% csrf_token %}
                         <input type="hidden" name="student_id"/>
-                        {{ pending_payment_form.as_p }}
+                        {{ payment_form.as_p }}
 
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary" id="savePayment">Save changes</button>
