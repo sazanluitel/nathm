@@ -52,11 +52,12 @@ class DashboardView(View):
             'notices': notices,
             'routines': today_routines,
             'student': student,
-            'books': books  
+            'books': books
         })
 
+
 class BookRequestView(View):
-     def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         id = kwargs.get("id", None)
         if id:
             library = get_object_or_404(Library, id=id)
@@ -65,8 +66,8 @@ class BookRequestView(View):
             form = LibraryForm(request.POST)
 
         if form.is_valid():
-            library_instance = form.save(commit=False) 
-            library_instance.borrowed_by = get_object_or_404(Student, user=request.user) 
+            library_instance = form.save(commit=False)
+            library_instance.borrowed_by = get_object_or_404(Student, user=request.user)
             library_instance.save()
             messages.success(request, 'Request added successfully')
             return redirect('students:studentdashboard')

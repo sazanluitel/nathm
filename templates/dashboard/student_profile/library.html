@@ -1,42 +1,43 @@
 {% extends "dashboard/bases/student-profile.html" %}
-{% block title %}Library{% endblock title %}
-{% block breadcrumb %}Library{% endblock breadcrumb %}
-{% block maintitle %}Library Record{% endblock maintitle %}
+{% block title %}Borrowed Books{% endblock title %}
+{% block breadcrumb %}Borrowed Books{% endblock breadcrumb %}
+{% block maintitle %}Borrowed Books{% endblock maintitle %}
 
 {% block content %}
-<div class="col-sm-12">
-    {% with messages=messages %}
-        {% include 'dashboard/alert.html' %}
-    {% endwith %}
-    
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Borrowed Books</h5>
-            {% if borrowed_books %}
-                <table class="table table-bordered">
-                    <thead>
+    <div class="col-sm-12">
+        {% with messages=messages %}
+            {% include 'dashboard/alert.html' %}
+        {% endwith %}
+
+        <div class="card mb-0">
+            <div class="card-body">
+                {% if borrowed_books %}
+                    <table class="table table-bordered">
+                        <thead>
                         <tr>
                             <th>Book Title</th>
                             <th>Borrow Date</th>
-                            <th>Return Date</th>
-                            <th>Status</th>
+                            <th>Action</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                        </thead>
+                        <tbody>
                         {% for record in borrowed_books %}
                             <tr>
-                                <td>{{ record.book.title }}</td> 
+                                <td>{{ record.book.name }}</td>
                                 <td>{{ record.borrow_date }}</td>
-                                <td>{{ record.return_date|default:"Not Returned" }}</td>
-                                <td>{{ record.get_status_display }}</td>
+                                <td>
+                                    {% if record.book.e_book %}
+                                        <a target="_blank" href="{{ record.book.file }}" class="btn btn-primary">Open Book</a>
+                                    {% endif %}
+                                </td>
                             </tr>
                         {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>No borrowed books found.</p>
-            {% endif %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>No borrowed books found.</p>
+                {% endif %}
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
