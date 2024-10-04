@@ -103,7 +103,9 @@
 
                         <div class="from-group mb-3">
                             <label for="college_email" class="form-label d-block">Section</label>
-                            <select class="form-control noselect2 w-100 select2ajax" data-ajax="{% url 'student_admin:section_select_json' %}" data-placeholder name="section_id"></select>
+                            <select class="form-control noselect2 w-100 select2ajax"
+                                    data-ajax="{% url 'student_admin:section_select_json' %}" data-placeholder
+                                    name="section_id"></select>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100">Assign Users</button>
@@ -112,5 +114,27 @@
             </div>
         </div>
     </div>
-{% include "dashboard/payment/payment.html" %}
+
+    <div class="modal fade" id="paymentModalToggle" tabindex="-1" aria-labelledby="paymentModalToggleLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentModalToggleLabel">Update Fee</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="paymentForm" method="post" action="{% url 'payment:update_fee' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="student_id"/>
+                        {{ pending_payment_form.as_p }}
+
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="savePayment">Save changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
