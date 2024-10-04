@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
-
+from payment.models import PaymentHistory
 from mail.modules.welcome import WelcomeMessage
 from students.forms import StudentAddForm, StudentEditForm
 from userauth.forms import *
@@ -15,6 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from students.forms import StudentForm
 from django.http import JsonResponse
 from django.urls import reverse
+from payment.forms import PaymentHistoryForm
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -137,8 +138,13 @@ class StudentEditView(View):
 class StudentList(View):
     template_name = 'dashboard/students/list.html'
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        payment_form = PaymentHistoryForm()
 
+        context = {
+            'payment_form': payment_form,
+        }
+        
+        return render(request, self.template_name, context)
 
 class StudentAjax(View):
     def get(self, request, *args, **kwargs):
@@ -208,6 +214,7 @@ class StudentAjax(View):
         edit_url = reverse('student_admin:edit', kwargs={'id': student_id})
         delete_url = reverse('generic:delete')
         backurl = reverse('student_admin:list')
+        fee_url = reverse('payment:update_fee', kwargs={'id': student_id})
 
         if not student.college_email:
             ids_button = (f'<button type="button" class="btn btn-primary btn-sm addIdsModal" '
@@ -216,18 +223,21 @@ class StudentAjax(View):
             ids_button = (f'<button type="button" class="btn btn-primary btn-sm addIdsModal" '
                           f'data-studentid="{student_id}" data-email="{student.college_email}"'
                           f' data-teamid="{student.team_id}">Update IDs</button>')
+        fee_button = (f'<button type="button" class="btn btn-warning btn-sm updateFeeModal" '
+              f'data-bs-toggle="modal" data-bs-target="#paymentModalToggle" '
+              f'data-studentid="{student_id}" data-url="{fee_url}">Update Fee</button>')
 
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
                 <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
                 {ids_button}
+                {fee_button} 
                 <input type="hidden" name="_selected_id" value="{student_id}" />
                 <input type="hidden" name="_selected_type" value="student" />
                 <input type="hidden" name="_back_url" value="{backurl}" />
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
         '''
-
 
 class StudentFilters(View):
     def get(self, request, *args, **kwargs):

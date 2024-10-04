@@ -1,0 +1,21 @@
+<!-- Fee Modal -->
+<div class="modal fade" id="paymentModalToggle" tabindex="-1" aria-labelledby="paymentModalToggleLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paymentModalToggleLabel">Update Fee</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="paymentForm" method="post" action="{% url 'payment:update_fee' 0 %}">
+                    {% csrf_token %}
+                    {{ payment_form.as_p }}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="savePayment">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>

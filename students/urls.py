@@ -15,6 +15,9 @@ urlpatterns = [
     
     path('library/', StudentLibraryView.as_view(), name='library'),
     path('certificate/', CertificateView.as_view(), name='certificate'),
+    path('payment-support/', PaymentSupport.as_view(), name='paymenysupport'),
+
+
 
     path("assignments/", AssignmentsStudentView.as_view(), name="assignments"),
     path("assignments/<status>/", AssignmentsStudentView.as_view(), name="assignments_status"),
