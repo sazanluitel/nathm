@@ -6,29 +6,25 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.urls import reverse
-from students.models import Sections 
-from .models import PaymentHistory
-from .forms import PaymentHistoryForm, StudentPaymentForm
-from userauth.models import User
+from students.models import Sections
+from .forms import StudentPaymentForm
 from django.contrib import messages
-
 
 
 class UpdateFeeView(View):
     def get(self, request, *args, **kwargs):
         student_id = kwargs.get('student_id')
-        student = get_object_or_404(Student, id=student_id)
         form = StudentPaymentForm()
-        
+
         context = {
-            'payment_form': form,
+            'pending_payment_form': form,
             'student_id': student_id,
         }
         return render(request, 'dashboard/students/list.html', context)
 
     def post(self, request, *args, **kwargs):
-        student_id = kwargs.get('student_id', None)
-        student = get_object_or_404(Student)
+        student_id = request.POST.get('student_id', None)
+        student = get_object_or_404(Student, id=student_id)
         form = StudentPaymentForm(request.POST, instance=student)
 
         if form.is_valid():
@@ -36,13 +32,15 @@ class UpdateFeeView(View):
             messages.success(request, "Fee updated successfully")
         else:
             messages.error(request, "Unable to update fee.")
+
         return redirect('student_admin:list')
-            
+
 
 class PaymentListView(View):
     def get(self, request):
         return render(request, 'dashboard/payment/payment_page.html')
-    
+
+
 class PaymentAjax(View):
     def get(self, request):
         draw = int(request.GET.get("draw", 1))
@@ -52,11 +50,11 @@ class PaymentAjax(View):
         page_number = (start // length) + 1
 
         sections = Sections.objects.order_by("-id")
-        
+
         # Apply search filter
         if search_value:
             sections = sections.filter(
-                Q(section_name__icontains=search_value)  # Adjust based on your model
+                Q(section_name__icontains=search_value)
             )
 
         paginator = Paginator(sections, length)
@@ -91,10 +89,12 @@ class PaymentAjax(View):
             </div>
         '''
 
+
 class StudentListView(View):
     def get(self, request, section_id):
         section = get_object_or_404(Sections, id=section_id)
-        students = Student.objects.filter(section=section)  # Assuming there's a foreign key to Sections in Student model
+        students = Student.objects.filter(
+            section=section)  # Assuming there's a foreign key to Sections in Student model
         return render(request, 'dashboard/payment/student_list.html', {
             'section': section,
             'students': students,

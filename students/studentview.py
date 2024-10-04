@@ -213,26 +213,29 @@ class StudentRoutineView(View):
     def get(self, request, *args, **kwargs):
         student = get_object_or_404(Student, user=request.user)
         section = student.section
-        
+
         routines = Routine.objects.filter(section=section)
-        
+
         return render(request, "dashboard/student_profile/routine.html", {
             "routines": routines,
             "section": section
         })
+
 
 class StudentLibraryView(View):
     template_name = 'dashboard/student_profile/library.html'
 
     def get(self, request, *args, **kwargs):
         student = get_object_or_404(Student, user=request.user)
-        
+
         borrowed_books = Library.objects.filter(borrowed_by=student)
 
         context = {
             'borrowed_books': borrowed_books
         }
         return render(request, self.template_name, context)
+
+
 class CertificateView(LoginRequiredMixin, View):
     template_name = 'dashboard/student_profile/certificate.html'
 

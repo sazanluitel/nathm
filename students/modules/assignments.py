@@ -123,13 +123,14 @@ class AssignmentsStudentView(View):
                 form = AssignmentSubmitForm(request.POST, request.FILES)
         else:
             form = AssignmentSubmitForm(request.POST, request.FILES)
+
         if form.is_valid():
             submitted_assignment = form.save(commit=False)
             submitted_assignment.assignment = assignment
             submitted_assignment.student = student
-
-            if submitted_id is not None:
+            if submitted_id is None:
                 submitted_assignment.status = "pending"
+
             submitted_assignment.save()
             messages.success(request, "Assignment submitted successfully.")
         else:

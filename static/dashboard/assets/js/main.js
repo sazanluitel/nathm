@@ -510,14 +510,14 @@
         }
     }
 
-    if ($(document).find("#id_available").length > 0) {
+    if ($(document).find("#id_e_book").length > 0) {
         handle_e_book_system();
     }
+    $(document).on('change', '#id_e_book', handle_e_book_system);
 
     $(document).on('click', '.updateFeeModal', function () {
-        var studentId = $(this).data('studentid');
-        console.log(studentId);
-        $('#paymentForm').find('input[name="user_id"]').val(studentId);
+        const studentId = $(this).data('studentid');
+        $(document).find('#paymentForm input[name="student_id"]').val(studentId).trigger("change");
         $(document).find("#paymentModalToggle").modal("show");
     });
 
