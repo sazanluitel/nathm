@@ -9,35 +9,44 @@ from django.urls import reverse
 from students.models import Sections 
 from .models import PaymentHistory
 from .forms import PaymentHistoryForm
+from userauth.models import User
+from django.contrib import messages
 
 
-# Create your views here.
+
 class UpdateFeeView(View):
-    def post(self, request, id):
-        payment_history = get_object_or_404(PaymentHistory, id=id)
+    def get(self, request, student_id):
+        student = get_object_or_404(Student, id=student_id)
+        payment_history = get_object_or_404(PaymentHistory, student=student)
+
+        form = PaymentHistoryForm(instance=payment_history)
+        
+        context = {
+            'payment_form': form,
+            'student_id': student_id,
+        }
+        return render(request, 'dashboard/students/list.html', context)
+
+    def post(self, request):
+        student_id = request.POST.get("user_id", None)  # Changed from student_id
+        user = get_object_or_404(User, student__id=student_id)
+        student = get_object_or_404(Student, id=student_id)
+        payment_history = get_object_or_404(PaymentHistory, student=student)
 
         form = PaymentHistoryForm(request.POST, instance=payment_history)
 
         if form.is_valid():
-            payment_history = form.save()
-            return JsonResponse({
-                'success': True,
-                'message': 'Payment history updated successfully!',
-                'data': {
-                    'id': payment_history.id,
-                    'amount': payment_history.amount,
-                    'payment_method': payment_history.payment_method,
-                    'status': payment_history.status,
-                    'created_at': payment_history.created_at.strftime("%Y-%m-%d %H:%M:%S"),
-                    'updated_at': payment_history.updated_at.strftime("%Y-%m-%d %H:%M:%S"),
-                }
-            })
+            form.save()
+            messages.success(request, "Fee updated successfully")
+            return redirect('student_admin:list')
         else:
-            # Return form errors as JSON response
-            return JsonResponse({
-                'success': False,
-                'errors': form.errors
-            }, status=400)
+            messages.error(request, "Please correct the errors.")
+            # Return the same form with errors to the template
+            context = {
+                'payment_form': form,
+                'student_id': student_id,
+            }
+            return render(request, 'dashboard/students/list.html', context)
 
 class PaymentListView(View):
     def get(self, request):
