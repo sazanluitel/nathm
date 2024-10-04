@@ -138,8 +138,8 @@
                 }
             ],
             table_class_list: [
-                {title: 'Table Bordered', value: 'table table-bordered'},
-                {title: 'None', value: ''}
+                { title: 'Table Bordered', value: 'table table-bordered' },
+                { title: 'None', value: '' }
             ],
             noneditable_noneditable_class: 'alert',
             min_height: 300
@@ -453,15 +453,15 @@
     $(document).on('click', '.updateFeeModal', function () {
         var studentId = $(this).data('studentid');
         var url = $(this).data('url');
-        
+
         $.ajax({
-            url: 'student/update_fee/<int:id>', 
+            url: 'student/update_fee/<int:id>',
             type: 'GET',
             success: function (data) {
                 $('#paymentModalToggle .modal-body').html(data.form);
-                
+
                 $('#paymentModalToggleLabel').text('Update Fee for Student ID: ' + studentId);
-                
+
                 $('#paymentModalToggle').modal('show');
             },
             error: function (error) {
@@ -536,5 +536,12 @@
         handle_e_book_system();
     }
 
-    $(document).on("change", "#id_e_book", handle_e_book_system);
+    $('.updateFeeModal').on('click', function () {
+        var studentId = $(this).data('studentid');
+        var actionUrl = $(this).data('url');
+
+        $('#paymentForm').attr('action', actionUrl.replace('0', studentId));
+    });
+
+
 })(jQuery);

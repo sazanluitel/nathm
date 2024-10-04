@@ -1,0 +1,59 @@
+{% extends "dashboard/bases/teacher-profile.html" %}
+{% block title %}Assignments Responses{% endblock title %}
+{% block breadcrumb %}Responses - {{ assignment }}{% endblock breadcrumb %}
+{% block maintitle %}Responses - {{ assignment }}{% endblock maintitle %}
+
+{% block rightbutton %}
+    <div class="text-end">
+        <div class="btn-group" role="group" aria-label="Basic outlined example">
+            <a href="{% url 'assignment:responses' assignment_id=assignment.id %}" type="button"
+               class="btn btn-outline-primary {% if not status %}active{% endif %}">
+               All ({{ counts.all }})
+            </a>
+
+            <a href="{% url 'assignment:responses_status' assignment_id=assignment.id status='pending' %}" type="button"
+               class="btn btn-outline-warning {% if status == 'pending' %}active{% endif %}">
+               Pending ({{ counts.pending }})
+            </a>
+
+            <a href="{% url 'assignment:responses_status' assignment_id=assignment.id status='approved' %}" type="button"
+               class="btn btn-outline-success {% if status == 'approved' %}active{% endif %}">
+               Approved ({{ counts.approved }})
+            </a>
+
+            <a href="{% url 'assignment:responses_status' assignment_id=assignment.id status='rejected' %}" type="button"
+               class="btn btn-outline-danger {% if status == 'rejected' %}active{% endif %}">
+               Rejected ({{ counts.rejected }})
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="col-sm-12">
+        {% with messages=messages %}
+            {% include 'dashboard/alert.html' %}
+        {% endwith %}
+
+        <div class="card">
+            <div class="card-body">
+                <div class="dt-responsive">
+                    <table
+                            class="ajaxdatatable table table-bordered nowrap"
+                            data-nodata="No Assignments Found"
+                    >
+                        <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Sections</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -399,3 +399,9 @@ class ExamRoutineView(View):
 #             "recordsFiltered": paginator.count,
 #             "data": data,
 #         }, status=200)
+
+class PaymentSupport(View):
+    template_name = 'dashboard/payment/payment_support.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {})

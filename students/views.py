@@ -15,6 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from students.forms import StudentForm
 from django.http import JsonResponse
 from django.urls import reverse
+from payment.forms import PaymentHistoryForm
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -137,8 +138,13 @@ class StudentEditView(View):
 class StudentList(View):
     template_name = 'dashboard/students/list.html'
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        payment_form = PaymentHistoryForm()
 
+        context = {
+            'payment_form': payment_form,
+        }
+        
+        return render(request, self.template_name, context)
 
 class StudentAjax(View):
     def get(self, request, *args, **kwargs):
@@ -208,7 +214,7 @@ class StudentAjax(View):
         edit_url = reverse('student_admin:edit', kwargs={'id': student_id})
         delete_url = reverse('generic:delete')
         backurl = reverse('student_admin:list')
-        fee_url = reverse('student_admin:update_fee', kwargs={'id': student_id})
+        fee_url = reverse('payment:update_fee', kwargs={'id': student_id})
 
         if not student.college_email:
             ids_button = (f'<button type="button" class="btn btn-primary btn-sm addIdsModal" '
@@ -221,7 +227,6 @@ class StudentAjax(View):
               f'data-bs-toggle="modal" data-bs-target="#paymentModalToggle" '
               f'data-studentid="{student_id}" data-url="{fee_url}">Update Fee</button>')
 
-
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
                 <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
@@ -233,25 +238,6 @@ class StudentAjax(View):
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
         '''
-
-
-class UpdateFeeView(View):
-    def post(self, request, id):
-        student = get_object_or_404(Student, id=id)
-        amount = request.POST.get('amount')
-        remarks = request.POST.get('remarks', '')
-
-        payment, created = PaymentHistory.objects.update_or_create(
-            student=student,
-            defaults={
-                'amount': amount,
-                'remarks': remarks,
-                'payment_date': timezone.now(),  
-            }
-        )
-
-        return JsonResponse({'success': True})
-
 
 class StudentFilters(View):
     def get(self, request, *args, **kwargs):
@@ -613,3 +599,4 @@ class SectionView(View):
                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </form>
                 '''
+

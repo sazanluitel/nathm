@@ -61,20 +61,28 @@ $(document).ready(function () {
         $('#id_english_test-TOTAL_FORMS').val(testFormCount);
     });
 
-    $('#libraryForm').on('submit', function (event) {
-        event.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: '{% url "students:studentstatus" %}',  // Make sure this is the correct URL for the form submission
-            data: $(this).serialize(),
-            success: function (response) {
-                $('#libraryModal').modal('hide');  // Close modal on success
-                alert('Book request submitted successfully!');
-                location.reload();  // Refresh page to update counts
-            },
-            error: function (xhr) {
-                alert('There was an error submitting your request.');
-            }
-        });
-    });
+    // $('#libraryForm').on('submit', function (event) {
+    //     event.preventDefault();
+    //     $.ajax({
+    //         type: 'POST',
+    //         url: '{% url "students:studentstatus" %}',  // Make sure this is the correct URL for the form submission
+    //         data: $(this).serialize(),
+    //         success: function (response) {
+    //             $('#libraryModal').modal('hide');  // Close modal on success
+    //             alert('Book request submitted successfully!');
+    //             location.reload();  // Refresh page to update counts
+    //         },
+    //         error: function (xhr) {
+    //             alert('There was an error submitting your request.');
+    //         }
+    //     });
+    // });
+
+    $(document).on("click", ".submitAssignmentBtn", function(){
+        const assignmentId = $(this).data('id');
+        const submissionId = $(this).data('submission-id');
+        $(document).find("#assignmentId").val(assignmentId);
+        $(document).find("#submittedId").val(submissionId);
+        $(document).find("#submitAssignmentModal").modal("show");
+    })
 });

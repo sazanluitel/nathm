@@ -1,0 +1,18 @@
+{% extends "dashboard/bases/teacher-profile.html" %}
+{% block title %}Add Assignments{% endblock title %}
+{% block breadcrumb %}Add Assignments{% endblock breadcrumb %}
+{% block maintitle %}Add Assignments{% endblock maintitle %}
+
+{% block content %}
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary w-100">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
