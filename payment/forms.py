@@ -19,3 +19,6 @@ class StudentPaymentForm(forms.ModelForm):
         labels = {
             "payment_due": "Payment Due",
         }
+        widgets = {
+            'payment_due': forms.NumberInput(attrs={'class': 'form-control'}),
+        }

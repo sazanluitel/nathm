@@ -18,7 +18,7 @@ class BookForm(forms.ModelForm):
                 attrs={'class': 'form-control', 'id': 'publication_house', 'placeholder': 'Publication House'}),
             'available_quantity': forms.NumberInput(
                 attrs={'class': 'form-control', 'id': 'available_quantity', 'placeholder': 'Available Quantity'}),
-            'program': forms.Select(
+            'program': forms.SelectMultiple(
                 attrs={'class': 'form-control', 'id': 'program', 'data-placeholder': 'Please select a program'}),
             'isbn': forms.TextInput(
                 attrs={'class': 'form-control', 'id': 'isbn', 'placeholder': 'ISBN'}),

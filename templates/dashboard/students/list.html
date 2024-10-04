@@ -35,8 +35,15 @@
         {% endwith %}
         <div class="card">
             <div class="card-body">
+                <div class="btn-group">
+                    <a href="{% url 'student_admin:list' %}" class="btn btn-outline-primary {% if not filter_by %}active{% endif %}">All</a>
+                    <a href="{% url 'student_admin:list_filter' filter_by="admin" %}" class="btn btn-outline-warning {% if filter_by == "admin" %}active{% endif %}">Dashboard</a>
+                    <a href="{% url 'student_admin:list_filter' filter_by="online" %}" class="btn btn-outline-secondary {% if filter_by == "online" %}active{% endif %}">Online Form</a>
+                    <a href="{% url 'student_admin:list_filter' filter_by="kiosk" %}" class="btn btn-outline-success {% if filter_by == "kiosk" %}active{% endif %}">Kiosk Form</a>
+                </div>
+
                 <div class="student_lists_table">
-                    <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'student_admin:ajax' %}"
+                    <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'student_admin:ajax' filter_by=filter_by %}"
                            data-nodata="No Data Found">
                         <thead>
                         <tr>
@@ -127,7 +134,7 @@
                     <form id="paymentForm" method="post" action="{% url 'payment:update_fee' %}">
                         {% csrf_token %}
                         <input type="hidden" name="student_id"/>
-                        {{ pending_payment_form.as_p }}
+                        {{ payment_form.as_p }}
 
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary" id="savePayment">Save changes</button>

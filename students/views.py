@@ -15,7 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from students.forms import StudentForm
 from django.http import JsonResponse
 from django.urls import reverse
-from payment.forms import PaymentHistoryForm
+from payment.forms import PaymentHistoryForm, StudentPaymentForm
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -137,17 +137,22 @@ class StudentEditView(View):
 
 class StudentList(View):
     template_name = 'dashboard/students/list.html'
+
     def get(self, request, *args, **kwargs):
-        payment_form = PaymentHistoryForm()
+        filter_by = kwargs.get('filter_by', None)
+        payment_form = StudentPaymentForm()
 
         context = {
             'payment_form': payment_form,
+            'filter_by': filter_by
         }
-        
+
         return render(request, self.template_name, context)
+
 
 class StudentAjax(View):
     def get(self, request, *args, **kwargs):
+        filter_by = kwargs.get('filter_by', None)
         draw = int(request.GET.get("draw", 1))
         start = int(request.GET.get("start", 0))
         length = int(request.GET.get("length", 10))
@@ -158,6 +163,12 @@ class StudentAjax(View):
         page_number = (start // length) + 1
 
         students = Student.objects.select_related('campus', 'department', 'program').order_by("-id")
+        if filter_by == "kiosk":
+            students = students.filter(kiosk_id__isnull=False)
+        elif filter_by == "admin":
+            students = students.filter(kiosk_id__isnull=True)
+        elif filter_by == "online":
+            students = students.filter(kiosk_id="hello")
 
         if campus_id:
             students = students.filter(campus_id=campus_id)
@@ -224,9 +235,9 @@ class StudentAjax(View):
                           f'data-studentid="{student_id}" data-email="{student.college_email}"'
                           f' data-teamid="{student.team_id}">Update IDs</button>')
         fee_button = (
-                        f'<button type="button" class="btn btn-primary updateFeeModal" '
-                        f'data-studentid="{student_id}">Update Fee</button>'
-                    )
+            f'<button type="button" class="btn btn-primary updateFeeModal" '
+            f'data-studentid="{student_id}" data-fee="{student.payment_due}">Update Fee</button>'
+        )
 
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
@@ -239,6 +250,7 @@ class StudentAjax(View):
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
         '''
+
 
 class StudentFilters(View):
     def get(self, request, *args, **kwargs):
@@ -292,7 +304,6 @@ class KioskView(View):
             if not form_instance.is_valid():
                 for field, errors in form_instance.errors.items():
                     print(f"Errors for {form_name} - {field}: {errors}")
-
 
 
 class KioskSuccessView(View):
@@ -600,4 +611,3 @@ class SectionView(View):
                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </form>
                 '''
-

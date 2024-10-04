@@ -42,15 +42,15 @@ class BookAjaxView(View):
         start = int(request.GET.get("start", 0))
         length = int(request.GET.get("length", 10))
         search_value = request.GET.get("search[value]", None)
-        program_id = request.GET.get("program", None)
+        # program_id = request.GET.get("program", None)
         page_number = (start // length) + 1
 
         # Select the books, and order them by the most recent
-        books = Book.objects.select_related('program').order_by("-id")
+        books = Book.objects.all().order_by("-id")
 
         # Filter based on program ID
-        if program_id:
-            books = books.filter(program_id=program_id)
+        # if program_id:
+        #     books = books.filter(program_id=program_id)
 
         # Filter based on search value across multiple fields
         if search_value:
@@ -70,6 +70,7 @@ class BookAjaxView(View):
         for book in page_books:
             data.append([
                 book.name,
+                self.get_programs(book),
                 self.get_action(book.id)
             ])
 
@@ -80,6 +81,14 @@ class BookAjaxView(View):
             "recordsFiltered": paginator.count,
             "data": data,
         }, status=200)
+
+    def get_programs(self, book):
+        try:
+            programs = book.program.all()
+            return ', '.join([program.name for program in programs])
+        except Exception:
+            return ""
+
     def get_action(self, book_id):
         edit_url = reverse('library_admin_urls:edit', kwargs={'id': book_id})
         delete_url = reverse('generic:delete')
