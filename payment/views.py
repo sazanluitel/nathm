@@ -9,8 +9,7 @@ from django.urls import reverse
 from students.models import Sections
 from .forms import StudentPaymentForm
 from django.contrib import messages
-
-
+from django.db import transaction
 class UpdateFeeView(View):
     def get(self, request, *args, **kwargs):
         student_id = kwargs.get('student_id')
@@ -84,15 +83,12 @@ class PaymentAjax(View):
                 <form method="get" action="{detail_url}" style="display:inline;">
                     <input type="hidden" name="_selected_id" value="{section_id}" />
                     <input type="hidden" name="_back_url" value="{back_url}" />
-                    <button type="submit" class="btn btn-secondary btn-sm">Update Fee</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Update Fee</button>
                 </form>
             </div>
         '''
-
-
 class StudentListView(View):
     def get_section(self, section_id):
-        """ Helper method to get the section object. """
         return get_object_or_404(Sections, id=section_id)
 
     def post(self, request, *args, **kwargs):
@@ -100,17 +96,30 @@ class StudentListView(View):
         section = self.get_section(section_id)
         students = Student.objects.filter(section=section)
 
-        for student in students:
-            due = request.POST.get(f"fee_amount_{student.id}", 0)
-            try:
-                student.fee_due = int(due)
-                student.save()
-            except ValueError:
-                pass
-        
-        messages.success(request,"Fees of this section updated successfully")
+        fee_updates = {}
+        errors = []
+
+        with transaction.atomic():
+            for student in students:
+                try:
+                    due = request.POST.get(f"fee_amount_{student.id}", None)
+                    if due is not None:
+                        payment_due = float(due)
+                        fee_updates[student.id] = payment_due
+                except ValueError:
+                    errors.append(f"Invalid fee amount for student {student.id}")
+
+            if errors:
+                for error in errors:
+                    messages.error(request, error)
+            else:
+                for student_id, payment_due in fee_updates.items():
+                    Student.objects.filter(id=student_id).update(payment_due=payment_due)
+
+                messages.success(request, "Fees of this section updated successfully")
+
         return redirect('payment:payments')
-    
+
     def get(self, request, section_id):
         section = self.get_section(section_id)
         students = Student.objects.filter(section=section)
