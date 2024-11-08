@@ -29,6 +29,7 @@ urlpatterns = [
     path('modules/list', ModulesList.as_view(), name='moduleslist'),
     path('modules/edit/<int:id>', ModulesEdit.as_view(), name='modulesedit'),
     path('modules/ajax', ModulesAjax.as_view(), name='modulesajax'),
-
+    path('modules/add_syllabus/<int:id>/', AddSyllabusView.as_view(), name='add_syllabus'),
+    
     path("settings/<tab>/", SettingsView.as_view(), name="settings"),
 ]

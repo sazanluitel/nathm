@@ -1,5 +1,5 @@
 from django import forms
-from .models import Campus,Department, Program, Modules
+from .models import Campus,Department, Program, Modules, Syllabus
 
 class CampusForm(forms.ModelForm):
     name = forms.CharField(
@@ -201,6 +201,13 @@ class ModulesForm(forms.ModelForm):
                 'placeholder': 'Description...'
             }),
         }
+
+
+class SyllabusForm(forms.ModelForm):
+    class Meta:
+        model = Syllabus
+        fields = ['file']
+
 
 
 

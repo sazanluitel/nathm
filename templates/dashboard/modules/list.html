@@ -1,40 +1,76 @@
-{% extends "dashboard/admin-base.html" %}
-{% block title %}Module{% endblock title %}
-{% block breadcrumb %}Module{% endblock breadcrumb %}
-{% block maintitle %}Module{% endblock maintitle %}
+{% extends 'dashboard/admin-base.html' %}
+{% block title %}
+  Module
+{% endblock %}
+{% block breadcrumb %}
+  Module
+{% endblock %}
+{% block maintitle %}
+  Module
+{% endblock %}
 
 {% block content %}
-
-<div class="col-sm-12">
+  <div class="col-sm-12">
     <div class="d-flex justify-content-end mb-2">
-         <a href="{% url 'dashboard:modules' %}" class="btn btn-primary mt-3">Add Subject</a>
+      <a href="{% url 'dashboard:modules' %}" class="btn btn-primary mt-3">Add Subject</a>
     </div>
     {% with messages=messages %}
-    {% include 'dashboard/alert.html' %}
-{% endwith %}
+      {% include 'dashboard/alert.html' %}
+    {% endwith %}
     <div class="card">
-        <div class="card-body">
-            <div class="dt-responsive">
-                <table 
-                    class="ajaxdatatable table table-bordered nowrap"
-                    data-ajax="{% url 'dashboard:modulesajax' %}"
-                    data-nodata="No Data Found"
-                >
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Subject Code</th>
-                            <th>Credit Hours</th>
-                            <th>Level</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        
-                    </tbody>
-                </table>
-            </div>
+      <div class="card-body">
+        <div class="dt-responsive">
+          <table class="ajaxdatatable table table-bordered nowrap" data-ajax="{% url 'dashboard:modulesajax' %}" data-nodata="No Data Found">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Subject Code</th>
+                <th>Credit Hours</th>
+                <th>Level</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
+      </div>
     </div>
-</div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="addSyllabusModal" tabindex="-1" aria-labelledby="addSyllabusModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="addSyllabusModalLabel">Add Syllabus</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form method="post" enctype="multipart/form-data" action="{% url 'dashboard:add_syllabus' id=0 %}">
+                {% csrf_token %}
+                <input type="hidden" name="module_id" id="moduleIdInput">
+                <div class="mb-3">
+                    <label for="syllabusFile" class="form-label">Upload Syllabus File</label>
+                    <input type="file" class="form-control" id="syllabusFile" name="syllabus_file">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Syllabus</button>
+                </div>
+            </form>
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Add this in your HTML file -->
+  <script>
+    function openSyllabusModal(moduleId) {
+      // Set the module ID to a hidden input field in the modal form
+      document.getElementById('moduleIdInput').value = moduleId
+    
+      // Show the modal
+      var syllabusModal = new bootstrap.Modal(document.getElementById('addSyllabusModal'), {})
+      syllabusModal.show()
+    }
+  </script>
 {% endblock %}

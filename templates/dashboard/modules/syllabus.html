@@ -1,0 +1,23 @@
+{% extends "dashboard/admin-base.html" %}
+{% block title %}Module{% endblock title %}
+{% block breadcrumb %}Module{% endblock breadcrumb %}
+{% block maintitle %}Module{% endblock maintitle %}
+
+{% block content %}
+
+<div class="col-sm-12">
+    <div class="d-flex justify-content-end mb-2">
+         <a href="{% url 'dashboard:modules' %}" class="btn btn-primary mt-3">Add Subject</a>
+    </div>
+    {% with messages=messages %}
+    {% include 'dashboard/alert.html' %}
+{% endwith %}
+    <div class="card">
+        <div class="card-body">
+            <div class="dt-responsive">
+                HIIII
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

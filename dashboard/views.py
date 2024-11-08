@@ -454,14 +454,14 @@ class ModulesAjax(View):
         page_menu_items = paginator.page(page_number)
 
         data = []
-        for modules in page_menu_items:
+        for module in page_menu_items:
             data.append(
                 [
-                    modules.name,
-                    modules.code,
-                    modules.credit_hours,
-                    modules.level,
-                    self.get_action(modules.id),
+                    module.name,
+                    module.code,
+                    module.credit_hours,
+                    module.level,
+                    self.get_action(module.id),
                 ]
             )
 
@@ -475,20 +475,25 @@ class ModulesAjax(View):
             status=200,
         )
 
-    def get_action(self, post_id):
-        edit_url = reverse('dashboard:modulesedit', kwargs={'id': post_id})
+    def get_action(self, module_id):
+        edit_url = reverse('dashboard:modulesedit', kwargs={'id': module_id})
         delete_url = reverse('generic:delete')
         backurl = reverse('dashboard:moduleslist')
+        syllabus_btn = f'<button type="button" class="btn btn-primary btn-sm" onclick="openSyllabusModal({module_id})">Add Syllabus</button>'
+        
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
                 <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
-
-                <input type="hidden" name="_selected_id" value="{post_id}" />
+                <input type="hidden" name="_selected_id" value="{module_id}" />
                 <input type="hidden" name="_selected_type" value="modules" />
                 <input type="hidden" name="_back_url" value="{backurl}" />
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                {syllabus_btn}
             </form>
         '''
+
+
+
 
 
 class DeleteHelper:
@@ -770,3 +775,26 @@ class DeleteView(View, DeleteHelper):
             "type": delete_type,
             "total": total_objects
         })
+
+class AddSyllabusView(View):
+    def post(self, request, *args, **kwargs):
+        file = request.FILES.get('syllabus_file')
+        module_id = request.POST.get('module_id')
+
+        if not module_id or not file:
+            messages.error(request, "Invalid form submission.")
+            return redirect('dashboard:moduleslist')
+
+        try:
+            module = Modules.objects.get(id=module_id)
+        except Modules.DoesNotExist:
+            messages.error(request, "Module not found.")
+            return redirect('dashboard:moduleslist')
+
+        syllabus = Syllabus(modules=module, file=file)
+        syllabus.save()
+
+        messages.success(request, "Syllabus added successfully.")
+        return redirect('dashboard:moduleslist')
+
+

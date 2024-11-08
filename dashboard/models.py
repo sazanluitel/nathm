@@ -1,5 +1,7 @@
 from django.db import models
 
+from filehub.fields import ImagePickerField
+
 # Create your models here.
 
 
@@ -60,3 +62,8 @@ class Modules(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class Syllabus(models.Model):
+    modules = models.ForeignKey(Modules, on_delete=models.CASCADE)
+    file = models.FileField(upload_to='syllabus_files/', null=True, blank=True)
