@@ -78,6 +78,29 @@ class RoutineView(View):
             routine.section = section
             routine.save()
 
+            # Repeat the routine
+            repeat_routine = request.POST.get("repeat_routine", None)
+            repeat_until = request.POST.get("repeat_until", None)
+
+            try:
+                if repeat_routine:
+                    repeat_until = datetime.strptime(repeat_until, "%Y-%m-%d").date()
+                    next_date = routine.date + timedelta(days=7)
+                    while next_date < repeat_until:
+                        routine, _ = Routine.objects.get_or_create(
+                            section=routine.section,
+                            date=next_date,
+                            teacher=routine.teacher,
+                            module=routine.module,
+                            defaults={
+                                "start_time": routine.start_time,
+                                "end_time": routine.end_time
+                            }
+                        )
+                        next_date = routine.date + timedelta(days=7)
+            except Exception:
+                pass
+
             return JsonResponse({
                 "message": "Routine saved successfully.",
                 "data": routine_object(routine)

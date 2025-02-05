@@ -4404,3 +4404,17 @@ h2 {
 .errorlist{
     color:red;
 }
+
+body .fc-daygrid-dot-event{
+    display:block;
+    background: #eeeeee;
+}
+
+body .fc-daygrid-dot-event button{
+    font-size:12px;
+    padding: 3px 8px;
+}
+
+body .fc-daygrid-dot-event button i{
+    font-size:12px;
+}
