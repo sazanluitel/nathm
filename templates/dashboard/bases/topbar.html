@@ -29,7 +29,7 @@
         <div class="ms-auto">
             <ul class="list-unstyled">
                 <li class="ps-h-item">
-                    <a href="https://ismt.edu.np/" class="ps-head-link me-0" target="_blank">
+                    <a href="" class="ps-head-link me-0" target="_blank">
                         <i class="fa fa-globe"></i>
                     </a>
                 </li>
@@ -81,12 +81,26 @@
                             <div class="profile-notification-scroll position-relative"
                                  style="max-height: calc(100vh - 225px)">
                                 <div class="d-flex mb-1">
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-1">ISMT College</h6>
-                                        <span>{{ request.user.username }}</span>
+                                    <div class="flex-shrink-0">
+                                        {% if request.user.profile_image %}
+                                            <img src="{{ request.user.profile_image }}" alt="user-image"
+                                                class="user-avatar wid-45 rounded-circle" />
+                                        {% else %}
+                                            <img src="{% static 'dashboard/assets/images/user.png' %}" alt="default-user-image"
+                                                class="user-avatar wid-45 rounded-circle" />
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex-grow-1 ms-3 me-2">
+                                        {% if request.user.is_authenticated %}
+                                            <h6 class="mb-0">{{ request.user.get_full_name }}</h6>
+                                            <small>{{ request.user.role|capfirst }}</small>
+                                        {% else %}
+                                            <h6 class="mb-0">Anonymous User</h6>
+                                            <small>Guest</small>
+                                        {% endif %}
                                     </div>
                                 </div>
-                                <p class="text-span mt-3">Manage</p>
+                                <p class="text-span mt-4">Manage</p>
                                 <a href="" class="dropdown-item">
                                         <span>
                                             <i class="ps-icon text-muted me-2 fa fa-cog"></i>
