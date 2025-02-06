@@ -40,13 +40,27 @@
             <div class="card ps-user-card">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            {% if request.user.profile_image %}
+                                <img src="{{ request.user.profile_image }}" alt="user-image"
+                                    class="user-avatar wid-45 rounded-circle" />
+                            {% else %}
+                                <img src="{% static 'dashboard/assets/images/user.png' %}" alt="default-user-image"
+                                    class="user-avatar wid-45 rounded-circle" />
+                            {% endif %}
+                        </div>
                         <div class="flex-grow-1 ms-3 me-2">
-                            <h6 class="mb-0">Super User</h6>
+                            {% if request.user.is_authenticated %}
+                                <h6 class="mb-0">{{ request.user.get_full_name }}</h6>
+                                <small>{{ request.user.role|capfirst }}</small>
+                            {% else %}
+                                <h6 class="mb-0">Anonymous User</h6>
+                                <small>Guest</small>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
-
             <ul class="ps-navbar mb-4">
                 <li class="ps-item ps-caption">
                     <label>Navigation</label>
@@ -182,7 +196,7 @@
                 <li class="ps-item ps-hasmenu">
                     <a href="#!" class="ps-link">
                             <span class="ps-micon">
-                                <i class="fa-solid fa-user-graduate"></i>
+                                <i class="fa-solid fa-user"></i>
                             </span>
                         <span class="ps-mtext">Add User</span>
                         <span class="ps-arrow"><i class="fa fa-angle-right"></i></span>
@@ -361,9 +375,23 @@
                             <div class="profile-notification-scroll position-relative"
                                  style="max-height: calc(100vh - 225px)">
                                 <div class="d-flex mb-1">
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-1">{{ website_name }}</h6>
-                                        <span>{{ request.user.username }}</span>
+                                    <div class="flex-shrink-0">
+                                        {% if request.user.profile_image %}
+                                            <img src="{{ request.user.profile_image }}" alt="user-image"
+                                                class="user-avatar wid-45 rounded-circle" />
+                                        {% else %}
+                                            <img src="{% static 'dashboard/assets/images/user.png' %}" alt="default-user-image"
+                                                class="user-avatar wid-45 rounded-circle" />
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex-grow-1 ms-3 me-2">
+                                        {% if request.user.is_authenticated %}
+                                            <h6 class="mb-0">{{ request.user.get_full_name }}</h6>
+                                            <small>{{ request.user.role|capfirst }}</small>
+                                        {% else %}
+                                            <h6 class="mb-0">Anonymous User</h6>
+                                            <small>Guest</small>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <p class="text-span mt-4">Manage</p>

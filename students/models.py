@@ -1,5 +1,4 @@
 import uuid
-
 from django.db import models, transaction
 from django.utils import timezone
 
@@ -48,53 +47,74 @@ class Student(models.Model):
     department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
     program = models.ForeignKey(Program, on_delete=models.CASCADE, null=True, blank=True)
     student_id = models.CharField(max_length=20, null=True, blank=True)
-    team_id = models.CharField(max_length=50, blank=True, null=True)
-    college_email = models.EmailField(blank=True, null=True)
+    team_id = models.CharField(max_length=50, null=True, blank=True)
+    college_email = models.EmailField(null=True, blank=True, unique=True)
 
     commencing_term = models.TextField(null=True, blank=True)
     date_of_admission = models.DateField(null=True, blank=True, default=timezone.now)
     shift = models.CharField(max_length=50, choices=SHIFT, null=True, blank=True)
-    admission_officer = models.TextField(blank=True, null=True)
-    scholarship_details = models.CharField(max_length=100, blank=True, null=True)
-    referred_by = models.CharField(max_length=100, blank=True, null=True)
+    admission_officer = models.TextField(null=True, blank=True)
+    scholarship_details = models.CharField(max_length=100, null=True, blank=True)
+    referred_by = models.CharField(max_length=100, null=True, blank=True)
 
     # Payment of fees
-    payment_by = models.CharField(choices=PAYMENT_BY, max_length=20, null=True)
-    organization = models.CharField(max_length=255, blank=True, null=True)
-    authorize_person = models.CharField(max_length=255, blank=True, null=True)
-    email = models.EmailField(max_length=100, blank=True, null=True)
-    payment_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, blank=True, null=True)
+    payment_by = models.CharField(choices=PAYMENT_BY, max_length=20, null=True, blank=True)
+    organization = models.CharField(max_length=255, null=True, blank=True)
+    authorize_person = models.CharField(max_length=255, null=True, blank=True)
+    email = models.EmailField(max_length=100, null=True, blank=True)
+    payment_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, null=True, blank=True)
 
     # Financial capacity
-    annual_income = models.FloatField(max_length=100, blank=True, null=True)
-    members_in_family = models.IntegerField(default=1, blank=True)
-    father_occupation = models.CharField(max_length=100, blank=True, null=True)
-    mother_occupation = models.CharField(max_length=100, blank=True, null=True)
+    annual_income = models.FloatField(null=True, blank=True)
+    members_in_family = models.IntegerField(null=True, blank=True)
+    father_occupation = models.CharField(max_length=100, null=True, blank=True)
+    mother_occupation = models.CharField(max_length=100, null=True, blank=True)
 
     # Reasons for choosing the institution
-    why_us = models.CharField(choices=WHY_US, max_length=20, default="REPUTATION", blank=True)
-    why_us_other = models.TextField(blank=True, null=True)
+    why_us = models.CharField(choices=WHY_US, max_length=20, default="REPUTATION", null=True, blank=True)
+    why_us_other = models.TextField(null=True, blank=True)
 
     # How the student learned about the course
-    about_us = models.CharField(choices=ABOUT_US, max_length=20, default="FRIENDS", blank=True)
-    about_us_other = models.TextField(max_length=255, blank=True, null=True)
+    about_us = models.CharField(choices=ABOUT_US, max_length=20, default="FRIENDS", null=True, blank=True)
+    about_us_other = models.TextField(max_length=255, null=True, blank=True)
 
     # Kiosk ID
-    kiosk_id = models.CharField(max_length=50, blank=True, null=True, unique=True)
+    kiosk_id = models.CharField(max_length=50, null=True, blank=True, unique=True)
     section = models.ForeignKey(Sections, on_delete=models.CASCADE, null=True, blank=True)
-    # signature = models.ImageField(upload_to='signatures/', blank=True, null=True)
+    # signature = models.ImageField(upload_to='signatures/', null=True, blank=True)
 
-    payment_due = models.FloatField(default=0.0)
+    payment_due = models.FloatField(null=True, blank=True, default=0.0)
+
+    def save(self, *args, **kwargs):
+        """Generate a unique college email before saving if not already set"""
+        if not self.college_email and self.user:
+            self.college_email = self.generate_unique_college_email()
+        
+        super().save(*args, **kwargs)
+
+    def generate_unique_college_email(self):
+        """Generate a unique college email in the format first_name.last_name@nathm.gov.np"""
+        base_email = f"{self.user.first_name.lower()}.{self.user.last_name.lower()}@nathm.gov.np"
+        unique_email = base_email
+        counter = 1
+        
+        while Student.objects.filter(college_email=unique_email).exists():
+            unique_email = f"{self.user.first_name.lower()}.{self.user.last_name.lower()}{counter}@nathm.gov.np"
+            counter += 1
+
+        return unique_email
 
     def __str__(self):
-        return self.email
+        return self.college_email if self.college_email else "No Email"
 
     def update_kiosk_id(self):
+        """Generate a unique kiosk ID if not already set"""
         if not self.kiosk_id:
             self.kiosk_id = self.generate_unique_kiosk_id()
             self.save()
 
     def generate_unique_kiosk_id(self):
+        """Generate a unique kiosk ID using UUID"""
         while True:
             new_kiosk_id = str(uuid.uuid4())[:10].upper()
             if not Student.objects.filter(kiosk_id=new_kiosk_id).exists():

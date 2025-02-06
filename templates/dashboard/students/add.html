@@ -179,88 +179,87 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="card mb-4">
-                    <div class="card-header py-3 h5">Permanent Address</div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.permanent_address_form.address.id_for_label }}" class="form-label">Address:</label>
-                                {{ form.permanent_address_form.address }}
-                                {% include "parts/error.html" with errors=form.permanent_address_form.address.errors %}
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.permanent_address_form.city.id_for_label }}" class="form-label">City:</label>
-                                {{ form.permanent_address_form.city }}
-                                {% include "parts/error.html" with errors=form.permanent_address_form.city.errors %}
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.permanent_address_form.province.id_for_label }}" class="form-label">Province:</label>
-                                {{ form.permanent_address_form.province }}
-                                {% include "parts/error.html" with errors=form.permanent_address_form.province.errors %}
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.permanent_address_form.country.id_for_label }}" class="form-label">Country:</label>
-                                {{ form.permanent_address_form.country }}
-                                {% include "parts/error.html" with errors=form.permanent_address_form.country.errors %}
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.permanent_address_form.postcode.id_for_label }}" class="form-label">Postcode:</label>
-                                {{ form.permanent_address_form.postcode }}
-                                {% include "parts/error.html" with errors=form.permanent_address_form.postcode.errors %}
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.permanent_address_form.contact_number.id_for_label }}"
-                                       class="form-label">Contact Number:</label>
-                                {{ form.permanent_address_form.contact_number }}
-                                {% include "parts/error.html" with errors=form.permanent_address_form.contact_number.errors %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card mt-4">
-                    <div class="card-header py-3 h5 d-flex justify-content-between align-items-center">
-                        <div class="cards-title">Temporary Address</div>
-                        <button type="button" class="btn btn-primary btn-sm sameAsPermanent">Same as Permanent</button>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.temporary_address_form.address.id_for_label }}" class="form-label">Address:</label>
-                                {{ form.temporary_address_form.address }}
-                                {% include "parts/error.html" with errors=form.temporary_address_form.address.errors %}
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.temporary_address_form.city.id_for_label }}" class="form-label">City:</label>
-                                {{ form.temporary_address_form.city }}
-                                {% include "parts/error.html" with errors=form.temporary_address_form.city.errors %}
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.temporary_address_form.province.id_for_label }}" class="form-label">Province:</label>
-                                {{ form.temporary_address_form.province }}
-                                {% include "parts/error.html" with errors=form.temporary_address_form.province.errors %}
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.temporary_address_form.country.id_for_label }}" class="form-label">Country:</label>
-                                {{ form.temporary_address_form.country }}
-                                {% include "parts/error.html" with errors=form.temporary_address_form.country.errors %}
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.temporary_address_form.postcode.id_for_label }}" class="form-label">Postcode:</label>
-                                {{ form.temporary_address_form.postcode }}
-                                {% include "parts/error.html" with errors=form.temporary_address_form.postcode.errors %}
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.temporary_address_form.contact_number.id_for_label }}"
-                                       class="form-label">Contact Number:</label>
-                                {{ form.temporary_address_form.contact_number }}
-                                {% include "parts/error.html" with errors=form.temporary_address_form.contact_number.errors %}
+                {% if user.role != "admin" %}
+                    <!-- Render Permanent Address Form -->
+                    <div class="card mb-4">
+                        <div class="card-header py-3 h5">Permanent Address</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.permanent_address_form.address.id_for_label }}" class="form-label">Address:</label>
+                                    {{ form.permanent_address_form.address }}
+                                    {% include "parts/error.html" with errors=form.permanent_address_form.address.errors %}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.permanent_address_form.city.id_for_label }}" class="form-label">City:</label>
+                                    {{ form.permanent_address_form.city }}
+                                    {% include "parts/error.html" with errors=form.permanent_address_form.city.errors %}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.permanent_address_form.province.id_for_label }}" class="form-label">Province:</label>
+                                    {{ form.permanent_address_form.province }}
+                                    {% include "parts/error.html" with errors=form.permanent_address_form.province.errors %}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.permanent_address_form.country.id_for_label }}" class="form-label">Country:</label>
+                                    {{ form.permanent_address_form.country }}
+                                    {% include "parts/error.html" with errors=form.permanent_address_form.country.errors %}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.permanent_address_form.postcode.id_for_label }}" class="form-label">Postcode:</label>
+                                    {{ form.permanent_address_form.postcode }}
+                                    {% include "parts/error.html" with errors=form.permanent_address_form.postcode.errors %}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.permanent_address_form.contact_number.id_for_label }}" class="form-label">Contact Number:</label>
+                                    {{ form.permanent_address_form.contact_number }}
+                                    {% include "parts/error.html" with errors=form.permanent_address_form.contact_number.errors %}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
+                    <!-- Render Temporary Address Form -->
+                    <div class="card mt-4">
+                        <div class="card-header py-3 h5 d-flex justify-content-between align-items-center">
+                            <div class="cards-title">Temporary Address</div>
+                            <button type="button" class="btn btn-primary btn-sm sameAsPermanent">Same as Permanent</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.temporary_address_form.address.id_for_label }}" class="form-label">Address:</label>
+                                    {{ form.temporary_address_form.address }}
+                                    {% include "parts/error.html" with errors=form.temporary_address_form.address.errors %}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.temporary_address_form.city.id_for_label }}" class="form-label">City:</label>
+                                    {{ form.temporary_address_form.city }}
+                                    {% include "parts/error.html" with errors=form.temporary_address_form.city.errors %}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.temporary_address_form.province.id_for_label }}" class="form-label">Province:</label>
+                                    {{ form.temporary_address_form.province }}
+                                    {% include "parts/error.html" with errors=form.temporary_address_form.province.errors %}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.temporary_address_form.country.id_for_label }}" class="form-label">Country:</label>
+                                    {{ form.temporary_address_form.country }}
+                                    {% include "parts/error.html" with errors=form.temporary_address_form.country.errors %}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.temporary_address_form.postcode.id_for_label }}" class="form-label">Postcode:</label>
+                                    {{ form.temporary_address_form.postcode }}
+                                    {% include "parts/error.html" with errors=form.temporary_address_form.postcode.errors %}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.temporary_address_form.contact_number.id_for_label }}" class="form-label">Contact Number:</label>
+                                    {{ form.temporary_address_form.contact_number }}
+                                    {% include "parts/error.html" with errors=form.temporary_address_form.contact_number.errors %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 <div class="card">
                     <div class="card-header h5 py-3">Emergency Contacts</div>
                     <div class="card-body">
@@ -474,7 +473,7 @@
                         </div>
                     </div>
                 </div>
-
+                {% endif %}
                 <div class="flex mb-5 ms-3">
                     <button type="submit" class="btn btn-success mt-3">Submit</button>
                     <a href="{% url "student_admin:list" %}" class="btn btn-secondary mt-3">Cancel</a>

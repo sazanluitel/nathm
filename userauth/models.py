@@ -32,14 +32,14 @@ ROLE_CHOICES = [
 
 
 class User(AbstractUser):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, null=True, blank=True)
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=100)
     first_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100)
     profile_image = models.TextField(blank=True, null=True)
-    role = models.CharField(max_length=100, choices=ROLE_CHOICES, default="student")
+    role = models.CharField(max_length=100, choices=ROLE_CHOICES, default="student", null=True, blank=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ['username']
@@ -47,7 +47,6 @@ class User(AbstractUser):
     objects = UserManager()
 
     def save(self, *args, **kwargs):
-        # Set is_staff based on role
         if self.role in ['admin']:
             self.is_superuser = True
         elif self.role in ['admission', 'it', 'student_service', 'college']:
@@ -55,7 +54,6 @@ class User(AbstractUser):
         else:
             self.is_staff = False
 
-        # Generate a unique username if none is provided
         if not self.username and self.email:
             base_username = self.email.split('@')[0]
             unique_username = base_username
@@ -64,16 +62,12 @@ class User(AbstractUser):
                 unique_username = f"{base_username}_{counter}"
                 counter += 1
             self.username = unique_username
-        
-        # Call the parent class's save() method to save the object
+
         super().save(*args, **kwargs)
 
     def get_full_name(self):
         full_name = self.full_name_raw()
-        if full_name:
-            return full_name
-        else:
-            return ""
+        return full_name if full_name else ""
 
     def full_name_raw(self):
         parts = [self.title or "", self.first_name or "", self.middle_name or "", self.last_name or ""]
@@ -81,7 +75,7 @@ class User(AbstractUser):
 
 
 class AddressInfo(models.Model):
-    address = models.CharField(max_length=200)
+    address = models.CharField(max_length=200, null=True, blank=True)
     city = models.CharField(max_length=200, null=True, blank=True)
     province = models.CharField(max_length=200, null=True, blank=True)
     country = models.CharField(max_length=200, null=True, blank=True)
@@ -91,11 +85,11 @@ class AddressInfo(models.Model):
 
 class EducationHistory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    degree_name = models.CharField(max_length=100)
-    institution_name = models.CharField(max_length=100)
-    graduation_year = models.IntegerField()
+    degree_name = models.CharField(max_length=100, null=True, blank=True)
+    institution_name = models.CharField(max_length=100, null=True, blank=True)
+    graduation_year = models.IntegerField(null=True, blank=True)
     major_subject = models.CharField(max_length=100, null=True, blank=True)
-    file = models.TextField(blank=True, null=True)
+    file = models.TextField(null=True, blank=True)
 
 
 class EnglishTest(models.Model):
@@ -108,17 +102,17 @@ class EnglishTest(models.Model):
         ('OTHER', 'Other'),
     ]
     test = models.CharField(max_length=50, choices=TESTS, null=True, blank=True)
-    score = models.FloatField(max_length=5, default=0)
+    score = models.FloatField(null=True, blank=True, default=0.0)
     date = models.DateField(null=True, blank=True)
-    files = models.TextField(blank=True, null=True)
+    files = models.TextField(null=True, blank=True)
 
 
 class EmploymentHistory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    employer_name = models.CharField(max_length=100)
-    title = models.CharField(max_length=100)
-    start_date = models.DateField()
-    end_date = models.DateField(blank=True, null=True)
+    employer_name = models.CharField(max_length=100, null=True, blank=True)
+    title = models.CharField(max_length=100, null=True, blank=True)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
     job_description = models.TextField(null=True, blank=True)
 
 
@@ -130,7 +124,7 @@ class EmergencyContact(models.Model):
         ('Relative', 'Relative'),
         ('OTHER', 'Other'),
     ]
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, null=True, blank=True)
     relationship = models.CharField(max_length=100, choices=RELATION, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, null=True, blank=True)
@@ -144,7 +138,7 @@ class PersonalInfo(models.Model):
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     citizenship_number = models.CharField(max_length=20, null=True, blank=True)
-    gender = models.CharField(max_length=6, choices=GENDER_CHOICES)
+    gender = models.CharField(max_length=6, choices=GENDER_CHOICES, null=True, blank=True)
     date_of_birth_in_ad = models.DateField(null=True, blank=True)
     citizenship_img = models.TextField(null=True, blank=True)
     permanent_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='permanent_address',
@@ -165,11 +159,11 @@ class Sections(models.Model):
         ('7', "Seventh Semester"),
         ('8', "Eighth Semester"),
     ]
-    section_name = models.CharField(max_length=255)
+    section_name = models.CharField(max_length=255, null=True, blank=True)
     campus = models.ForeignKey("dashboard.Campus", on_delete=models.CASCADE, null=True, blank=True)
-    program = models.ForeignKey('dashboard.Program', on_delete=models.CASCADE)
-    year = models.IntegerField()
-    semester = models.CharField(max_length=255, choices=SEMESTER_CHOICES)
+    program = models.ForeignKey('dashboard.Program', on_delete=models.CASCADE, null=True, blank=True)
+    year = models.IntegerField(null=True, blank=True)
+    semester = models.CharField(max_length=255, choices=SEMESTER_CHOICES, null=True, blank=True)
 
     def get_title(self):
         program_name = self.program.name if self.program else "No Program"
@@ -179,4 +173,4 @@ class Sections(models.Model):
         return f"{self.section_name} - {program_name} - {year_display} - {semester_display}"
 
     def __str__(self):
-        return self.section_name
+        return self.section_name if self.section_name else "Unnamed Section"
