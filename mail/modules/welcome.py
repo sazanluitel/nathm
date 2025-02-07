@@ -12,10 +12,10 @@ class WelcomeMessage(EmailHelper):
         from students.models import Student
         student = Student.objects.filter(user=self.user).first()
 
-        # Generate password reset token and link
         token = default_token_generator.make_token(self.user)
         uid = urlsafe_base64_encode(force_bytes(self.user.pk))
         reset_link = f"http://127.0.0.1:8000/reset-password/{uid}/{token}/"
+        # reset_link = f"https://nathm.sunbi.com.np/reset-password/{uid}/{token}/"
 
         message = self.get_template_content("welcome", {
             "first_name": self.user.first_name,
