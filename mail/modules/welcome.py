@@ -17,7 +17,7 @@ class WelcomeMessage(EmailHelper):
         })
 
         return self.send_email(
-            subject="Welcome to ISMT!",
+            subject="Welcome to NATHM!",
             to_email=self.user.email,
             message=message
         )

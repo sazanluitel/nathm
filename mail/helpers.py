@@ -5,7 +5,7 @@ from django.utils.crypto import get_random_string
 
 
 class EmailHelper:
-    from_email = "ISMT <no-reply@hamroguru.host>"
+    from_email = "NATHM <sunbi.qa@gmail.com>"
     fail_silently = True
 
     def generate_token(self):

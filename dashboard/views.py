@@ -23,57 +23,19 @@ from django.contrib.auth.views import LoginView
 from django.db.models import Q
 from students.models import *
 from teacher.models import *
-from datetime import timedelta, datetime
 from django.utils.timezone import now
-import logging
-
-logger = logging.getLogger(__name__)
 
 class DashboardView(View):
-    def calculate_changes(self, model, date_field, filter_kwargs=None):
-        """
-        Generic function to calculate new, old, and percentage change of model instances.
-        """
-        try:
-            one_week_ago = now() - timedelta(weeks=1)
-            filter_kwargs = filter_kwargs or {}
-
-            new_queryset = model.objects.filter(**filter_kwargs, **{f"{date_field}__gte": one_week_ago})
-            old_queryset = model.objects.filter(**filter_kwargs, **{f"{date_field}__lt": one_week_ago})
-
-            new_count = new_queryset.count()
-            old_count = old_queryset.count()
-            total_count = new_count + old_count
-
-            if total_count == 0:
-                change_percent = 0
-            else:
-                change_percent = ((new_count - old_count) / total_count) * 100
-
-            # Debugging
-            logger.info(f"Model: {model.__name__}, New: {new_count}, Old: {old_count}, Total: {total_count}")
-
-            return {
-                "total": total_count,
-                "new": new_count,
-                "old": old_count,
-                "change": round(change_percent, 1),
-            }
-        except Exception as e:
-            logger.error(f"Error calculating changes for {model.__name__}: {e}")
-            return {"total": 0, "new": 0, "old": 0, "change": 0}
-
     def get(self, request, *args, **kwargs):
         data = {
-            "Students": self.calculate_changes(Student, "date_joined", {"role": "student"}),
-            "Teachers": self.calculate_changes(Student, "date_joined", {"role": "teacher"}),
-            "Courses": self.calculate_changes(Program, "start_date"),
-            "Departments": self.calculate_changes(Department, "start_date"),
-            "Universities": self.calculate_changes(Campus, "created_at"),
+            "Students": Student.objects.count(),
+            "Teachers": Teacher.objects.count(),
+            "Courses": Program.objects.count(),
+            "Departments": Department.objects.count(),
+            "Universities": Campus.objects.count(),
         }
-
         return render(request, "dashboard/parts/index.html", context={"data": data})
-    
+
 class FileManagerView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'dashboard/parts/filemanager.html')
