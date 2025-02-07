@@ -1,12 +1,11 @@
 import uuid
 from django.db import models, transaction
 from django.utils import timezone
-
 from dashboard.models import Campus, Department, Program
 from exam.models import Subject
 from routine.models import ExamRoutine
 from userauth.models import AddressInfo, User, PersonalInfo, Sections
-
+from mail.modules.welcome import WelcomeMessage  
 
 class Student(models.Model):
     PAYMENT_BY = [
@@ -81,23 +80,27 @@ class Student(models.Model):
     # Kiosk ID
     kiosk_id = models.CharField(max_length=50, null=True, blank=True, unique=True)
     section = models.ForeignKey(Sections, on_delete=models.CASCADE, null=True, blank=True)
-    # signature = models.ImageField(upload_to='signatures/', null=True, blank=True)
-
     payment_due = models.FloatField(null=True, blank=True, default=0.0)
 
     def save(self, *args, **kwargs):
         """Generate a unique college email before saving if not already set"""
+        email_was_empty = not self.college_email  # Check if email was empty before saving
+
         if not self.college_email and self.user:
             self.college_email = self.generate_unique_college_email()
         
         super().save(*args, **kwargs)
+
+        # Send welcome message only if the email was just created
+        if email_was_empty and self.college_email:
+            WelcomeMessage(self.user).send()
 
     def generate_unique_college_email(self):
         """Generate a unique college email in the format first_name.last_name@nathm.gov.np"""
         base_email = f"{self.user.first_name.lower()}.{self.user.last_name.lower()}@nathm.gov.np"
         unique_email = base_email
         counter = 1
-        
+
         while Student.objects.filter(college_email=unique_email).exists():
             unique_email = f"{self.user.first_name.lower()}.{self.user.last_name.lower()}{counter}@nathm.gov.np"
             counter += 1
@@ -106,28 +109,3 @@ class Student(models.Model):
 
     def __str__(self):
         return self.college_email if self.college_email else "No Email"
-
-    def update_kiosk_id(self):
-        """Generate a unique kiosk ID if not already set"""
-        if not self.kiosk_id:
-            self.kiosk_id = self.generate_unique_kiosk_id()
-            self.save()
-
-    def generate_unique_kiosk_id(self):
-        """Generate a unique kiosk ID using UUID"""
-        while True:
-            new_kiosk_id = str(uuid.uuid4())[:10].upper()
-            if not Student.objects.filter(kiosk_id=new_kiosk_id).exists():
-                return new_kiosk_id
-
-    def get_results(self, exam):
-        """Fetches or creates the result for a given exam."""
-        output = []
-        with transaction.atomic():
-            for routine in ExamRoutine.objects.filter(routine=exam):
-                subject, _ = Subject.objects.get_or_create(
-                    routine=routine,
-                    student=self
-                )
-                output.append(subject)
-        return output

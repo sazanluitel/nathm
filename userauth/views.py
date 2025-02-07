@@ -12,14 +12,20 @@ from students.models import Student
 from userauth.forms import (
     LoginForm,
     RegisterForm,
-    UserForm
+    UserForm,
+    ForgetPasswordForm,
+    ResetPasswordForm
 )
 from django.core.paginator import Paginator
 from userauth.models import User, ROLE_CHOICES
 from userauth.utils import send_verification_link
 import re
 from django.db.models import Q
-
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
 
 # Create your views here.
 class LoginView(View):
@@ -27,49 +33,130 @@ class LoginView(View):
         form = LoginForm(request.POST)
         try:
             if form.is_valid():
-                username = form.cleaned_data.get('username')
-                password = form.cleaned_data.get('password')
+                username = form.cleaned_data.get("username")
+                password = form.cleaned_data.get("password")
+
                 if not username:
                     raise Exception("Email is required")
                 if not password:
                     raise Exception("Password is required")
 
-                user = authenticate(request, username=username, password=password)
+                # Check if the provided username is a college_email
+                student = Student.objects.filter(college_email=username).first()
+                if student:
+                    # Get the associated User object
+                    user = student.user
+                else:
+                    # Assume it's a standard login with User.email
+                    user = User.objects.filter(email=username).first()
+
+                if user:
+                    # Authenticate using the User model's credentials
+                    user = authenticate(request, username=user.email, password=password)
+
                 if user is not None:
                     login(request, user)
 
+                    # Redirect based on user role
                     if user.role == "admission":
                         return redirect("admission_department:index")
-                    if user.role == "it":
+                    elif user.role == "it":
                         return redirect("it_department:index")
                     elif user.role == "student_service":
                         return redirect("student_service:index")
                     else:
-                        return redirect('dashboard:index')
+                        return redirect("dashboard:index")
                 else:
                     raise Exception("Invalid username or password")
+
         except Exception as e:
-            form.add_error('username', str(e))
-        return render(request, 'dashboard/auth/login.html', {'form': form})
+            form.add_error("username", str(e))
+
+        return render(request, "dashboard/auth/login.html", {"form": form})
 
     def get(self, request, *args, **kwargs):
         if request.user and request.user.is_authenticated:
-            return redirect('dashboard:index')
+            return redirect("dashboard:index")
 
         form = LoginForm()
-        return render(request, 'dashboard/auth/login.html', {
-            'form': form
-        })
-
-
+        return render(request, "dashboard/auth/login.html", {"form": form})
+    
 class ForgetPassView(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'dashboard/auth/forget-password.html')
+        """Render the password reset request form."""
+        form = ForgetPasswordForm()
+        return render(request, "dashboard/auth/forget-password.html", {"form": form})
 
+    def post(self, request, *args, **kwargs):
+        """Handle password reset request submission."""
+        form = ForgetPasswordForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+            try:
+                # Check if the email belongs to a student via `college_email`
+                student = Student.objects.filter(college_email=email).select_related("user").first()
+                if student:
+                    user = student.user  # Get associated user
+                else:
+                    user = User.objects.get(email=email)  # Regular user
 
+                # Generate password reset link
+                token = default_token_generator.make_token(user)
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+                reset_url = request.build_absolute_uri(
+                    reverse("userauth:resetpass", kwargs={"uidb64": uid, "token": token})
+                )
+
+                # Send reset email
+                subject = "Password Reset Request"
+                message = f"Click the link to reset your password: {reset_url}"
+                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+
+                messages.success(request, "Password reset link sent to your email.")
+            except User.DoesNotExist:
+                messages.error(request, "User with this email does not exist.")
+
+        return render(request, "dashboard/auth/forget-password.html", {"form": form})
+    
 class ResetPasswordView(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'dashboard/auth/reset-password.html')
+    def get(self, request, uidb64, token, *args, **kwargs):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.objects.get(pk=uid)
+            
+            if not default_token_generator.check_token(user, token):
+                messages.error(request, "Invalid or expired reset link.")
+                return redirect('userauth:login')
+
+            # Pass the user instance to the form
+            form = ResetPasswordForm(user=user)  # ✅ Fix here
+            return render(request, 'dashboard/auth/reset-password.html', {'form': form, 'uidb64': uidb64, 'token': token})
+
+        except (User.DoesNotExist, ValueError):
+            messages.error(request, "Invalid reset link.")
+            return redirect('userauth:login')
+    def post(self, request, uidb64, token, *args, **kwargs):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.objects.get(pk=uid)
+
+            if not default_token_generator.check_token(user, token):
+                messages.error(request, "Invalid or expired reset link.")
+                return redirect('userauth:login')
+
+            form = ResetPasswordForm(user=user, data=request.POST)
+            if form.is_valid():
+                user.set_password(form.cleaned_data['new_password1'])
+                user.save()
+                messages.success(request, "Your password has been reset successfully.")
+                return redirect('userauth:login')
+
+        except (User.DoesNotExist, ValueError):
+            messages.error(request, "Invalid reset link.")
+            return redirect('userauth:login')
+
+        return render(request, 'dashboard/auth/reset-password.html', {'form': form})
 
 
 # class VerifyEmailCodeView(View):

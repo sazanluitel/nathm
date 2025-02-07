@@ -1,5 +1,5 @@
 from django import forms
-
+from django.contrib.auth.forms import SetPasswordForm
 from students.models import Student
 from teacher.models import Teacher
 from userauth.models import (
@@ -13,7 +13,19 @@ class LoginForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'test@example.com'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '********'}))
 
+class ForgetPasswordForm(forms.Form):
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'test@example.com'}),
+        label="Email",
+        required=True
+    )
 
+class ResetPasswordForm(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['new_password1'].widget.attrs.update({'class': 'form-control', 'placeholder': 'New Password'})
+        self.fields['new_password2'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Confirm Password'})
+        
 class RegisterForm(forms.ModelForm):
     class Meta:
         model = User

@@ -7,9 +7,20 @@
         <p style="margin-bottom: 20px;">Dear Student,</p>
     {% endif %}
     <p style="margin-bottom: 20px;">Welcome to {{ COLLEGE_NAME }}! We are excited to have you on board.</p>
-    <p style="margin-bottom: 20px;">Your college email and Teams ID have been successfully assigned. You can now access all the resources and connect with your peers.</p>
-    <p><strong>College Email:</strong> {{ college_email }}</p>
-    <p style="margin-bottom: 20px;"><strong>Teams ID:</strong> {{ team_id }}</p>
+    <p style="margin-bottom: 20px;">Your IMS Login ID {% if team_id %} and team Id{% endif %} have been successfully assigned. You can now access all the resources and connect with your peers.</p>
+    <p><strong>IMS Login ID:</strong> {{ college_email }}</p>
+    {% if team_id %}
+        <p style="margin-bottom: 20px;"><strong>Teams ID:</strong> {{ team_id }}</p>
+    {% endif %}
     <p style="margin-bottom: 20px;">Stay tuned for upcoming features and updates that will enhance your learning experience!</p>
+
+    <!-- Add the password reset button -->
+    <p style="margin-bottom: 20px;">
+        To set or reset your password, click the button below:
+    </p>
+    <a href="{{ reset_link }}" style="background-color: #007bff; color: white; padding: 10px 20px; margin-bottom: 5px; text-decoration: none; border-radius: 5px;">
+        Reset Password
+    </a>
+
     <p>Best Regards,<br>The {{ COLLEGE_NAME }} College</p>
 {% endblock %}
