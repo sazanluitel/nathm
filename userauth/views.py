@@ -41,23 +41,18 @@ class LoginView(View):
                 if not password:
                     raise Exception("Password is required")
 
-                # Check if the provided username is a college_email
                 student = Student.objects.filter(college_email=username).first()
                 if student:
-                    # Get the associated User object
                     user = student.user
                 else:
-                    # Assume it's a standard login with User.email
                     user = User.objects.filter(email=username).first()
 
                 if user:
-                    # Authenticate using the User model's credentials
                     user = authenticate(request, username=user.email, password=password)
 
                 if user is not None:
                     login(request, user)
 
-                    # Redirect based on user role
                     if user.role == "admission":
                         return redirect("admission_department:index")
                     elif user.role == "it":
@@ -93,12 +88,11 @@ class ForgetPassView(View):
         if form.is_valid():
             email = form.cleaned_data["email"]
             try:
-                # Check if the email belongs to a student via `college_email`
                 student = Student.objects.filter(college_email=email).select_related("user").first()
                 if student:
-                    user = student.user  # Get associated user
+                    user = student.user  
                 else:
-                    user = User.objects.get(email=email)  # Regular user
+                    user = User.objects.get(email=email)  
 
                 # Generate password reset link
                 token = default_token_generator.make_token(user)
@@ -130,7 +124,7 @@ class ResetPasswordView(View):
                 return redirect('userauth:login')
 
             # Pass the user instance to the form
-            form = ResetPasswordForm(user=user)  # ✅ Fix here
+            form = ResetPasswordForm(user=user)
             return render(request, 'dashboard/auth/reset-password.html', {'form': form, 'uidb64': uidb64, 'token': token})
 
         except (User.DoesNotExist, ValueError):
