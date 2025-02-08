@@ -251,7 +251,6 @@ class StudentAjax(View):
             </form>
         '''
 
-
 class StudentFilters(View):
     def get(self, request, *args, **kwargs):
         # Fetch filter options from the database
