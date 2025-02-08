@@ -109,3 +109,5 @@ class Student(models.Model):
 
     def __str__(self):
         return self.college_email if self.college_email else "No Email"
+    
+    

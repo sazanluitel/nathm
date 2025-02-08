@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from students.models import Student
+from teacher.models import Teacher
 from userauth.forms import (
     LoginForm,
     RegisterForm,
@@ -26,6 +27,7 @@ from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
+from mail.helpers import EmailHelper
 
 # Create your views here.
 class LoginView(View):
@@ -78,23 +80,32 @@ class LoginView(View):
     
 class ForgetPassView(View):
     def get(self, request, *args, **kwargs):
-        """Render the password reset request form."""
         form = ForgetPasswordForm()
         return render(request, "dashboard/auth/forget-password.html", {"form": form})
 
     def post(self, request, *args, **kwargs):
-        """Handle password reset request submission."""
         form = ForgetPasswordForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data["email"]
+            user = None
+            recipient_email = None
+
             try:
                 student = Student.objects.filter(college_email=email).select_related("user").first()
                 if student:
-                    user = student.user  
-                else:
-                    user = User.objects.get(email=email)  
+                    user = student.user
+                    recipient_email = student.college_email
 
-                # Generate password reset link
+                if not user:
+                    teacher = Teacher.objects.filter(college_email=email).select_related("user").first()
+                    if teacher:
+                        user = teacher.user
+                        recipient_email = teacher.college_email
+
+                if not user:
+                    user = User.objects.get(email=email)
+                    recipient_email = user.email
+
                 token = default_token_generator.make_token(user)
                 uid = urlsafe_base64_encode(force_bytes(user.pk))
 
@@ -102,34 +113,34 @@ class ForgetPassView(View):
                     reverse("userauth:resetpass", kwargs={"uidb64": uid, "token": token})
                 )
 
-                # Send reset email
                 subject = "Password Reset Request"
-                message = f"Click the link to reset your password: {reset_url}"
-                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+                context = {"user": user, "reset_link": reset_url}
+                email_helper = EmailHelper()
+                email_helper.send_with_template("forget_mail", context, subject, recipient_email)
 
                 messages.success(request, "Password reset link sent to your email.")
             except User.DoesNotExist:
                 messages.error(request, "User with this email does not exist.")
 
         return render(request, "dashboard/auth/forget-password.html", {"form": form})
-    
+
 class ResetPasswordView(View):
     def get(self, request, uidb64, token, *args, **kwargs):
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
             user = User.objects.get(pk=uid)
-            
+
             if not default_token_generator.check_token(user, token):
                 messages.error(request, "Invalid or expired reset link.")
                 return redirect('userauth:login')
 
-            # Pass the user instance to the form
             form = ResetPasswordForm(user=user)
             return render(request, 'dashboard/auth/reset-password.html', {'form': form, 'uidb64': uidb64, 'token': token})
 
         except (User.DoesNotExist, ValueError):
             messages.error(request, "Invalid reset link.")
             return redirect('userauth:login')
+
     def post(self, request, uidb64, token, *args, **kwargs):
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
@@ -213,7 +224,6 @@ class LogoutView(View):
 
 
 class RegisterView(View):
-
     def generate_username(self, email: str) -> str:
         base_username = email.split('@')[0]
         unique_username = base_username
