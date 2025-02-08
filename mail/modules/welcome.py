@@ -12,16 +12,12 @@ class WelcomeMessage(EmailHelper):
         from students.models import Student
         from teacher.models import Teacher
 
-        to_email = self.user.email
-        
         student = Student.objects.filter(user=self.user).first()
-        if student and student.college_email:
-            to_email = student.college_email
-        
         teacher = Teacher.objects.filter(user=self.user).first()
-        if teacher and teacher.college_email:
-            to_email = teacher.college_email
-        
+
+        college_email = student.college_email if student else (teacher.college_email if teacher else None)
+        team_id = student.team_id if student else None
+
         token = default_token_generator.make_token(self.user)
         uid = urlsafe_base64_encode(force_bytes(self.user.pk))
         reset_link = f"http://127.0.0.1:8000/reset-password/{uid}/{token}/"
@@ -29,15 +25,15 @@ class WelcomeMessage(EmailHelper):
 
         message = self.get_template_content("welcome", {
             "first_name": self.user.first_name,
-            "role":self.user.role,
             "user_id": self.user.id,
-            "college_email": student.college_email if student else None,
-            "team_id": student.team_id if student else None,
+            "college_email": college_email,
+            "team_id": team_id,
             "reset_link": reset_link,
         })
 
         return self.send_email(
             subject="Welcome to NATHM!",
-            to_email=to_email,
+            # to_email=college_email if college_email else self.user.email,
+            to_email=self.user.email,
             message=message
         )
