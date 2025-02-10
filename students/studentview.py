@@ -25,29 +25,40 @@ class DashboardView(View):
     template_name = 'dashboard/student_profile/index.html'
 
     def get(self, request, *args, **kwargs):
-        student = get_object_or_404(Student, user=request.user)
+        try:
+            student = get_object_or_404(Student, user=request.user)
+        except Student.DoesNotExist:
+            messages.error(request, "No student profile found for the current user.")
+            return redirect("userauth:login")
 
+        # Borrowed books count
         borrowed_books = Library.objects.filter(
             borrowed_by=student,
             book__e_book=False
         ).count()
+
+        # Total e-books count
         total_e_books = Library.objects.filter(
             borrowed_by=student,
-            book__e_book= True
+            book__e_book=True
         ).count()
 
+        # Total submitted assignments
         total_submitted = AssignmentSubmit.objects.filter(student=student, status="accepted").count()
+
+        # Total pending assignments
         total_pending_assignments = AssignmentSubmit.objects.filter(student=student, status="pending").count()
 
         # Fetch all books
         books = Book.objects.all()
 
+        # Today's routines
         today_routines = Routine.objects.filter(
             section=student.section,
             date=datetime.now().date()
         ).order_by("-date")[:5]
 
-        notices = Notices.objects.order_by('-id')[:2]
+        # Latest notices
         notices = Notices.objects.order_by('-id')[:2]
 
         return render(request, self.template_name, context={
@@ -60,7 +71,6 @@ class DashboardView(View):
             'student': student,
             'books': books
         })
-
 
 class BookRequestView(View):
     def post(self, request, *args, **kwargs):

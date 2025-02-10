@@ -1,15 +1,22 @@
 {% extends 'dashboard/admin-base.html' %}
-{% block title %} Students {% endblock %}
-{% block breadcrumb %} Students {% endblock %}
-{% block maintitle %} Students {% endblock %}
+{% block title %}
+    Students
+{% endblock %}
+{% block breadcrumb %}
+    Students
+{% endblock %}
+{% block maintitle %}
+    Students
+{% endblock %}
 
 {% block rightbutton %}
     <div class="d-flex justify-content-end mb-2">
-        <a href="{% url 'student_admin:add' %}" class="btn btn-primary">Add New Student</a>
+        <a href="{% url 'student_admin:add' %}" class="btn btn-primary mt-3">Add New Student</a>
     </div>
 {% endblock %}
 
 {% block content %}
+
     <div class="col-sm-12">
         {% with messages=messages %}
             {% include 'dashboard/alert.html' %}
@@ -19,8 +26,7 @@
                 <form method="post" action="{% url 'generic:delete' %}">
                     {% csrf_token %}
                     <input type="hidden" name="_selected_type" value="student">
-                    <input type="hidden" name="_back_url" value="{% url 'student_admin:list' %}">
-                    
+                    <input type="hidden" name="_back_url" value="{% url 'student_admin:list' %}">   
                     <div class="btn-group mb-3">
                         <a href="{% url 'student_admin:list' %}" class="btn btn-outline-primary {% if not filter_by %}active{% endif %}">All</a>
                         <a href="{% url 'student_admin:list_filter' filter_by='admin' %}" class="btn btn-outline-warning {% if filter_by == 'admin' %}active{% endif %}">Dashboard</a>
@@ -34,6 +40,7 @@
                                     <tr>
                                         <th>
                                             <div class="form-check">
+                                                <label for="allCheckbox"></label>
                                                 <input class="form-check-input" type="checkbox" id="allCheckbox"/>
                                             </div>
                                         </th>
@@ -52,4 +59,82 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="addIdsModal" tabindex="-1" aria-labelledby="addIdsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addIdsModalLabel">Add College Email and Teams ID</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-ids-form" method="POST" action="{% url 'student_admin:ids' %}">
+                        {% csrf_token %}
+                        <input type="hidden" id="student_id" name="student_id"/>
+
+                        <div class="mb-3">
+                            <label for="college_email" class="form-label">College Email</label>
+                            <input type="email" class="form-control" id="college_email" name="college_email"/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="teams_id" class="form-label">Teams ID</label>
+                            <input type="text" class="form-control" id="teams_id" name="teams_id"/>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-full">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="updateSections" aria-labelledby="updateSectionsLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateSectionsLabel">Update Sections</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="update_sections" method="POST" action="{% url 'student_admin:section_assign_users' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_ids" id="student_ids_input">
+
+                        <div class="from-group mb-3">
+                            <label for="college_email" class="form-label d-block">Section</label>
+                            <select class="form-control noselect2 w-100 select2ajax"
+                                    data-ajax="{% url 'student_admin:section_select_json' %}" data-placeholder
+                                    name="section_id"></select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Assign Users</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="paymentModalToggle" tabindex="-1" aria-labelledby="paymentModalToggleLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentModalToggleLabel">Update Fee</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="paymentForm" method="post" action="{% url 'payment:update_fee' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="student_id"/>
+                        {{ payment_form.as_p }}
+
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="savePayment">Save changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

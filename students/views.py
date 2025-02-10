@@ -148,123 +148,103 @@ class StudentList(View):
         }
 
         return render(request, self.template_name, context)
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
-from django.core.paginator import Paginator
-from django.db.models import Q
-from django.http import JsonResponse
-from django.urls import reverse
-from django.views import View
-from students.models import Student
+
 
 class StudentAjax(View):
     def get(self, request, *args, **kwargs):
-        filter_by = kwargs.get("filter_by", None)
+        filter_by = kwargs.get('filter_by', None)
         draw = int(request.GET.get("draw", 1))
         start = int(request.GET.get("start", 0))
         length = int(request.GET.get("length", 10))
-        search_value = request.GET.get("search[value]", "").strip()
+        search_value = request.GET.get("search[value]", None)
         campus_id = request.GET.get("campus", None)
         program_id = request.GET.get("program", None)
         department_id = request.GET.get("department", None)
         page_number = (start // length) + 1
 
-        students = Student.objects.select_related("campus", "department", "program").order_by("-id")
+        students = Student.objects.select_related('campus', 'department', 'program').order_by("-id")
+        if filter_by == "kiosk":
+            students = students.filter(kiosk_id__isnull=False)
+        elif filter_by == "admin":
+            students = students.filter(kiosk_id__isnull=True)
+        elif filter_by == "online":
+            students = students.filter(kiosk_id="hello")
 
-        if filter_by:
-            filter_map = {
-                "kiosk": Q(kiosk_id__isnull=False),
-                "admin": Q(kiosk_id__isnull=True),
-                "online": Q(kiosk_id="hello"),
-            }
-            students = students.filter(filter_map.get(filter_by, Q()))
-
-        filters = {
-            "campus_id": campus_id,
-            "program_id": program_id,
-            "department_id": department_id,
-        }
-        students = students.filter(**{k: v for k, v in filters.items() if v})
+        if campus_id:
+            students = students.filter(campus_id=campus_id)
+        if program_id:
+            students = students.filter(program_id=program_id)
+        if department_id:
+            students = students.filter(department_id=department_id)
 
         if search_value:
             students = students.filter(
-                Q(user__first_name__icontains=search_value)
-                | Q(user__last_name__icontains=search_value)
-                | Q(student_id__icontains=search_value)
-                | Q(campus__name__icontains=search_value)
-                | Q(department__name__icontains=search_value)
-                | Q(program__name__icontains=search_value)
+                Q(user__first_name__icontains=search_value) |
+                Q(user__last_name__icontains=search_value) |
+                Q(student_id__icontains=search_value) |
+                Q(campus__name__icontains=search_value) |
+                Q(department__name__icontains=search_value) |
+                Q(program__name__icontains=search_value)
             )
 
         paginator = Paginator(students, length)
-        page_students = paginator.get_page(page_number)
+        page_students = paginator.page(page_number)
 
-        data = [
-            [
+        data = []
+        for student in page_students:
+            data.append([
                 self.get_checkbox_html(student.id),
-                f"{student.user.get_full_name()}<br>{student.user.email}",
+                student.user.get_full_name() + '<br />' + student.user.email,
                 student.campus.name if student.campus else "",
                 student.department.name if student.department else "",
                 student.program.name if student.program else "",
                 self.get_section(student),
-                self.get_action(student),
-            ]
-            for student in page_students
-        ]
+                self.get_action(student)
+            ])
 
-        return JsonResponse(
-            {
-                "draw": draw,
-                "recordsTotal": Student.objects.count(),
-                "recordsFiltered": students.count(),
-                "data": data,
-            },
-            status=200,
-        )
+        return JsonResponse({
+            "draw": draw,
+            "recordsTotal": paginator.count,
+            "recordsFiltered": paginator.count,
+            "data": data,
+        }, status=200)
 
     def get_section(self, obj):
         if obj.section:
-            section_url = reverse("student_admin:edit_section", kwargs={"pk": obj.section.id})
+            section_url = reverse('student_admin:edit_section', kwargs={'pk': obj.section.id})
             return f'<a target="_blank" href="{section_url}">{obj.section.section_name}</a>'
         return ""
 
     def get_checkbox_html(self, student_id):
-        return f'''
-            <div class="form-check">
-                <input class="form-check-input row-checkbox" type="checkbox" 
-                    name="_selected_id" value="{student_id}" 
-                    id="checkbox_{student_id}">
-                <label for="checkbox_{student_id}"></label>
-            </div>
-        '''
+        return (f'<div class="form-check"><label for="checkbox_{student_id}_question"></label><input '
+                f'class="form-check-input" type="checkbox" name="_selected_id"'
+                f' value="{student_id}" id="checkbox_{student_id}_question"></div>'),
 
     def get_action(self, student):
         student_id = student.id
-        edit_url = reverse("student_admin:edit", kwargs={"id": student_id})
-        fee_url = reverse("payment:update_fee")
+        edit_url = reverse('student_admin:edit', kwargs={'id': student_id})
+        fee_url = reverse('payment:update_fee')
 
-        ids_button = f'''
-            <button type="button" class="btn btn-primary btn-sm addIdsModal"
-                data-studentid="{student_id}" {'data-email="' + student.college_email + '"' if student.college_email else ''}
-                {'data-teamid="' + student.team_id + '"' if student.team_id else ''}>
-                {'Update IDs' if student.college_email else 'Add IDs'}
-            </button>
-        '''
-
-        fee_button = f'''
-            <button type="button" class="btn btn-primary updateFeeModal" 
-                data-studentid="{student_id}" data-fee="{student.payment_due}">
-                Update Fee
-            </button>
-        '''
+        if not student.college_email:
+            ids_button = (f'<button type="button" class="btn btn-primary btn-sm addIdsModal" '
+                          f'data-studentid="{student_id}">Add IDs</button>')
+        else:
+            ids_button = (f'<button type="button" class="btn btn-primary btn-sm addIdsModal" '
+                          f'data-studentid="{student_id}" data-email="{student.college_email}"'
+                          f' data-teamid="{student.team_id}">Update IDs</button>')
+        fee_button = (
+            f'<button type="button" class="btn btn-primary updateFeeModal" '
+            f'data-studentid="{student_id}" data-fee="{student.payment_due}">Update Fee</button>'
+        )
 
         return f'''
                 <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
                 {ids_button}
                 {fee_button} 
+                <input type="hidden" name="_selected_id" value="{student_id}" />
         '''
-    
+
+
 class StudentFilters(View):
     def get(self, request, *args, **kwargs):
         # Fetch filter options from the database

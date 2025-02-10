@@ -43,11 +43,18 @@ class LoginView(View):
                 if not password:
                     raise Exception("Password is required")
 
+                # Check if the user is a student
                 student = Student.objects.filter(college_email=username).first()
                 if student:
                     user = student.user
                 else:
-                    user = User.objects.filter(email=username).first()
+                    # Check if the user is a teacher
+                    teacher = Teacher.objects.filter(college_email=username).first()
+                    if teacher:
+                        user = teacher.user
+                    else:
+                        # Check if the user is a regular user
+                        user = User.objects.filter(email=username).first()
 
                 if user:
                     user = authenticate(request, username=user.email, password=password)
@@ -55,12 +62,17 @@ class LoginView(View):
                 if user is not None:
                     login(request, user)
 
+                    # Redirect based on user role
                     if user.role == "admission":
                         return redirect("admission_department:index")
                     elif user.role == "it":
                         return redirect("it_department:index")
                     elif user.role == "student_service":
                         return redirect("student_service:index")
+                    elif user.role == "student":
+                        return redirect("students:studentdashboard")
+                    elif user.role == "teacher":
+                        return redirect("teacherurl:teacherdashboard")
                     else:
                         return redirect("dashboard:index")
                 else:
@@ -161,7 +173,7 @@ class ResetPasswordView(View):
             messages.error(request, "Invalid reset link.")
             return redirect('userauth:login')
 
-        return render(request, 'dashboard/auth/reset-password.html', {'form': form})
+        return render(request, 'dashboard/auth/reset-password.html', {'form': form, 'uidb64': uidb64, 'token': token})
 
 
 # class VerifyEmailCodeView(View):

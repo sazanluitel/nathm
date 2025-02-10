@@ -162,9 +162,9 @@
         }
     }
     $(document).ready(function () {
-        let selectedItems = new Set();
 
         const datatableAjaxElement = $(".ajaxdatatable");
+
         if (datatableAjaxElement.length > 0) {
             try {
                 const table = datatableAjaxElement.on("init.dt", function () {
@@ -188,27 +188,15 @@
                         }
                     },
                     drawCallback: function () {
-                        const tableApi = this.api();
-
-                        // Restore checkbox selections after table redraw
-                        tableApi.rows().every(function () {
-                            let row = $(this.node());
-                            let checkbox = row.find(".row-checkbox");
-                            let itemId = checkbox.val();
-                            if (selectedItems.has(itemId)) {
-                                checkbox.prop("checked", true);
-                            }
-                        });
-
-                        updateSelectAllState();
-                        updateButtonStates();
+                        // Re-attach event listeners after each draw
+                        updateStudentIds();
                     },
                     language: {
                         emptyTable: datatableAjaxElement.data("nodata") ?? "No data available"
                     },
                     processing: true,
-                    errorCallback: function (settings, xhr, errorThrown) {
-                        console.error("DataTables Ajax error:", errorThrown);
+                    errorCallback: function (settings, xhr, errorthrown) {
+                        console.error("DataTables Ajax error:", errorthrown);
                     }
                 });
 
@@ -218,61 +206,60 @@
                 });
 
             } catch (error) {
-                console.error("Error initializing DataTable:", error);
+                console.log(error);
             }
         }
 
-        function updateButtonStates() {
-            const hasSelection = selectedItems.size > 0;
-            $("#student_create_section").prop("disabled", !hasSelection);
-            $("#delete-btn").prop("disabled", !hasSelection);
+        let selected_student_ids = [];
+
+        function enable_or_disable_buttons() {
+            console.log("Selected IDs:", selected_student_ids);
+
+            $("#student_create_section").prop("disabled", selected_student_ids.length === 0);
+            $("#delete-btn").prop("disabled", selected_student_ids.length === 0);
         }
 
-        function updateSelectAllState() {
-            const allChecked = $(".student_lists_table tbody .row-checkbox:not(:checked)").length === 0;
-            $("#allCheckbox").prop("checked", allChecked);
+        function updateStudentIds() {
+            selected_student_ids = [...new Set($(".student_lists_table tbody input[type=checkbox]:checked").map(function () {
+                return $(this).val();
+            }).get())];
+
+            enable_or_disable_buttons();
         }
 
-        // "Select All" checkbox logic
+        // Attach event listener for checkboxes
+        $(document).on("change", ".student_lists_table tbody input[type=checkbox]", function () {
+            updateStudentIds();
+        });
+
+        // Attach event listener for the "Select All" checkbox
         $("#allCheckbox").on("change", function () {
-            const isChecked = $(this).prop("checked");
-            $(".student_lists_table tbody .row-checkbox").each(function () {
-                let itemId = $(this).val();
-                $(this).prop("checked", isChecked);
-                if (isChecked) {
-                    selectedItems.add(itemId);
-                } else {
-                    selectedItems.delete(itemId);
-                }
+            const isChecked = $(this).is(":checked");
+            $(".student_lists_table tbody input[type=checkbox]").prop("checked", isChecked);
+            updateStudentIds();
+        });
+        function populateDropdown(selector, options) {
+            const $dropdown = $(selector);
+            $dropdown.empty();
+            $dropdown.append('<option value="">All</option>');
+            options.forEach(option => {
+                $dropdown.append(`<option value="${option.id}">${option.name}</option>`);
             });
-
-            updateButtonStates();
-        });
-
-        // Individual row checkbox logic
-        $(document).on("change", ".student_lists_table tbody .row-checkbox", function () {
-            let itemId = $(this).val();
-            if ($(this).prop("checked")) {
-                selectedItems.add(itemId);
-            } else {
-                selectedItems.delete(itemId);
-            }
-
-            updateSelectAllState();
-            updateButtonStates();
-        });
+        }
 
         // Open "Assign Section" modal
         $(document).on("click", "#student_create_section", function () {
-            $("#student_ids_input").val(Array.from(selectedItems).join(","));
             $("#updateSections").modal("show");
         });
 
         // Handle Assign Section form submission
         $(document).on("submit", "#update_sections", function (e) {
             e.preventDefault();
+
             let submitButton = $(this).find('button[type="submit"]');
             submitButton.prop("disabled", true).text("Updating...");
+
+            $("#student_ids_input").val(selected_student_ids.join(",")); // Use only for section update
 
             $.ajax({
                 type: "POST",
@@ -290,31 +277,7 @@
             });
         });
 
-        // Handle Multiple Delete
-        $(document).on("submit", "form#delete-form", function (e) {
-            e.preventDefault();
-            if (!confirm("Are you sure you want to delete the selected students?")) return;
-
-            let deleteButton = $("#delete-btn");
-            deleteButton.prop("disabled", true).text("Deleting...");
-
-            $.ajax({
-                type: "POST",
-                url: $(this).attr("action"),
-                data: { student_ids: Array.from(selectedItems) },
-                success: function () {
-                    window.location.reload();
-                },
-                error: function () {
-                    alert("Error: Could not delete the selected students.");
-                },
-                complete: function () {
-                    deleteButton.prop("disabled", false).text("Delete Selected");
-                }
-            });
-        });
     });
-
 
     $(document).on('click', '.password_field .show-hide', function () {
         const parentEle = $(this).parent();
@@ -493,7 +456,6 @@
             }
         });
     })
-
 
     $(document).on("click", ".sameAsPermanent", function () {
         const address = $(document).find("[name='permanent-address']").val();
