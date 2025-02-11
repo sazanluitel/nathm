@@ -43,7 +43,6 @@ class AddStudentIds(View):
 
         if is_sent_mail:
             WelcomeMessage(student.user).send()
-            print('Email sent')
 
         label = "Add Ids"
         if student.college_email or student.team_id:
