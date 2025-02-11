@@ -16,7 +16,9 @@ from students.forms import StudentForm
 from django.http import JsonResponse
 from django.urls import reverse
 from payment.forms import PaymentHistoryForm, StudentPaymentForm
+import re
 
+EMAIL_DOMAIN = "@nathm.gov.np"
 
 @method_decorator(csrf_exempt, name='dispatch')
 class AddStudentIds(View):
@@ -25,12 +27,24 @@ class AddStudentIds(View):
         college_email = request.POST.get('college_email')
         teams_id = request.POST.get('teams_id')
 
-        student = get_object_or_404(Student, id=student_id)
-        student.college_email = college_email
-        student.team_id = teams_id
-        student.save()
+        # Validate email format
+        if college_email and not re.match(rf"^[a-zA-Z0-9._%+-]+{EMAIL_DOMAIN}$", college_email):
+            return JsonResponse({'success': False, 'message': f'Invalid email. It must end with {EMAIL_DOMAIN}'}, status=400)
 
-        WelcomeMessage(student.user).send()
+        student = get_object_or_404(Student, id=student_id)
+        
+        is_sent_mail = False
+
+        if student.college_email != college_email or student.team_id != teams_id:
+            is_sent_mail = (college_email and student.college_email != college_email) or (teams_id and student.team_id != teams_id)
+            student.college_email = college_email
+            student.team_id = teams_id
+            student.save()
+
+        if is_sent_mail:
+            WelcomeMessage(student.user).send()
+            print('Email sent')
+
         label = "Add Ids"
         if student.college_email or student.team_id:
             label = "Update Ids"
@@ -43,7 +57,6 @@ class AddStudentIds(View):
             "email": student.college_email,
             "team_id": student.team_id
         })
-
 
 class StudentView(View):
     template_name = 'dashboard/students/add.html'
@@ -241,9 +254,7 @@ class StudentAjax(View):
                 <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
                 {ids_button}
                 {fee_button} 
-                <input type="hidden" name="_selected_id" value="{student_id}" />
         '''
-
 
 class StudentFilters(View):
     def get(self, request, *args, **kwargs):

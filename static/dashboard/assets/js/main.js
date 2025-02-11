@@ -531,6 +531,28 @@
         $(document).find("#paymentModalToggle").modal("show");
     });
 
+    document.getElementById("submit-btn").addEventListener("click", function () {
+        let formData = new FormData();
+        formData.append("student_id", document.getElementById("student_id").value);
+        formData.append("college_email", document.getElementById("college_email").value);
+        formData.append("teams_id", document.getElementById("teams_id").value);
+
+        fetch("/your-endpoint-url/", {
+            method: "POST",
+            body: formData,
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert(data.message);  // Show alert if there's an error
+                } else {
+                    alert("Success: " + data.message);
+                    location.reload(); // Reload page or update UI
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    });
+
 })(jQuery);
 
 
