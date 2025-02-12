@@ -4,6 +4,7 @@ from django.views import View
 from certificate.forms import CertificateForm
 from routine.models import Routine, ExamRoutine
 from routine.views import routine_object, exam_routine_object
+from teacher.views import get_or_none
 from userauth.forms import *
 from library.forms import *
 from userauth.models import *
@@ -111,4 +112,48 @@ class StudentRoutineView(View):
         return render(request, "dashboard/teacher_profile/routine.html", {
             "routines": routines,
             "modules":modules
+        })
+
+class TeacherDashboardEditView(View):
+    template_name = 'dashboard/teacher_profile/profile_edit.html'
+
+    def get(self, request, *args, **kwargs):
+        # Ensure that the teacher can only edit their own profile
+        teacher = get_object_or_404(Teacher, user=request.user)
+        personalinfo = get_or_none(PersonalInfo, user=teacher.user)
+        
+        # Ensure that personalinfo is found
+        if not personalinfo:
+            messages.error(request, "Personal Info not found.")
+            return redirect('teacherurl:teacherdashboard')
+
+        # Pass both the teacher and personalinfo instances to the form
+        form = TeacherEditForm(instance=teacher, personalinfo_instance=personalinfo)
+        
+        return render(request, self.template_name, {
+            "form": form,
+            "teacher_id": teacher.id,
+        })
+    
+    def post(self, request, *args, **kwargs):
+        teacher = get_object_or_404(Teacher, user=request.user)
+        personalinfo = get_or_none(PersonalInfo, user=teacher.user)
+
+        if not personalinfo:
+            messages.error(request, "Personal Info not found.")
+            return redirect('teacherurl:teacherdashboard')
+
+        # Pass both the teacher and personalinfo instances to the form
+        form = TeacherEditForm(data=request.POST, files=request.FILES, instance=teacher, personalinfo_instance=personalinfo)
+        
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Teacher profile updated successfully.")
+            return redirect('teacherurl:teacherdashboard')
+        else:
+            messages.error(request, "Please correct the errors below.")
+        
+        return render(request, self.template_name, {
+            "form": form,
+            "teacher_id": teacher.id,
         })

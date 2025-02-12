@@ -8,7 +8,7 @@ class Teacher(models.Model):
         ('AFTERNOON', 'Afternoon'),
         ('EVENING', 'Evening'),
     ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
@@ -19,12 +19,19 @@ class Teacher(models.Model):
     college_email = models.EmailField(null=True, blank=True, unique=True)
     
     def save(self, *args, **kwargs):
-        """Generate a unique college email before saving if not already set"""
+        """Ensure unique college email and set user role to 'teacher' only when saving Teacher"""
+
         email_was_empty = not self.college_email  # Check if email was empty before saving
 
+        # Generate unique college email if not already set
         if not self.college_email and self.user:
             self.college_email = self.generate_unique_college_email()
-        
+
+        # Set the user role to 'teacher' only for this model
+        if self.user.role != "teacher":  
+            self.user.role = "teacher"
+            self.user.save(update_fields=["role"])  # Update only the 'role' field
+
         super().save(*args, **kwargs)
 
         # Send welcome message only if the email was just created
@@ -45,4 +52,3 @@ class Teacher(models.Model):
 
     def __str__(self):
         return self.college_email if self.college_email else "No Email"
-

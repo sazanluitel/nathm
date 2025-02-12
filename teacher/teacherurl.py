@@ -7,6 +7,8 @@ urlpatterns = [
     
     path('dashboard/', DashboardView.as_view(), name='teacherdashboard'),
 
+    path('dashboard/edit/', TeacherDashboardEditView.as_view(), name='teacher_dashboard_edit'),
+
     path('syllabus/', StudentModulesView.as_view(), name='modules'),
 
     path('routine/class/', ClassRoutineView.as_view(), name='class_routines'),

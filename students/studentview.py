@@ -6,6 +6,8 @@ from django.views import View
 from certificate.forms import CertificateForm
 from routine.models import Routine, ExamRoutine
 from routine.views import routine_object, exam_routine_object
+from students.forms import StudentEditForm
+from students.views import get_or_none
 from userauth.forms import *
 from library.forms import *
 from userauth.models import *
@@ -19,6 +21,9 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from notices.models import Notices
 from assignment.models import AssignmentSubmit
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 
 
 class DashboardView(View):
@@ -508,3 +513,36 @@ class PaymentSuccessView(View):
         student.save()
 
         return render(request, self.template_name, {})
+
+class StudentDashboardEditView(LoginRequiredMixin, View):
+    template_name = 'dashboard/student_profile/profile_edit.html'
+
+    def get(self, request, *args, **kwargs):
+        # Ensure that the student can only edit their own profile
+        student = get_object_or_404(Student, user=request.user)
+        personalinfo = get_or_none(PersonalInfo, user=student.user)
+        
+        form = StudentEditForm(instance=student, personalinfo_instance=personalinfo)
+        
+        return render(request, self.template_name, {
+            'form': form,
+            'student_id': student.id,
+        })
+
+    def post(self, request, *args, **kwargs):
+        student = get_object_or_404(Student, user=request.user)
+        personalinfo = get_object_or_404(PersonalInfo, user=student.user)
+        
+        form = StudentEditForm(data=request.POST, instance=student, personalinfo_instance=personalinfo)
+        
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your profile has been updated successfully.")
+            return redirect('students:student_dashboard_edit')
+        else:
+            messages.error(request, "Please correct the errors below.")
+        
+        return render(request, self.template_name, {
+            'form': form,
+            'student_id': student.id,
+        })

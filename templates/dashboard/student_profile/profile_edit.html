@@ -1,0 +1,231 @@
+{% extends 'dashboard/bases/student-profile.html' %}
+{% load static %}
+{% block title %}Edit Profile{% endblock %}
+{% block breadcrumb %}Edit Profile{% endblock %}
+{% block maintitle %}Edit Your Profile{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <form method="post" enctype="multipart/form-data" action="{% url 'students:student_dashboard_edit' %}">
+                {% csrf_token %}
+                {% with messages=messages %}
+                    {% include 'dashboard/alert.html' %}
+                {% endwith %}
+
+                <!-- Personal Details -->
+                <div class="card mb-4">
+                    <div class="card-header h5 py-3">Personal Details</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-10">
+                                <div class="row">
+                                    <div class="col-md-2 mb-3">
+                                        <label for="{{ form.user_form.title.id_for_label }}" class="form-label">Title:</label>
+                                        {{ form.user_form.title }}
+                                        {% include "parts/error.html" with errors=form.user_form.title.errors %}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="{{ form.user_form.first_name.id_for_label }}" class="form-label">First Name:</label>
+                                        {{ form.user_form.first_name }}
+                                        {% include "parts/error.html" with errors=form.user_form.first_name.errors %}
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <label for="{{ form.user_form.middle_name.id_for_label }}" class="form-label">Middle Name:</label>
+                                        {{ form.user_form.middle_name }}
+                                        {% include "parts/error.html" with errors=form.user_form.middle_name.errors %}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="{{ form.user_form.last_name.id_for_label }}" class="form-label">Last Name:</label>
+                                        {{ form.user_form.last_name }}
+                                        {% include "parts/error.html" with errors=form.user_form.last_name.errors %}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="{{ form.personal_info_form.gender.id_for_label }}" class="form-label">Gender:</label>
+                                        {{ form.personal_info_form.gender }}
+                                        {% include "parts/error.html" with errors=form.personal_info_form.gender.errors %}
+                                    </div>
+                                    <div class="col-md-8 mb-3">
+                                        <label for="{{ form.user_form.email.id_for_label }}" class="form-label">Email:</label>
+                                        {{ form.user_form.email }}
+                                        {% include "parts/error.html" with errors=form.user_form.email.errors %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="col-md-12">
+                                    <label for="profile_image" class="form-label">Profile Image:</label>
+                                    {% include 'dashboard/image-picker.html' with name=form.user_form.profile_image.name image=form.user_form.profile_image.value %}
+                                    {% include "parts/error.html" with errors=form.user_form.profile_image.errors %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-7">
+                                <div class="col-md-12 mb-3">
+                                    <label for="{{ form.personal_info_form.date_of_birth_in_ad.id_for_label }}" class="form-label">Date of Birth:</label>
+                                    {{ form.personal_info_form.date_of_birth_in_ad }}
+                                    {% include "parts/error.html" with errors=form.personal_info_form.date_of_birth_in_ad.errors %}
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label for="{{ form.personal_info_form.citizenship_number.id_for_label }}" class="form-label">Citizenship Number:</label>
+                                    {{ form.personal_info_form.citizenship_number }}
+                                    {% include "parts/error.html" with errors=form.personal_info_form.citizenship_number.errors %}
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="col-md-12 mb-3">
+                                    <label for="citizenship_card" class="form-label">Citizenship:</label>
+                                    {% include 'dashboard/image-picker.html' with name=form.personal_info_form.citizenship_img.name image=form.personal_info_form.citizenship_img.value %}
+                                    {% include "parts/error.html" with errors=form.personal_info_form.citizenship_img.errors %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Temporary Address -->
+                <div class="card mt-4">
+                    <div class="card-header py-3 h5">Temporary Address</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.temporary_address_form.address.id_for_label }}" class="form-label">Address:</label>
+                                {{ form.temporary_address_form.address }}
+                                {% include "parts/error.html" with errors=form.temporary_address_form.address.errors %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.temporary_address_form.city.id_for_label }}" class="form-label">City:</label>
+                                {{ form.temporary_address_form.city }}
+                                {% include "parts/error.html" with errors=form.temporary_address_form.city.errors %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.temporary_address_form.province.id_for_label }}" class="form-label">Province:</label>
+                                {{ form.temporary_address_form.province }}
+                                {% include "parts/error.html" with errors=form.temporary_address_form.province.errors %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.temporary_address_form.country.id_for_label }}" class="form-label">Country:</label>
+                                {{ form.temporary_address_form.country }}
+                                {% include "parts/error.html" with errors=form.temporary_address_form.country.errors %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.temporary_address_form.postcode.id_for_label }}" class="form-label">Postcode:</label>
+                                {{ form.temporary_address_form.postcode }}
+                                {% include "parts/error.html" with errors=form.temporary_address_form.postcode.errors %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.temporary_address_form.contact_number.id_for_label }}" class="form-label">Contact Number:</label>
+                                {{ form.temporary_address_form.contact_number }}
+                                {% include "parts/error.html" with errors=form.temporary_address_form.contact_number.errors %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Permanent Address -->
+                <div class="card mb-4">
+                    <div class="card-header py-3 h5">Permanent Address</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.permanent_address_form.address.id_for_label }}" class="form-label">Address:</label>
+                                {{ form.permanent_address_form.address }}
+                                {% include "parts/error.html" with errors=form.permanent_address_form.address.errors %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.permanent_address_form.city.id_for_label }}" class="form-label">City:</label>
+                                {{ form.permanent_address_form.city }}
+                                {% include "parts/error.html" with errors=form.permanent_address_form.city.errors %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.permanent_address_form.province.id_for_label }}" class="form-label">Province:</label>
+                                {{ form.permanent_address_form.province }}
+                                {% include "parts/error.html" with errors=form.permanent_address_form.province.errors %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.permanent_address_form.country.id_for_label }}" class="form-label">Country:</label>
+                                {{ form.permanent_address_form.country }}
+                                {% include "parts/error.html" with errors=form.permanent_address_form.country.errors %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.permanent_address_form.postcode.id_for_label }}" class="form-label">Postcode:</label>
+                                {{ form.permanent_address_form.postcode }}
+                                {% include "parts/error.html" with errors=form.permanent_address_form.postcode.errors %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.permanent_address_form.contact_number.id_for_label }}" class="form-label">Contact Number:</label>
+                                {{ form.permanent_address_form.contact_number }}
+                                {% include "parts/error.html" with errors=form.permanent_address_form.contact_number.errors %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Contacts -->
+                <div class="card mb-4">
+                    <div class="card-header h5 py-3">Emergency Contacts</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.emergency_contact_form.name.id_for_label }}" class="form-label">Name:</label>
+                                {{ form.emergency_contact_form.name }}
+                                {% include "parts/error.html" with errors=form.emergency_contact_form.name.errors %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.emergency_contact_form.relationship.id_for_label }}" class="form-label">Relationship:</label>
+                                {{ form.emergency_contact_form.relationship }}
+                                {% include "parts/error.html" with errors=form.emergency_contact_form.relationship.errors %}
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.emergency_contact_form.email.id_for_label }}" class="form-label">Email:</label>
+                                {{ form.emergency_contact_form.email }}
+                                {% include "parts/error.html" with errors=form.emergency_contact_form.email.errors %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.emergency_address_form.address.id_for_label }}" class="form-label">Address:</label>
+                                {{ form.emergency_address_form.address }}
+                                {% include "parts/error.html" with errors=form.emergency_address_form.address.errors %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.emergency_address_form.city.id_for_label }}" class="form-label">City:</label>
+                                {{ form.emergency_address_form.city }}
+                                {% include "parts/error.html" with errors=form.emergency_address_form.city.errors %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.emergency_address_form.province.id_for_label }}" class="form-label">Province:</label>
+                                {{ form.emergency_address_form.province }}
+                                {% include "parts/error.html" with errors=form.emergency_address_form.province.errors %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.emergency_address_form.country.id_for_label }}" class="form-label">Country:</label>
+                                {{ form.emergency_address_form.country }}
+                                {% include "parts/error.html" with errors=form.emergency_address_form.country.errors %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.emergency_address_form.postcode.id_for_label }}" class="form-label">Postcode:</label>
+                                {{ form.emergency_address_form.postcode }}
+                                {% include "parts/error.html" with errors=form.emergency_address_form.postcode.errors %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.emergency_address_form.contact_number.id_for_label }}" class="form-label">Contact Number:</label>
+                                {{ form.emergency_address_form.contact_number }}
+                                {% include "parts/error.html" with errors=form.emergency_address_form.contact_number.errors %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit and Cancel Buttons -->
+                <div class="flex mb-5 ms-3">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a href="{% url 'students:studentdashboard' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+	<script src="{% static 'dashboard/assets/js/edit_student.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,229 @@
+{% extends 'dashboard/bases/teacher-profile.html' %}
+{% load static %}
+{% block title %}Edit Profile{% endblock %}
+{% block breadcrumb %}Edit Profile{% endblock %}
+{% block maintitle %}Edit Your Profile{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <form method="post" enctype="multipart/form-data" action="{% url 'teacherurl:teacher_dashboard_edit' %}">
+            {% csrf_token %}
+            {% with messages=messages %}
+                {% include 'dashboard/alert.html' %}
+            {% endwith %}
+            <div class="card mb-4">
+                <div class="card-header h5 py-3">Personal Details</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="row">
+                                <div class="col-md-2 mb-3">
+                                    <label for="{{ form.user_form.title.id_for_label }}"
+                                           class="form-label">Title:</label>
+                                    {{ form.user_form.title }}
+                                    {% include "parts/error.html" with errors=form.user_form.title.errors %}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.user_form.first_name.id_for_label }}" class="form-label">First
+                                        Name:</label>
+                                    {{ form.user_form.first_name }}
+                                    {% include "parts/error.html" with errors=form.user_form.first_name.errors %}
+                                </div>
+                                <div class="col-md-2 ">
+                                    <label for="{{ form.user_form.middle_name.id_for_label }}" class="form-label">Middle
+                                        Name:</label>
+                                    {{ form.user_form.middle_name }}
+                                    {% include "parts/error.html" with errors=form.user_form.middle_name.errors %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="{{ form.user_form.last_name.id_for_label }}" class="form-label">Last
+                                        Name:</label>
+                                    {{ form.user_form.last_name }}
+                                    {% include "parts/error.html" with errors=form.user_form.last_name.errors %}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="{{ form.personal_info_form.gender.id_for_label }}"
+                                           class="form-label">Gender:</label>
+                                    {{ form.personal_info_form.gender }}
+                                    {% include "parts/error.html" with errors=form.personal_info_form.gender.errors %}
+                                </div>
+                                <div class="col-md-8 mb-3">
+                                    <label for="{{ form.user_form.email.id_for_label }}"
+                                           class="form-label">Email:</label>
+                                    {{ form.user_form.email }}
+                                    {% include "parts/error.html" with errors=form.user_form.email.errors %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="col-md-12">
+                                <label for="profile_image" class="form-label">Profile Image:</label>
+                                {% include 'dashboard/image-picker.html' with name=form.user_form.profile_image.name image=form.user_form.profile_image.value %}
+                                {% include "parts/error.html" with errors=form.user_form.profile_image.errors %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.personal_info_form.date_of_birth_in_ad.id_for_label }}"
+                                       class="form-label">Date of Birth:</label>
+                                {{ form.personal_info_form.date_of_birth_in_ad }}
+                                {% include "parts/error.html" with errors=form.personal_info_form.date_of_birth_in_ad.errors %}
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="{{ form.personal_info_form.citizenship_number.id_for_label }}"
+                                       class="form-label">Citizenship Number:</label>
+                                {{ form.personal_info_form.citizenship_number }}
+                                {% include "parts/error.html" with errors=form.personal_info_form.citizenship_number.errors %}
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="col-md-12 mb-3">
+                                <label for="citizenship_card" class="form-label">Citizenship:</label>
+                                {% include 'dashboard/image-picker.html' with name=form.personal_info_form.citizenship_img.name image=form.personal_info_form.citizenship_img.value %}
+                                {% include "parts/error.html" with errors=form.personal_info_form.citizenship_img.errors %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header py-3 h5 d-flex justify-content-between align-items-center">
+                    <div class="cards-title">Address Info</div>
+                    {% comment %} <button type="button" class="btn btn-primary btn-sm sameAsPermanent">Same as Permanent</button> {% endcomment %}
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.address_info_form.address.id_for_label }}" class="form-label">Address:</label>
+                            {{ form.address_info_form.address }}
+                            {% include "parts/error.html" with errors=form.address_info_form.address.errors %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.address_info_form.city.id_for_label }}" class="form-label">City:</label>
+                            {{ form.address_info_form.city }}
+                            {% include "parts/error.html" with errors=form.address_info_form.city.errors %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.address_info_form.province.id_for_label }}" class="form-label">Province:</label>
+                            {{ form.address_info_form.province }}
+                            {% include "parts/error.html" with errors=form.address_info_form.province.errors %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.address_info_form.country.id_for_label }}" class="form-label">Country:</label>
+                            {{ form.address_info_form.country }}
+                            {% include "parts/error.html" with errors=form.address_info_form.country.errors %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.address_info_form.postcode.id_for_label }}" class="form-label">Postcode:</label>
+                            {{ form.address_info_form.postcode }}
+                            {% include "parts/error.html" with errors=form.address_info_form.postcode.errors %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.address_info_form.contact_number.id_for_label }}"
+                                   class="form-label">Contact Number:</label>
+                            {{ form.address_info_form.contact_number }}
+                            {% include "parts/error.html" with errors=form.address_info_form.contact_number.errors %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center py-3 h5">
+                        <div class="cards-title">Education History</div>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#educationHistoryModal">
+                            Add Education History
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="education_history_container" class="table-responsive">
+                            <table
+                                    class="table student-datatable table-bordered"
+                                    data-ajax="{% url 'teacher:educational_history_json' pk=teacher_id %}"
+                            >
+                                <thead>
+                                    <tr>
+                                        <th>Degree</th>
+                                        <th>Institution</th>
+                                        <th>Start Year</th>
+                                        <th>End Year</th>
+                                        <th>Grade</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center py-3 h5">
+                        <div class="cards-title">English Test Record</div>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#englishTestModal">
+                            Add English Test
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="englishtest_history_container" class="table-responsive">
+                            <table
+                                    class="table student-datatable table-bordered"
+                                    data-ajax="{% url 'teacher:english_test_json' pk=teacher_id %}"
+                            >
+                                <thead>
+                                <tr>
+                                    <th>Test Name</th>
+                                    <th>Score</th>
+                                    <th>Date</th>
+                                    <th>Grade</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center py-3 h5">
+                        <div class="cards-title">Employment History</div>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#employmentHistoryModal">
+                            Add Employment History
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="employment_history_container" class="table-responsive">
+                            <table class="table table-bordered"
+                                data-ajax="{% url 'teacher:employment_history_json' pk=teacher_id %}"
+                            >
+                                <thead>
+                                <tr>
+                                    <th>Company</th>
+                                    <th>Position</th>
+                                    <th>Start Year</th>
+                                    <th>End Year</th>
+                                    <th>Job Description</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            <div class="flex mb-5 ms-3">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{% url 'teacherurl:teacherdashboard' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+    {% include "dashboard/teacher/modal.html" %}
+{% endblock %}
+
+{% block footer %}
+	<script src="{% static 'dashboard/assets/js/edit_student.js' %}"></script>
+{% endblock %}

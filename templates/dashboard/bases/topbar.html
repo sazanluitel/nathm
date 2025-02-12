@@ -80,26 +80,41 @@
                         <div class="dropdown-body">
                             <div class="profile-notification-scroll position-relative"
                                  style="max-height: calc(100vh - 225px)">
-                                <div class="d-flex mb-1">
+                                <div class="d-flex align-items-center mb-2 p-2 rounded bg-light">
+                                    <!-- Profile Image -->
                                     <div class="flex-shrink-0">
                                         {% if request.user.profile_image %}
                                             <img src="{{ request.user.profile_image }}" alt="user-image"
-                                                class="user-avatar wid-45 rounded-circle" />
+                                                class="user-avatar wid-50 rounded-circle border border-2 border-primary shadow-sm" />
                                         {% else %}
                                             <img src="{% static 'dashboard/assets/images/user.png' %}" alt="default-user-image"
-                                                class="user-avatar wid-45 rounded-circle" />
+                                                class="user-avatar wid-50 rounded-circle border border-2 border-secondary shadow-sm" />
                                         {% endif %}
                                     </div>
-                                    <div class="flex-grow-1 ms-3 me-2">
+
+                                    <!-- User Info -->
+                                    <div class="flex-grow-1 ms-3">
                                         {% if request.user.is_authenticated %}
-                                            <h6 class="mb-0">{{ request.user.get_full_name }}</h6>
-                                            <small>{{ request.user.role|capfirst }}</small>
+                                            <h6 class="mb-0 fw-bold">{{ request.user.get_full_name }}</h6>
+                                            <small class="text-muted d-block">{{ request.user.role|capfirst }}</small>
                                         {% else %}
-                                            <h6 class="mb-0">Anonymous User</h6>
-                                            <small>Guest</small>
+                                            <h6 class="mb-0 fw-bold">Anonymous User</h6>
+                                            <small class="text-muted d-block">Guest</small>
                                         {% endif %}
                                     </div>
+
+                                    <!-- Edit Profile Button -->
+                                    {% if request.user.role == "student" %}
+                                        <a href="{% url 'students:student_dashboard_edit' %}" class="btn btn-outline-primary btn-sm d-flex align-items-center">
+                                            <i class="fa fa-edit me-1"></i> Edit
+                                        </a>
+                                    {% elif request.user.role == "teacher" %}
+                                        <a href="{% url 'teacherurl:teacher_dashboard_edit' %}" class="btn btn-outline-primary btn-sm d-flex align-items-center">
+                                            <i class="fa fa-edit me-1"></i> Edit
+                                        </a>
+                                    {% endif %}
                                 </div>
+
                                 <p class="text-span mt-4">Manage</p>
                                 <a href="" class="dropdown-item">
                                         <span>
@@ -107,7 +122,7 @@
                                             <span>Settings</span>
                                         </span>
                                 </a>
-                                <a href="" class="dropdown-item">
+                                <a href="{% url 'userauth:change-password' %}" class="dropdown-item">
                                         <span>
                                             <i class="ps-icon text-muted me-2 fa fa-lock"></i>
                                             <span>Change Password</span>

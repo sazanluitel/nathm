@@ -15,7 +15,8 @@ from userauth.forms import (
     RegisterForm,
     UserForm,
     ForgetPasswordForm,
-    ResetPasswordForm
+    ResetPasswordForm,
+    ChangePasswordForm,
 )
 from django.core.paginator import Paginator
 from userauth.models import User, ROLE_CHOICES
@@ -28,6 +29,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from mail.helpers import EmailHelper
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import update_session_auth_hash
 
 # Create your views here.
 class LoginView(View):
@@ -175,7 +178,23 @@ class ResetPasswordView(View):
 
         return render(request, 'dashboard/auth/reset-password.html', {'form': form, 'uidb64': uidb64, 'token': token})
 
+class ChangePasswordView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        form = ChangePasswordForm(user=request.user)
+        return render(request, "dashboard/auth/change-password.html", {"form": form})
 
+    def post(self, request, *args, **kwargs):
+        form = ChangePasswordForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Keep the user logged in after changing the password
+            messages.success(request, "Your password has been successfully changed.")
+            return redirect("userauth:change-password")
+        else:
+            messages.error(request, "Please correct the errors below.")
+
+        return render(request, "dashboard/auth/change-password.html", {"form": form})
+    
 # class VerifyEmailCodeView(View):
 #     def get(self, request, *args, **kwargs):
 #         try:

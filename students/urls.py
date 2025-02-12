@@ -10,6 +10,8 @@ urlpatterns = [
     path('routine/class/', ClassRoutineView.as_view(), name='class_routines'),
     path('routine/exam/', ExamRoutineView.as_view(), name='exam_routines'),
     
+    path('dashboard/edit/', StudentDashboardEditView.as_view(), name='student_dashboard_edit'),
+
     path('library/', StudentLibraryView.as_view(), name='library'),
     path('certificate/', CertificateView.as_view(), name='certificate'),
     path('payment-method/', PaymentSupport.as_view(), name='paymenysupport'),
