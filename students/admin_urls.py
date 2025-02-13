@@ -22,4 +22,5 @@ urlpatterns = [
     path('student/<pk>/test/history/json/', EnglishTestHistoryJson.as_view(), name="english_test_json"),
     path('student/<pk>/employment/history/json/', EmploymentHistoryJson.as_view(), name="employment_history_json"),
 
+    path("upload-excel/", upload_excel, name="upload_excel"),
 ]

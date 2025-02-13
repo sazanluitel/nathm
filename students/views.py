@@ -17,6 +17,7 @@ from django.http import JsonResponse
 from django.urls import reverse
 from payment.forms import PaymentHistoryForm, StudentPaymentForm
 import re
+import pandas as pd
 
 EMAIL_DOMAIN = "@nathm.gov.np"
 
@@ -614,3 +615,49 @@ class SectionView(View):
                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </form>
                 '''
+    
+def upload_excel(request):
+    if request.method == "POST" and request.FILES.get("file"):
+        file = request.FILES["file"]
+
+        try:
+            df = pd.read_excel(file)  
+            
+            for _, row in df.iterrows():
+                email = row.get("Email")
+                student_id = row.get("Student ID")
+                first_name = row.get("First Name", "").strip()
+                last_name = row.get("Last Name", "").strip()
+
+                user, created = User.objects.get_or_create(
+                    email=email,
+                    defaults={"first_name": first_name, "last_name": last_name, "role": "student"},
+                )
+
+                campus = Campus.objects.filter(name=row.get("Campus", "").strip()).first()
+                department = Department.objects.filter(name=row.get("Department", "").strip()).first()
+                program = Program.objects.filter(name=row.get("Program", "").strip()).first()
+
+                date_of_admission = pd.to_datetime(row.get("Date of Admission", ""), errors='coerce').date()
+
+                shift = row.get("Shift", "").upper()
+                shift = shift if shift in dict(Student.SHIFT).keys() else None
+
+                if not Student.objects.filter(user=user).exists():
+                    Student.objects.create(
+                        user=user,
+                        student_id=student_id,
+                        campus=campus,
+                        department=department,
+                        program=program,
+                        date_of_admission=date_of_admission,
+                        shift=shift,
+                    )
+
+            messages.success(request, "Excel file uploaded successfully.")
+        except Exception as e:
+            messages.error(request, f"Error uploading file: {e}")
+
+        return redirect("student_admin:list") 
+
+    return render(request, "dashboard/students/list.html")
