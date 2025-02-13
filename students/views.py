@@ -18,6 +18,7 @@ from django.urls import reverse
 from payment.forms import PaymentHistoryForm, StudentPaymentForm
 import re
 import pandas as pd
+from datetime import datetime
 
 EMAIL_DOMAIN = "@nathm.gov.np"
 
@@ -621,7 +622,7 @@ def upload_excel(request):
         file = request.FILES["file"]
 
         try:
-            df = pd.read_excel(file)  
+            df = pd.read_excel(file)
             
             for _, row in df.iterrows():
                 email = row.get("Email")
@@ -634,17 +635,33 @@ def upload_excel(request):
                     defaults={"first_name": first_name, "last_name": last_name, "role": "student"},
                 )
 
-                campus = Campus.objects.filter(name=row.get("Campus", "").strip()).first()
-                department = Department.objects.filter(name=row.get("Department", "").strip()).first()
-                program = Program.objects.filter(name=row.get("Program", "").strip()).first()
+                campus_name = row.get("Campus", "").strip()
+                department_name = row.get("Department", "").strip()
+                program_name = row.get("Program", "").strip()
 
-                date_of_admission = pd.to_datetime(row.get("Date of Admission", ""), errors='coerce').date()
+                campus = Campus.objects.filter(name=campus_name).first() if campus_name else None
+                department = Department.objects.filter(name=department_name).first() if department_name else None
+                program = Program.objects.filter(name=program_name).first() if program_name else None
 
-                shift = row.get("Shift", "").upper()
-                shift = shift if shift in dict(Student.SHIFT).keys() else None
+                date_of_admission = pd.to_datetime(row.get("Date of Admission", ""), errors='coerce')
+                date_of_admission = date_of_admission.date() if not pd.isnull(date_of_admission) else None
+
+                shift = row.get("Shift", "").upper() if row.get("Shift", "").upper() in dict(Student.SHIFT).keys() else None
+
+                emergency_contact_name = row.get("Emergency Contact", "").strip()
+                emergency_contact = EmergencyContact.objects.filter(name=emergency_contact_name).first() if emergency_contact_name else None
+                address = AddressInfo.objects.filter(address=row.get("Address", "").strip()).first() if row.get("Address") else None
+
+                if not emergency_contact and emergency_contact_name:
+                    emergency_contact = EmergencyContact.objects.create(
+                        name=emergency_contact_name,
+                        relationship=row.get("Emergency Contact Relationship", "")
+                    )
+                if not address and row.get("Address"):
+                    address = AddressInfo.objects.create(address=row.get("Address", ""))
 
                 if not Student.objects.filter(user=user).exists():
-                    Student.objects.create(
+                    student = Student.objects.create(
                         user=user,
                         student_id=student_id,
                         campus=campus,
@@ -652,12 +669,14 @@ def upload_excel(request):
                         program=program,
                         date_of_admission=date_of_admission,
                         shift=shift,
+                        emergency_contact=emergency_contact,
+                        payment_address=address,
                     )
 
-            messages.success(request, "Excel file uploaded successfully.")
+            messages.success(request, "Excel file uploaded and records created successfully.")
         except Exception as e:
             messages.error(request, f"Error uploading file: {e}")
 
-        return redirect("student_admin:list") 
+        return redirect("student_admin:list")  
 
     return render(request, "dashboard/students/list.html")
