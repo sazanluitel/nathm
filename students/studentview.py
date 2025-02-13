@@ -538,7 +538,7 @@ class StudentDashboardEditView(LoginRequiredMixin, View):
         if form.is_valid():
             form.save()
             messages.success(request, "Your profile has been updated successfully.")
-            return redirect('students:student_dashboard_edit')
+            return redirect('students:studentdashboard')
         else:
             messages.error(request, "Please correct the errors below.")
         

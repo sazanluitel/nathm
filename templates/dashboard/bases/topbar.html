@@ -70,8 +70,15 @@
                 <li class="dropdown ps-h-item header-user-profile ">
                     <a class="ps-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
                        role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
-                        <img src="{% static 'dashboard/assets/images/user.png' %}" alt="user-image"
-                             class="user-avatar"/>
+                        {% if request.user.profile_image %}
+                            <img src="{{ request.user.profile_image }}" alt="user-image"
+                                class="user-avatar rounded-circle border border-2 border-primary shadow-sm"
+                                style="width: 40px; height: 40px; object-fit: cover;" />
+                        {% else %}
+                            <img src="{% static 'dashboard/assets/images/user.png' %}" alt="default-user-image"
+                                class="user-avatar rounded-circle border border-2 border-secondary shadow-sm"
+                                style="width: 40px; height: 40px; object-fit: cover;" />
+                        {% endif %}
                     </a>
                     <div class="dropdown-menu dropdown-user-profile dropdown-menu-end z-999 ps-h-dropdown">
                         <div class="dropdown-header d-flex align-items-center justify-content-between">
@@ -85,10 +92,12 @@
                                     <div class="flex-shrink-0">
                                         {% if request.user.profile_image %}
                                             <img src="{{ request.user.profile_image }}" alt="user-image"
-                                                class="user-avatar wid-50 rounded-circle border border-2 border-primary shadow-sm" />
+                                                class="user-avatar rounded-circle border border-2 border-primary shadow-sm"
+                                                style="width: 40px; height: 40px; object-fit: cover;" />
                                         {% else %}
                                             <img src="{% static 'dashboard/assets/images/user.png' %}" alt="default-user-image"
-                                                class="user-avatar wid-50 rounded-circle border border-2 border-secondary shadow-sm" />
+                                                class="user-avatar rounded-circle border border-2 border-secondary shadow-sm"
+                                                style="width: 40px; height: 40px; object-fit: cover;" />
                                         {% endif %}
                                     </div>
 

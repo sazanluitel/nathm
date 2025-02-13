@@ -1,5 +1,6 @@
+{% extends "dashboard/bases/base.html" %}
 {% load static %}
-{% include "dashboard/bases/header.html" %}
+{% block temp %}
 
 <!-- [ Sidebar Menu ] start -->
 <nav class="ps-sidebar">
@@ -93,8 +94,4 @@
 
 {% include "dashboard/bases/footer.html" %}
 
-{% block footer %}{% endblock footer %}
-<script src="{% static 'dashboard/assets/js/main.js' %}"></script>
-</body>
-
-</html>
+{% endblock temp %}
