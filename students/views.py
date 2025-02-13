@@ -617,6 +617,7 @@ class SectionView(View):
                     </form>
                 '''
     
+    
 def upload_excel(request):
     if request.method == "POST" and request.FILES.get("file"):
         file = request.FILES["file"]
