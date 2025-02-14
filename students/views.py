@@ -19,6 +19,7 @@ from payment.forms import PaymentHistoryForm, StudentPaymentForm
 import re
 import pandas as pd
 from datetime import datetime
+from django.core.exceptions import ValidationError
 
 EMAIL_DOMAIN = "@nathm.gov.np"
 
@@ -107,34 +108,53 @@ def get_or_none(model, *args, **kwargs):
     except model.DoesNotExist:
         return None
 
-
 class StudentEditView(View):
     template_name = 'dashboard/students/edit.html'
 
     def get(self, request, *args, **kwargs):
         student_id = kwargs.pop('id', None)
         student = get_object_or_404(Student, id=student_id)
-        personalinfo = get_or_none(PersonalInfo, user=student.user)
+
+        # Ensure PersonalInfo exists
+        personalinfo, created = PersonalInfo.objects.get_or_create(user=student.user)
+
+        # Ensure EmergencyContact exists
+        if not personalinfo.emergency_contact:
+            emergency_contact = EmergencyContact.objects.create()
+            personalinfo.emergency_contact = emergency_contact
+            personalinfo.save()
+
         education_history_form = EducationHistoryForm()
         english_test_form = EnglishTestForm()
         employment_history_form = EmploymentHistoryForm()
 
         form = StudentEditForm(instance=student, personalinfo_instance=personalinfo)
-        return render(request, self.template_name,
-                      {'form': form, 'student_id': student_id, 'education_history_form': education_history_form,
-                       'english_test_form': english_test_form,
-                       'employment_history_form': employment_history_form})
+        return render(request, self.template_name, {
+            'form': form,
+            'student_id': student_id,
+            'education_history_form': education_history_form,
+            'english_test_form': english_test_form,
+            'employment_history_form': employment_history_form
+        })
 
     def post(self, request, *args, **kwargs):
         student_id = kwargs.pop('id', None)
         student = get_object_or_404(Student, id=student_id)
-        personalinfo = get_object_or_404(PersonalInfo, user=student.user)
+
+        # Ensure PersonalInfo exists
+        personalinfo, created = PersonalInfo.objects.get_or_create(user=student.user)
+
+        # Ensure EmergencyContact exists
+        if not personalinfo.emergency_contact:
+            emergency_contact = EmergencyContact.objects.create()
+            personalinfo.emergency_contact = emergency_contact
+            personalinfo.save()
+
         education_history_form = EducationHistoryForm()
         english_test_form = EnglishTestForm()
         employment_history_form = EmploymentHistoryForm()
-        # Pass the personalinfo_instance during POST as well
-        form = StudentEditForm(data=request.POST, instance=student,
-                               personalinfo_instance=personalinfo)
+
+        form = StudentEditForm(data=request.POST, instance=student, personalinfo_instance=personalinfo)
 
         if form.is_valid():
             form.save()
@@ -143,11 +163,13 @@ class StudentEditView(View):
         else:
             messages.error(request, "Please correct the errors below.")
 
-        return render(request, self.template_name,
-                      {'form': form, 'student_id': student_id, 'education_history_form': education_history_form,
-                       'english_test_form': english_test_form,
-                       'employment_history_form': employment_history_form})
-
+        return render(request, self.template_name, {
+            'form': form,
+            'student_id': student_id,
+            'education_history_form': education_history_form,
+            'english_test_form': english_test_form,
+            'employment_history_form': employment_history_form
+        })
 
 class StudentList(View):
     template_name = 'dashboard/students/list.html'
@@ -617,52 +639,55 @@ class SectionView(View):
                     </form>
                 '''
     
-    
-def upload_excel(request):
-    if request.method == "POST" and request.FILES.get("file"):
-        file = request.FILES["file"]
+class UploadExcelView(View):
+    template_name = "dashboard/students/list.html"
 
+    def get(self, request):
+        return render(request, self.template_name)
+
+    def post(self, request):
+        if not request.FILES.get("file"):
+            messages.error(request, "No file uploaded.")
+            return redirect("student_admin:list")
+
+        file = request.FILES["file"]
         try:
             df = pd.read_excel(file)
-            
+            self.process_excel_data(df)
+            messages.success(request, "Excel file uploaded and records created successfully.")
+        except ValidationError as e:
+            messages.error(request, f"Validation Error: {e}")
+        except Exception as e:
+            messages.error(request, f"Error uploading file: {e}")
+
+        return redirect("student_admin:list")
+
+    def process_excel_data(self, df):
+        with transaction.atomic():
             for _, row in df.iterrows():
                 email = row.get("Email")
+                if not email:
+                    raise ValidationError("Email is required for each record.")
+
                 student_id = row.get("Student ID")
                 first_name = row.get("First Name", "").strip()
                 last_name = row.get("Last Name", "").strip()
 
-                user, created = User.objects.get_or_create(
+                user, _ = User.objects.get_or_create(
                     email=email,
                     defaults={"first_name": first_name, "last_name": last_name, "role": "student"},
                 )
 
-                campus_name = row.get("Campus", "").strip()
-                department_name = row.get("Department", "").strip()
-                program_name = row.get("Program", "").strip()
+                campus = self.get_related_object(Campus, row.get("Campus"))
+                department = self.get_related_object(Department, row.get("Department"))
+                program = self.get_related_object(Program, row.get("Program"))
+                date_of_admission = self.parse_date(row.get("Date of Admission"))
+                shift = self.get_valid_shift(row.get("Shift"))
 
-                campus = Campus.objects.filter(name=campus_name).first() if campus_name else None
-                department = Department.objects.filter(name=department_name).first() if department_name else None
-                program = Program.objects.filter(name=program_name).first() if program_name else None
-
-                date_of_admission = pd.to_datetime(row.get("Date of Admission", ""), errors='coerce')
-                date_of_admission = date_of_admission.date() if not pd.isnull(date_of_admission) else None
-
-                shift = row.get("Shift", "").upper() if row.get("Shift", "").upper() in dict(Student.SHIFT).keys() else None
-
-                emergency_contact_name = row.get("Emergency Contact", "").strip()
-                emergency_contact = EmergencyContact.objects.filter(name=emergency_contact_name).first() if emergency_contact_name else None
-                address = AddressInfo.objects.filter(address=row.get("Address", "").strip()).first() if row.get("Address") else None
-
-                if not emergency_contact and emergency_contact_name:
-                    emergency_contact = EmergencyContact.objects.create(
-                        name=emergency_contact_name,
-                        relationship=row.get("Emergency Contact Relationship", "")
-                    )
-                if not address and row.get("Address"):
-                    address = AddressInfo.objects.create(address=row.get("Address", ""))
+                address = self.get_or_create_address(row)
 
                 if not Student.objects.filter(user=user).exists():
-                    student = Student.objects.create(
+                    Student.objects.create(
                         user=user,
                         student_id=student_id,
                         campus=campus,
@@ -670,14 +695,25 @@ def upload_excel(request):
                         program=program,
                         date_of_admission=date_of_admission,
                         shift=shift,
-                        emergency_contact=emergency_contact,
                         payment_address=address,
                     )
 
-            messages.success(request, "Excel file uploaded and records created successfully.")
-        except Exception as e:
-            messages.error(request, f"Error uploading file: {e}")
+    def get_related_object(self, model, name):
+        name = (name or "").strip()
+        return model.objects.filter(name=name).first() if name else None
 
-        return redirect("student_admin:list")  
+    def parse_date(self, date_str):
+        date = pd.to_datetime(date_str, errors='coerce')
+        return date.date() if not pd.isnull(date) else None
 
-    return render(request, "dashboard/students/list.html")
+    def get_valid_shift(self, shift):
+        shift = (shift or "").upper()
+        return shift if shift in dict(Student.SHIFT).keys() else None
+
+
+    def get_or_create_address(self, row):
+        address_text = row.get("Address", "").strip()
+        if not address_text:
+            return None
+        address, _ = AddressInfo.objects.get_or_create(address=address_text)
+        return address

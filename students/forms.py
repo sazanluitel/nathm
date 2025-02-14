@@ -223,8 +223,9 @@ class StudentEditForm:
         if not instance:
             raise ValueError('Instance must be provided')
 
+        # Instead of raising an error, create PersonalInfo if missing
         if not personalinfo_instance:
-            raise ValueError('Personal Info instance must be provided')
+            personalinfo_instance = PersonalInfo.objects.create(user=instance.user)
 
         self.user_form = UserForm(instance=instance.user, data=data)
         self.permanent_address_form = AddressInfoForm(prefix="permanent", data=data,
@@ -238,65 +239,6 @@ class StudentEditForm:
                                                       instance=personalinfo_instance.emergency_contact.address,
                                                       data=data)
         self.student_form = StudentForm(prefix="student", instance=instance, data=data)
-
-    def is_valid(self):
-        registration_forms = [
-            self.user_form,
-            self.permanent_address_form,
-            self.temporary_address_form,
-            self.payment_address_form,
-            self.personal_info_form,
-            self.student_form,
-            self.emergency_contact_form,
-            self.emergency_address_form,
-        ]
-        return all(form.is_valid() for form in registration_forms)
-
-    def save(self, commit=True):
-        with transaction.atomic():
-            user = self.user_form.save(commit=False)
-
-            if commit:
-                user.save()
-
-            permanent_address = self.permanent_address_form.save(commit=False)
-            temporary_address = self.temporary_address_form.save(commit=False)
-            payment_address = self.payment_address_form.save(commit=False)
-
-            if commit:
-                permanent_address.save()
-                temporary_address.save()
-                payment_address.save()
-
-            emergency_contact = self.emergency_contact_form.save(commit=False)
-            emergency_address = self.emergency_address_form.save(commit=False)
-
-            if commit:
-                emergency_address.save()
-                emergency_contact.address = emergency_address
-                emergency_contact.save()
-
-            # Save Personal Info
-            personal_info = self.personal_info_form.save(commit=False)
-            personal_info.user = user
-            personal_info.permanent_address = permanent_address
-            personal_info.temporary_address = temporary_address
-            personal_info.emergency_contact = emergency_contact
-
-            if commit:
-                personal_info.save()
-
-            # Save Student instance
-            instance = self.student_form.save(commit=False)
-            instance.user = user
-            instance.payment_address = payment_address
-            instance.personal_info = personal_info
-
-            if commit:
-                instance.save()
-
-            return instance
-
 
 class KioskForm:
     def __init__(self, data=None):

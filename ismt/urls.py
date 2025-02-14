@@ -23,7 +23,7 @@ urlpatterns = [
     path("admin/studentservice/", include("student_service.urls", namespace="student_service")),
 
     path("admin/admission-department/", include("admission_department.urls", namespace="admission_department")),
-    path("", include("mail.urls", namespace="mail")),
+    # path("", include("mail.urls", namespace="mail")),
 
     # Routines
     path("admin/superuser/", include("routine.admin_urls", namespace="routine_admin")),
