@@ -169,7 +169,7 @@ class ModulesForm(forms.ModelForm):
     )
     class Meta:
         model = Modules
-        fields = ['name', 'code', 'credit_hours', 'level', 'program', 'description']
+        fields = ['name', 'code', 'credit_hours', 'program', 'description']
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'form-control', 
@@ -189,11 +189,11 @@ class ModulesForm(forms.ModelForm):
                 'id': 'credit_hours', 
                 'placeholder': 'Enter credit hours'
             }),
-            'level': forms.Select(attrs={
-                'class': 'form-control w-100', 
-                'data-placeholder': 'Select the level',
-                'id': 'level-select'
-            }),
+            # 'level': forms.Select(attrs={
+            #     'class': 'form-control w-100', 
+            #     'data-placeholder': 'Select the level',
+            #     'id': 'level-select'
+            # }),
 
             'description': forms.Textarea(attrs={
                 'class': 'form-control tinymce', 
@@ -207,27 +207,5 @@ class SyllabusForm(forms.ModelForm):
     class Meta:
         model = Syllabus
         fields = ['file']
-
-
-
-
-# class StudentAddForm(forms.Form):
-#     user_form = UserForm()
-#     address_info_form = AddressInfoForm()
-#     educational_history_form = EducationHistoryForm()
-#     english_test_form = EnglishTestForm()
-#     employment_history_form = EmploymentHistoryForm()
-#     emergency_contact_form = EmergencyContactForm()
-#     personal_info_form = PersonalInfoForm()
-#     student_form = StudentForm()
-
-#     # Create formsets using formset_factory
-#     AddressHistoryFormset = formset_factory(AddressInfoForm, extra=1)
-#     EducationalHistoryFormSet = formset_factory(EducationHistoryForm, extra=1)
-#     EnglishTestFormSet = formset_factory(EnglishTestForm, extra=1)
-#     EmploymentHistoryFormSet = formset_factory(EmploymentHistoryForm, extra=1)
-#     EmergencyContactFormSet = formset_factory(EmergencyContactForm, extra=1)
-#     PersonalInfoFormSet = formset_factory(PersonalInfoForm, extra=1)
-#     StudentFormSet = formset_factory(StudentForm, extra=1)
 
 

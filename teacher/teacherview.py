@@ -37,7 +37,8 @@ class DashboardView(View):
             "routines": today_routines,
             "teacher": teacher
         })
-class StudentModulesView(View):
+    
+class TeacherModulesView(View):
     template_name = 'dashboard/teacher_profile/modules.html'
 
     def get(self, request, *args, **kwargs):
@@ -102,58 +103,57 @@ class ExamRoutineView(View):
         return JsonResponse(output, safe=False)
 
 
-class StudentRoutineView(View):
-    def get(self, request, *args, **kwargs):
-        teacher = get_object_or_404(Teacher, user=request.user)
-        modules = teacher.modules
-        
-        routines = Routine.objects.filter(modules=modules)
-        
-        return render(request, "dashboard/teacher_profile/routine.html", {
-            "routines": routines,
-            "modules":modules
-        })
-
 class TeacherDashboardEditView(View):
     template_name = 'dashboard/teacher_profile/profile_edit.html'
 
     def get(self, request, *args, **kwargs):
-        # Ensure that the teacher can only edit their own profile
         teacher = get_object_or_404(Teacher, user=request.user)
-        personalinfo = get_or_none(PersonalInfo, user=teacher.user)
-        
-        # Ensure that personalinfo is found
-        if not personalinfo:
-            messages.error(request, "Personal Info not found.")
-            return redirect('teacherurl:teacherdashboard')
+        personalinfo, created = PersonalInfo.objects.get_or_create(user=teacher.user)
 
-        # Pass both the teacher and personalinfo instances to the form
+        # Initialize all forms with existing instances
         form = TeacherEditForm(instance=teacher, personalinfo_instance=personalinfo)
-        
+        education_history_form = EducationHistoryForm()
+        english_test_form = EnglishTestForm()
+        employment_history_form = EmploymentHistoryForm()
+
         return render(request, self.template_name, {
             "form": form,
             "teacher_id": teacher.id,
+            "education_history_form": education_history_form,
+            "english_test_form": english_test_form,
+            "employment_history_form": employment_history_form,
         })
-    
+
     def post(self, request, *args, **kwargs):
         teacher = get_object_or_404(Teacher, user=request.user)
-        personalinfo = get_or_none(PersonalInfo, user=teacher.user)
+        personalinfo, created = PersonalInfo.objects.get_or_create(user=teacher.user)
 
-        if not personalinfo:
-            messages.error(request, "Personal Info not found.")
-            return redirect('teacherurl:teacherdashboard')
-
-        # Pass both the teacher and personalinfo instances to the form
+        # Bind all forms with POST data
         form = TeacherEditForm(data=request.POST, files=request.FILES, instance=teacher, personalinfo_instance=personalinfo)
-        
-        if form.is_valid():
+        education_history_form = EducationHistoryForm(request.POST)
+        english_test_form = EnglishTestForm(request.POST)
+        employment_history_form = EmploymentHistoryForm(request.POST)
+
+        if (
+            form.is_valid()
+            and education_history_form.is_valid()
+            and english_test_form.is_valid()
+            and employment_history_form.is_valid()
+        ):
             form.save()
+            education_history_form.save()
+            english_test_form.save()
+            employment_history_form.save()
+
             messages.success(request, "Teacher profile updated successfully.")
             return redirect('teacherurl:teacherdashboard')
         else:
             messages.error(request, "Please correct the errors below.")
-        
+
         return render(request, self.template_name, {
             "form": form,
             "teacher_id": teacher.id,
+            "education_history_form": education_history_form,
+            "english_test_form": english_test_form,
+            "employment_history_form": employment_history_form,
         })

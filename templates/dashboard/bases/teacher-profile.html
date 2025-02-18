@@ -71,6 +71,22 @@
                     </a>
                 </li>
                 <li class="ps-item">
+                    <a href="{% url 'students:exam_routines'%}" class="ps-link">
+                            <span class="ps-micon">
+                                <i class="fa-solid fa-calendar-day"></i>
+                            </span>
+                        <span class="ps-mtext">Exam Routine</span>
+                    </a>
+                </li>
+                <li class="ps-item">
+                    <a href="" class="ps-link">
+                            <span class="ps-micon">
+                                <i class="fa-solid fa-file-pen"></i>
+                            </span>
+                        <span class="ps-mtext">Exam Result</span>
+                    </a>
+                </li>
+                <li class="ps-item">
                     <a href="{% url 'assignment:list' %}" class="ps-link">
                             <span class="ps-micon">
                                 <i class="fa-solid fa-book-open"></i>
@@ -127,5 +143,4 @@
 <!-- [ Main Content ] end -->
 
 {% include "dashboard/bases/footer.html" %}
-	<script src="{% static 'dashboard/assets/js/edit_student.js' %}"></script>
 {% endblock temp %}

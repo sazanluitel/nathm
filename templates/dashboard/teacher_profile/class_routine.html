@@ -7,11 +7,6 @@
 {% block content %}
     <div id="calendar"
         data-events-url="{% url 'teacherurl:class_routines' %}"
-         data-section="{{ student.section.id }}"
+         data-section="{{ teacher.section.id }}"
     ></div>
-{% endblock %}
-
-{% block footer %}
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
-    <script src="{% static 'dashboard/assets/js/student_routine.js' %}"></script>
 {% endblock %}

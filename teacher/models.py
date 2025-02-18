@@ -3,6 +3,14 @@ from userauth.models import PersonalInfo,User
 from dashboard.models import Campus, Department, Program,Modules
 from mail.modules.welcome import WelcomeMessage
 class Teacher(models.Model):
+    POSITIONS = [
+        ('instructor', 'Instructor'),
+        ('senior_instr', 'Senior Instructor'),
+        ('chief_inst', 'Chief Instructor'),
+        ('deputy_hod', 'Deputy HOD'),
+        ('hod', 'HOD'),
+        ('principal', 'Principal'),
+    ]
     SHIFT_CHOICES = [
         ('MORNING', 'Morning'),
         ('AFTERNOON', 'Afternoon'),
@@ -15,6 +23,8 @@ class Teacher(models.Model):
     modules = models.ManyToManyField(Modules)
     personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE)
     shift = models.CharField(max_length=100, choices=SHIFT_CHOICES)
+    position = models.CharField(max_length=100, choices=POSITIONS)
+
     date_joined = models.DateField(blank=True, null=True)
     college_email = models.EmailField(null=True, blank=True, unique=True)
     

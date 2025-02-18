@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 
 from certificate.forms import CertificateForm
+from routine.forms import RoutineForm
 from routine.models import Routine, ExamRoutine
 from routine.views import routine_object, exam_routine_object
 from students.forms import StudentEditForm
@@ -97,118 +98,12 @@ class BookRequestView(View):
             return render(request, 'dashboard/library/library.html', {'form': form})
 
 
-# class StudentStatusView(LoginRequiredMixin, View):
-#     template_name = 'dashboard/student_profile/status.html'
-
-#     def get(self, request, *args, **kwargs):
-#         student = get_object_or_404(Student, user=request.user)
-#         notices = Notices.objects.order_by('-id')[:2]
-
-
-#         borrowed_books = Library.objects.filter(borrowed_by=student, status='approved')
-#         borrowed_ebooks = borrowed_books.filter(book__e_book=True).count()
-#         borrowed_physical_books = borrowed_books.filter(book__e_book=False).count()
-
-#         library_form = LibraryForm()
-
-#         today = datetime.now()
-#         today_date = today.strftime("%b %d, %Y %A")
-#         return render(request, self.template_name, {
-#             'student': student,
-#             'student_id': student.id,
-#             'library_form': library_form,
-#             'borrowed_ebooks': borrowed_ebooks,
-#             'borrowed_physical_books': borrowed_physical_books,
-#             'today_date': today_date,
-#             'notices': notices,
-#          })
-
-#     def post(self, request, *args, **kwargs):
-#         student = get_object_or_404(Student, user=request.user)
-#         library_form = LibraryForm(request.POST)
-
-#         if library_form.is_valid():
-#             library = library_form.save(commit=False)
-#             library.borrowed_by = student
-#             library.status = 'pending'
-#             library.save()
-
-#             return redirect('students:studentstatus')
-
-#         return render(request, self.template_name, {
-#             'student': student,
-#             'student_id': student.id,
-#             'library_form': library_form,
-#         })
-
-
-# class StudentRecordView(View):
-#     template_name = 'dashboard/student_profile/profile.html'
-
-#     def get(self, request, *args, **kwargs):
-#         student = get_object_or_404(Student, user=request.user)
-#         personalinfo = get_object_or_404(PersonalInfo, user=student.user)
-#         education_history_form = EducationHistoryForm()
-#         english_test_form = EnglishTestForm()
-#         employment_history_form = EmploymentHistoryForm()
-#         return render(request, self.template_name, {
-#             'student_id': student.id,
-#             'student': student,
-#             'personalinfo': personalinfo,
-#             'education_history_form': education_history_form,
-#             'english_test_form': english_test_form,
-#             'employment_history_form': employment_history_form
-#         })
-
-
 class StudentModulesView(View):
     template_name = 'dashboard/student_profile/modules.html'
 
     def get(self, request, *args, **kwargs):
         modules = Modules.objects.all()
         return render(request, self.template_name, {'modules': modules})
-
-
-# class StudentModuleAjaxView(View):
-#     def get(self, request, *args, **kwargs):
-#         draw = int(request.GET.get("draw", 1))
-#         start = int(request.GET.get("start", 0))
-#         length = int(request.GET.get("length", 10))
-#         search_value = request.GET.get("search[value]", None)
-#         page_number = (start // length) + 1
-
-#         modules = Modules.objects.all()
-#         if search_value:
-#             modules = modules.filter(
-#                 Q(name__icontains=search_value) | Q(description__icontains=search_value)
-#             )
-
-#         modules = modules.order_by("name")
-
-#         paginator = Paginator(modules, length)
-#         page_menu_items = paginator.page(page_number)
-
-#         data = []
-#         for modules in page_menu_items:
-#             data.append(
-#                 [
-#                     modules.name,
-#                     modules.code,
-#                     modules.credit_hours,
-#                     modules.level,
-#                 ]
-#             )
-
-#         return JsonResponse(
-#             {
-#                 "draw": draw,
-#                 "recordsTotal": paginator.count,
-#                 "recordsFiltered": paginator.count,
-#                 "data": data,
-#             },
-#             status=200,
-#         )
-
 
 class ClassRoutineView(View):
     def get(self, request, *args, **kwargs):
@@ -238,7 +133,6 @@ class ClassRoutineView(View):
 
         return JsonResponse(output, safe=False)
 
-
 class ExamRoutineView(View):
     def get(self, request, *args, **kwargs):
         start_date = request.GET.get('start_date', None)
@@ -266,19 +160,6 @@ class ExamRoutineView(View):
         for routine in routines:
             output.append(exam_routine_object(routine, False))
         return JsonResponse(output, safe=False)
-
-
-class StudentRoutineView(View):
-    def get(self, request, *args, **kwargs):
-        student = get_object_or_404(Student, user=request.user)
-        section = student.section
-
-        routines = Routine.objects.filter(section=section)
-
-        return render(request, "dashboard/student_profile/routine.html", {
-            "routines": routines,
-            "section": section
-        })
 
 
 class StudentLibraryView(View):
@@ -321,182 +202,6 @@ class CertificateView(LoginRequiredMixin, View):
         return redirect('students:certificate')
 
 
-class ExamRoutineView(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'dashboard/student_profile/result.html')
-
-
-class ExamRoutineAjaxView(View):
-    paginate_by = 10
-
-    def get(self, request, *args, **kwargs):
-        draw = int(request.GET.get("draw", 1))
-        start = int(request.GET.get("start", 0))
-        length = int(request.GET.get("length", self.paginate_by))
-        page_number = (start // length) + 1
-
-        student = get_object_or_404(Student, user=request.user)
-        results = Subject.objects.filter(student=student)
-
-        paginator = Paginator(results, length)
-        page_results = paginator.page(page_number)
-
-        data = []
-        for result in page_results:
-            exam = result.exam
-            subjects = ", ".join([subject.name for subject in result.subjects.all()])
-            data.append([
-                exam.name,
-                subjects,
-                result.total_obtained_marks,
-                result.percentage,
-                self.get_action(result.id)
-            ])
-
-        return JsonResponse({
-            "draw": draw,
-            "recordsTotal": paginator.count,
-            "recordsFiltered": paginator.count,
-            "data": data,
-        }, status=200)
-
-    def get_action(self, result_id):
-        """Generate the action buttons for each result entry (e.g., View or Update Result)."""
-        result_url = reverse("#", kwargs={'result_id': result_id})
-        return f'''
-            <a href="{result_url}" class="btn btn-primary btn-sm">View Result</a>
-        '''
-
-
-# class EducationalHistoryJsons(View):
-#     def get(self, request, *args, **kwargs):
-#         draw = int(request.GET.get("draw", 1))
-#         start = int(request.GET.get("start", 0))
-#         length = int(request.GET.get("length", 10))
-#         search_value = request.GET.get("search[value]", None)
-#         page_number = (start // length) + 1
-
-#         student = get_object_or_404(Student, id=kwargs.get("pk"))  # Assuming pk is the student ID
-#         educations_history = EducationHistory.objects.filter(user=student.user).order_by('-id')
-
-#         if search_value:
-#             educations_history = educations_history.filter(
-#                 Q(degree_name__icontains=search_value) |
-#                 Q(institution_name__icontains=search_value) |
-#                 Q(start_year__icontains=search_value) |
-#                 Q(end_year__icontains=search_value) |
-#                 Q(grade__icontains=search_value)
-#             )
-
-#         paginator = Paginator(educations_history, length)
-#         educations_history_page = paginator.get_page(page_number)
-
-#         data = []
-#         for history in educations_history_page:
-#             data.append([
-#                 history.degree_name,
-#                 history.institution_name,
-#                 history.start_year,
-#                 history.end_year,
-#                 history.grade,
-#                 self.get_action(history.file)
-#             ])
-
-#         return JsonResponse({
-#             "draw": draw,
-#             "recordsTotal": paginator.count,
-#             "recordsFiltered": paginator.count,
-#             "data": data,
-#         }, status=200)
-
-#     def get_action(self, file):
-#         if file and file != "None":
-#             return f'<a href="{file}" class="btn btn-primary btn-sm" target="_blank">View File</a>'
-#         return ''
-
-
-# class EnglishTestHistoryJsons(View):
-#     def get(self, request, *args, **kwargs):
-#         draw = int(request.GET.get("draw", 1))
-#         start = int(request.GET.get("start", 0))
-#         length = int(request.GET.get("length", 10))
-#         search_value = request.GET.get("search[value]", None)
-#         page_number = (start // length) + 1
-
-#         student = get_object_or_404(Student, id=kwargs.get("pk"))  # Ensure to get student by pk
-#         english_test_history = EnglishTest.objects.filter(user=student.user).order_by('-id')
-
-#         if search_value:
-#             english_test_history = english_test_history.filter(
-#                 Q(test__icontains=search_value) |
-#                 Q(score__icontains=search_value) |
-#                 Q(date__icontains=search_value)
-#             )
-
-#         paginator = Paginator(english_test_history, length)
-#         english_test_history_page = paginator.get_page(page_number)
-
-#         data = []
-#         for history in english_test_history_page:
-#             data.append([
-#                 history.test,
-#                 history.score,
-#                 history.date,
-#                 self.get_action(history.files)  # Assuming you want to show file action
-#             ])
-
-#         return JsonResponse({
-#             "draw": draw,
-#             "recordsTotal": paginator.count,
-#             "recordsFiltered": paginator.count,
-#             "data": data,
-#         }, status=200)
-
-#     def get_action(self, file):
-#         if file and file != "None":
-#             return f'<a href="{file}" class="btn btn-primary btn-sm" target="_blank">View File</a>'
-#         return ''
-
-
-# class EmploymentHistoryJsons(View):
-#     def get(self, request, *args, **kwargs):
-#         draw = int(request.GET.get("draw", 1))
-#         start = int(request.GET.get("start", 0))
-#         length = int(request.GET.get("length", 10))
-#         search_value = request.GET.get("search[value]", None)
-#         page_number = (start // length) + 1
-
-#         student = get_object_or_404(Student, id=kwargs.get("pk"))  # Ensure to get student by pk
-#         employment_history = EmploymentHistory.objects.filter(user=student.user).order_by('-id')
-
-#         if search_value:
-#             employment_history = employment_history.filter(
-#                 Q(employer_name__icontains=search_value) |
-#                 Q(title__icontains=search_value) |
-#                 Q(start_date__icontains=search_value) |
-#                 Q(end_date__icontains=search_value) |
-#                 Q(job_description__icontains=search_value)
-#             )
-
-#         paginator = Paginator(employment_history, length)
-#         employment_history_page = paginator.get_page(page_number)
-
-#         data = []
-#         for history in employment_history_page:
-#             data.append([
-#                 history.employer_name,
-#                 history.title,
-#                 history.start_date,
-#                 history.end_date,
-#             ])
-
-#         return JsonResponse({
-#             "draw": draw,
-#             "recordsTotal": paginator.count,
-#             "recordsFiltered": paginator.count,
-#             "data": data,
-#         }, status=200)
-
 class PaymentSupport(View):
     template_name = 'dashboard/payment/payment_support.html'
 
@@ -518,31 +223,58 @@ class StudentDashboardEditView(LoginRequiredMixin, View):
     template_name = 'dashboard/student_profile/profile_edit.html'
 
     def get(self, request, *args, **kwargs):
-        # Ensure that the student can only edit their own profile
         student = get_object_or_404(Student, user=request.user)
-        personalinfo = get_or_none(PersonalInfo, user=student.user)
-        
+        personalinfo, created = PersonalInfo.objects.get_or_create(user=student.user)
+
+        # Ensure EmergencyContact exists
+        if not personalinfo.emergency_contact:
+            emergency_contact = EmergencyContact.objects.create()
+            personalinfo.emergency_contact = emergency_contact
+            personalinfo.save()
+
+        # Instantiate forms
         form = StudentEditForm(instance=student, personalinfo_instance=personalinfo)
-        
+        education_history_form = EducationHistoryForm()
+        english_test_form = EnglishTestForm()
+        employment_history_form = EmploymentHistoryForm()
+
         return render(request, self.template_name, {
             'form': form,
+            'education_history_form': education_history_form,
+            'english_test_form': english_test_form,
+            'employment_history_form': employment_history_form,
             'student_id': student.id,
         })
 
     def post(self, request, *args, **kwargs):
         student = get_object_or_404(Student, user=request.user)
-        personalinfo = get_object_or_404(PersonalInfo, user=student.user)
-        
+        personalinfo, created = PersonalInfo.objects.get_or_create(user=student.user)
+
         form = StudentEditForm(data=request.POST, instance=student, personalinfo_instance=personalinfo)
-        
-        if form.is_valid():
+        education_history_form = EducationHistoryForm(request.POST)
+        english_test_form = EnglishTestForm(request.POST)
+        employment_history_form = EmploymentHistoryForm(request.POST)
+
+        if (
+            form.is_valid()
+            and education_history_form.is_valid()
+            and english_test_form.is_valid()
+            and employment_history_form.is_valid()
+        ):
             form.save()
+            education_history_form.save()
+            english_test_form.save()
+            employment_history_form.save()
+
             messages.success(request, "Your profile has been updated successfully.")
             return redirect('students:studentdashboard')
         else:
             messages.error(request, "Please correct the errors below.")
-        
+
         return render(request, self.template_name, {
             'form': form,
+            'education_history_form': education_history_form,
+            'english_test_form': english_test_form,
+            'employment_history_form': employment_history_form,
             'student_id': student.id,
         })

@@ -531,26 +531,35 @@
         $(document).find("#paymentModalToggle").modal("show");
     });
 
-    document.getElementById("submit-btn").addEventListener("click", function () {
-        let formData = new FormData();
-        formData.append("student_id", document.getElementById("student_id").value);
-        formData.append("college_email", document.getElementById("college_email").value);
-        formData.append("teams_id", document.getElementById("teams_id").value);
+    $(document).ready(function () {
+        if ($("#submit-btn").length) {
+            $("#submit-btn").click(function () {
+                let formData = new FormData();
+                formData.append("student_id", $("#student_id").val());
+                formData.append("college_email", $("#college_email").val());
+                formData.append("teams_id", $("#teams_id").val());
 
-        fetch("/your-endpoint-url/", {
-            method: "POST",
-            body: formData,
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (!data.success) {
-                    alert(data.message);  // Show alert if there's an error
-                } else {
-                    alert("Success: " + data.message);
-                    location.reload(); // Reload page or update UI
-                }
-            })
-            .catch(error => console.error("Error:", error));
+                $.ajax({
+                    url: "/your-endpoint-url/",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        if (!data.success) {
+                            alert(data.message);
+                        } else {
+                            alert("Success: " + data.message);
+                            location.reload();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX Error:", error);
+                        alert("An error occurred. Please try again.");
+                    }
+                });
+            });
+        }
     });
 
 })(jQuery);

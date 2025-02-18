@@ -71,7 +71,7 @@ class RegisterForm(forms.ModelForm):
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['title', 'email', 'first_name', 'middle_name', 'last_name', 'profile_image']
+        fields = ['title', 'email', 'first_name', 'middle_name', 'last_name', 'profile_image','role',]
         widgets = {
             'title': forms.TextInput(
                 attrs={'class': 'form-control', 'id': 'user_title', 'placeholder': 'Mr, Ms, Mrs...)'}),
@@ -85,6 +85,10 @@ class UserForm(forms.ModelForm):
                 attrs={'class': 'form-control', 'id': 'user_last_name', 'placeholder': 'Last Name'}),
             'profile_image': forms.TextInput(
                 attrs={'class': 'form-control', 'id': 'user_profile_image', 'placeholder': 'Profile Image'}),
+            'role': forms.Select(
+                attrs={'class': 'form-control', 'id': 'role', 'data-placeholder': 'Select Role'},
+                choices=[('student', 'Student'), ('teacher', 'Teacher'), ('parent', 'Parent'), ('admin', 'Admin')]
+            )
         }
 
 

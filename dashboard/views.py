@@ -438,7 +438,6 @@ class ModulesEdit(View):
             'module_id': id
         })
 
-
 class ModulesAjax(View):
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
@@ -460,13 +459,13 @@ class ModulesAjax(View):
 
         data = []
         for module in page_menu_items:
+            syllabus = Syllabus.objects.filter(modules=module).first()
             data.append(
                 [
                     module.name,
                     module.code,
                     module.credit_hours,
-                    module.level,
-                    self.get_action(module.id),
+                    self.get_action(module.id, syllabus),
                 ]
             )
 
@@ -480,12 +479,20 @@ class ModulesAjax(View):
             status=200,
         )
 
-    def get_action(self, module_id):
+    def get_action(self, module_id, syllabus):
         edit_url = reverse('dashboard:modulesedit', kwargs={'id': module_id})
         delete_url = reverse('generic:delete')
         backurl = reverse('dashboard:moduleslist')
         syllabus_btn = f'<button type="button" class="btn btn-primary btn-sm" onclick="openSyllabusModal({module_id})">Add Syllabus</button>'
         
+        view_file = ""
+        if syllabus and syllabus.file:
+            view_file = f'''
+                <a href="{syllabus.file.url}" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer">
+                    View File
+                </a>
+            '''
+
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
                 <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
@@ -494,8 +501,11 @@ class ModulesAjax(View):
                 <input type="hidden" name="_back_url" value="{backurl}" />
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                 {syllabus_btn}
+                {view_file}
             </form>
         '''
+
+
 
 class AddSyllabusView(View):
     def post(self, request, *args, **kwargs):

@@ -1,4 +1,4 @@
-{% extends "dashboard/bases/student-profile.html" %}
+{% extends "dashboard/bases/teacher-profile.html" %}
 {% load static %}
 {% block title %}Exam Routines{% endblock title %}
 {% block breadcrumb %}Exam Routines{% endblock breadcrumb %}
@@ -6,8 +6,8 @@
 
 {% block content %}
     <div id="calendar"
-        data-events-url="{% url 'students:exam_routines' %}"
-         data-section="{{ student.program.id }}"
+        data-events-url="{% url 'teacherurl:exam_routines' %}"
+         data-section="{{ teacher.section.id }}"
     ></div>
 {% endblock %}
 
