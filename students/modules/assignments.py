@@ -149,8 +149,3 @@ class AssignmentsStudentView(View):
             )
             messages.error(request, error_message)
         return redirect("students:assignments")
-
-class AssignmentsTeacherView(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'dashboard/teacher_profile/assignments.html')
-    
