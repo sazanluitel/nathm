@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from certificate.forms import CertificateForm
@@ -157,3 +158,43 @@ class TeacherDashboardEditView(View):
             "english_test_form": english_test_form,
             "employment_history_form": employment_history_form,
         })
+
+class TeacherSectionsView(LoginRequiredMixin, View):
+    template_name = 'dashboard/teacher_profile/sections.html'
+
+    def get(self, request, *args, **kwargs):
+        teacher = get_object_or_404(Teacher, user=request.user)
+        sections = Sections.objects.filter(teacher=teacher)
+
+        return render(request, self.template_name, {"sections": sections})
+
+class GetStudentsView(LoginRequiredMixin, View):
+    def get(self, request, section_id, *args, **kwargs):
+        section = get_object_or_404(Sections, id=section_id)
+        students = Student.objects.filter(section=section)
+
+        students_data = []
+        for student in students:
+            student_info = {
+                'id': student.id,
+                'name': student.name,
+                'modules': [{'id': module.id, 'name': module.name} for module in section.modules.all()]
+            }
+            students_data.append(student_info)
+
+        return JsonResponse({'students': students_data})
+
+class UpdateMarksView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+            for item in data.get('marks', []):
+                student = get_object_or_404(Student, id=item['student_id'])
+                module = get_object_or_404(Modules, id=item['module_id'])
+                marks, created = Subject.objects.get_or_create(student=student, module=module)
+                marks.marks = item['marks']
+                marks.save()
+
+            return JsonResponse({'message': 'Marks updated successfully!'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)

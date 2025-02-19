@@ -16,7 +16,7 @@
                 <div class="card-body">
                     <div class="row">
                         <!-- Campus Field -->
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                             <label for="{{ form.teacher_form.campus.id_for_label }}"
                                    class="form-label">Campus</label>
                             {{ form.teacher_form.campus }}
@@ -24,36 +24,42 @@
                         </div>
 
                         <!-- Department Field -->
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                             <label for="{{ form.teacher_form.department.id_for_label }}" class="form-label">Department</label>
                             {{ form.teacher_form.department }}
                             {% include "parts/error.html" with errors=form.teacher_form.department.errors %}
                         </div>
 
                         <!-- Program Field -->
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                             <label for="{{ form.teacher_form.program.id_for_label }}"
                                    class="form-label">Program</label>
                             {{ form.teacher_form.program }}
                             {% include "parts/error.html" with errors=form.teacher_form.program.errors %}
                         </div>
+                        <!-- Shift Field -->
+                        <div class="col-md-3 mb-3">
+                            <label for="{{ form.teacher_form.shift.id_for_label }}" class="form-label">Shift</label>
+                            {{ form.teacher_form.shift }}
+                            {% include "parts/error.html" with errors=form.teacher_form.shift.errors %}
+                        </div>
                          <!-- modules Field -->
-                         <div class="col-md-4 mb-3">
+                         <div class="col-md-5 mb-3">
                             <label for="{{ form.teacher_form.modules.id_for_label }}"
                                    class="form-label">Modules</label>
                             {{ form.teacher_form.modules }}
                             {% include "parts/error.html" with errors=form.teacher_form.modules.errors %}
                         </div>
 
-                        <!-- Shift Field -->
-                        <div class="col-md-4 mb-3">
-                            <label for="{{ form.teacher_form.shift.id_for_label }}" class="form-label">Shift</label>
-                            {{ form.teacher_form.shift }}
-                            {% include "parts/error.html" with errors=form.teacher_form.shift.errors %}
+                        <!-- Section Field -->
+                        <div class="col-md-5 mb-3">
+                            <label for="{{ form.teacher_form.section.id_for_label }}" class="form-label">Section</label>
+                            {{ form.teacher_form.section }}
+                            {% include "parts/error.html" with errors=form.teacher_form.section.errors %}
                         </div>
 
                         <!-- Date of Admission Field -->
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-2 mb-3">
                             <label for="{{ form.teacher_form.date_joined.id_for_label }}" class="form-label">Date
                                 Joined</label>
                             {{ form.teacher_form.date_joined }}
@@ -223,7 +229,7 @@
 
             <div class="flex mb-5 ms-3">
                 <button type="submit" class="btn btn-success mt-3">Submit</button>
-                <a href="{% url "student_admin:list" %}" class="btn btn-secondary mt-3">Cancel</a>
+                <a href="{% url "teacher:list" %}" class="btn btn-secondary mt-3">Cancel</a>
             </div>
         </form>
     </div>

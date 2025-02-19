@@ -16,6 +16,8 @@ urlpatterns = [
     path('routine/class/', ClassRoutineView.as_view(), name='class_routines'),
     path('routine/exam/', ExamRoutineView.as_view(), name='exam_routines'),
     # path('result/', ExamResultView.as_view(), name="result"),
-
+    path('teacher-sections/', TeacherSectionsView.as_view(), name='teacher_sections'),
+    path('get-students/<int:section_id>/', GetStudentsView.as_view(), name='get_students'),
+    path('update-marks/', UpdateMarksView.as_view(), name='update_marks'),
 
 ]

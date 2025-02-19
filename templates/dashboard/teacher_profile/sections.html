@@ -1,0 +1,96 @@
+{% extends "dashboard/bases/teacher-profile.html" %}
+{% load static %}
+{% block title %}Result{% endblock title %}
+{% block breadcrumb %}Result{% endblock breadcrumb %}
+{% block maintitle %}Result{% endblock maintitle %}{% block content %}
+<div class="container mt-4">
+    <h2>Teacher Dashboard - Sections</h2>
+    
+    {% for section in sections %}
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5 class="card-title">Section: {{ section.name }}</h5>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateMarksModal" onclick="loadStudents({{ section.id }})">
+                    Update Marks
+                </button>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Modal for Updating Marks -->
+<div class="modal fade" id="updateMarksModal" tabindex="-1" aria-labelledby="updateMarksModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateMarksModalLabel">Update Marks</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Module</th>
+                            <th>Marks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsList">
+                        <!-- Student list will be populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onclick="submitMarks()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function loadStudents(sectionId) {
+    fetch(`/get-students/${sectionId}/`)
+        .then(response => response.json())
+        .then(data => {
+            let studentsList = document.getElementById('studentsList');
+            studentsList.innerHTML = '';
+            data.students.forEach(student => {
+                student.modules.forEach(module => {
+                    studentsList.innerHTML += `
+                        <tr>
+                            <td>${student.name}</td>
+                            <td>${module.name}</td>
+                            <td><input type="number" class="form-control" data-student="${student.id}" data-module="${module.id}"></td>
+                        </tr>
+                    `;
+                });
+            });
+        });
+}
+
+function submitMarks() {
+    let marksData = [];
+    document.querySelectorAll('#studentsList input').forEach(input => {
+        marksData.push({
+            student_id: input.dataset.student,
+            module_id: input.dataset.module,
+            marks: input.value
+        });
+    });
+
+    fetch('/update-marks/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ marks: marksData })
+    }).then(response => response.json())
+      .then(data => {
+          alert(data.message);
+          location.reload();
+      });
+}
+</script>
+{% endblock %}

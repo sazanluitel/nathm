@@ -1,7 +1,8 @@
 from django.db import models
-from userauth.models import PersonalInfo,User
+from userauth.models import *
 from dashboard.models import Campus, Department, Program,Modules
 from mail.modules.welcome import WelcomeMessage
+
 class Teacher(models.Model):
     POSITIONS = [
         ('instructor', 'Instructor'),
@@ -24,7 +25,7 @@ class Teacher(models.Model):
     personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE)
     shift = models.CharField(max_length=100, choices=SHIFT_CHOICES)
     position = models.CharField(max_length=100, choices=POSITIONS)
-
+    section = models.ManyToManyField(Sections, blank=True)
     date_joined = models.DateField(blank=True, null=True)
     college_email = models.EmailField(null=True, blank=True, unique=True)
     

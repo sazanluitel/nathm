@@ -9,7 +9,7 @@ from .models import Teacher
 class TeacherForm(forms.ModelForm):
     class Meta:
         model = Teacher
-        fields = ['campus', 'department', 'program', 'shift', 'date_joined', 'modules','position']
+        fields = ['campus', 'department', 'program', 'shift','section', 'date_joined', 'modules','position']
         widgets = {
             'campus': forms.Select(attrs={
                 'class': 'form-control',
@@ -30,6 +30,11 @@ class TeacherForm(forms.ModelForm):
                 'class': 'form-control',
                 'id': 'modules',
                 'data-placeholder': 'Select modules'
+            }),
+            'section':forms.SelectMultiple(attrs={
+                'class': 'form-control',
+                'id': 'section',
+                'data-placeholder': 'Select section'
             }),
             'shift': forms.Select(attrs={
                 'class': 'form-control',

@@ -20,7 +20,7 @@ urlpatterns = [
     path("assignments/", AssignmentsStudentView.as_view(), name="assignments"),
     path("assignments/<status>/", AssignmentsStudentView.as_view(), name="assignments_status"),
 
-    # path('result/', ExamResultView.as_view(), name="result"),
+    path('result/', StudentResultView.as_view(), name="result"),
 
     path('requestbook/', BookRequestView.as_view(), name='requestbook'),
 ]

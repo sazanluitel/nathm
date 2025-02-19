@@ -5,7 +5,7 @@ from django.views import View
 
 from certificate.forms import CertificateForm
 from routine.forms import RoutineForm
-from routine.models import Routine, ExamRoutine
+from routine.models import ExamProgramRoutine, Routine, ExamRoutine
 from routine.views import routine_object, exam_routine_object
 from students.forms import StudentEditForm
 from students.views import get_or_none
@@ -277,4 +277,21 @@ class StudentDashboardEditView(LoginRequiredMixin, View):
             'english_test_form': english_test_form,
             'employment_history_form': employment_history_form,
             'student_id': student.id,
+        })
+
+class StudentResultView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        student = request.user.student  # Assuming the user is linked to a student
+        exams = ExamProgramRoutine.objects.filter(program=student.program)
+
+        results_by_phase = {}
+        for exam in exams:
+            phase = exam.title
+            results = student.get_results(exam)
+            if results:
+                results_by_phase[phase] = results
+
+        return render(request, 'dashboard/student_profile/result.html', {
+            'results_by_phase': results_by_phase,
+            'student': student,
         })
