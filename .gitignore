@@ -8,3 +8,4 @@ reload.sh
 .env
 .idea/
 
+db.sqlite3
