@@ -211,6 +211,12 @@ class DeleteHelper:
             return "Students" if total > 1 else "Student"
         elif post_type == "teacher":
             return "Teachers" if total > 1 else "Teacher"
+        elif post_type=="employment_history":
+            return "Employment Histories" if total > 1 else "Employment History"
+        elif post_type == "educational_history":
+            return "Educational Histories" if total > 1 else "Educational History"
+        elif post_type == "englishtest_history":
+            return "English Test Histories" if total > 1 else "English Test History"
         elif post_type == "book":
             return "Books" if total > 1 else "Book"
         elif post_type == "Library":
