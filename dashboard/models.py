@@ -2,6 +2,7 @@ from django.db import models
 
 from filehub.fields import ImagePickerField
 
+
 # Create your models here.
 
 
@@ -26,6 +27,7 @@ class Department(models.Model):
     def __str__(self):
         return self.name
 
+
 class Program(models.Model):
     ACADEMIC_PLAN = [
         ("year", "Year"),
@@ -43,26 +45,26 @@ class Program(models.Model):
     def __str__(self):
         return self.name
 
+
 class Modules(models.Model):
-    # LEVEL_CHOICES = [
-    #     ('4', '4'),
-    #     ('5', '5'),
-    #     ('6', '6'),
-    #     ('7', '7'),
-    # ]
+    LEVEL_CHOICES = [
+        ('4', '4'),
+        ('5', '5'),
+        ('6', '6'),
+        ('7', '7'),
+    ]
 
     name = models.CharField(max_length=100)
-    code = models.CharField(blank=False,  max_length=300)
+    code = models.CharField(blank=False, max_length=300)
     credit_hours = models.IntegerField(blank=False)
-    # level = models.CharField(max_length=1, choices=LEVEL_CHOICES, blank=False)
+    level = models.CharField(max_length=1, choices=LEVEL_CHOICES, blank=False)
     program = models.ManyToManyField(Program)
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.name
-    
+
 
 class Syllabus(models.Model):
     modules = models.ForeignKey(Modules, on_delete=models.CASCADE)
     file = models.FileField(upload_to='syllabus_files/', null=True, blank=True)
-    

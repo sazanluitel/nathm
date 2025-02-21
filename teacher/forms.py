@@ -1,15 +1,17 @@
 from django import forms
 from django.db import transaction
 from teacher.models import Teacher
-from userauth.forms import UserForm,PersonalInfoForm,AddressInfoForm,EducationHistoryForm,EnglishTestForm, EmploymentHistoryForm
+from userauth.forms import UserForm, PersonalInfoForm, AddressInfoForm, EducationHistoryForm, EnglishTestForm, \
+    EmploymentHistoryForm
 
 from django import forms
 from .models import Teacher
 
+
 class TeacherForm(forms.ModelForm):
     class Meta:
         model = Teacher
-        fields = ['campus', 'department', 'program', 'shift','section', 'date_joined', 'modules','position']
+        fields = ['campus', 'department', 'program', 'shift', 'section', 'date_joined', 'modules', 'position']
         widgets = {
             'campus': forms.Select(attrs={
                 'class': 'form-control',
@@ -26,12 +28,12 @@ class TeacherForm(forms.ModelForm):
                 'id': 'program',
                 'data-placeholder': 'Select a program'
             }),
-            'modules':forms.SelectMultiple(attrs={
+            'modules': forms.SelectMultiple(attrs={
                 'class': 'form-control',
                 'id': 'modules',
                 'data-placeholder': 'Select modules'
             }),
-            'section':forms.SelectMultiple(attrs={
+            'section': forms.SelectMultiple(attrs={
                 'class': 'form-control',
                 'id': 'section',
                 'data-placeholder': 'Select section'
@@ -51,9 +53,8 @@ class TeacherForm(forms.ModelForm):
                 'class': 'form-control',
                 'id': 'position',
                 'data-placeholder': 'Select a position'
-            }),  
+            }),
         }
-
 
 
 class TeacherAddForm:
@@ -112,6 +113,7 @@ class TeacherAddForm:
             print(f"Error while saving: {e}")
             return None
 
+
 class TeacherEditForm:
     def __init__(self, *args, **kwargs):
         instance = kwargs.pop('instance', None)
@@ -128,7 +130,8 @@ class TeacherEditForm:
         # Initialize forms
         self.user_form = UserForm(instance=instance.user, data=data)
         self.personal_info_form = PersonalInfoForm(instance=personalinfo_instance, data=data)
-        self.address_info_form = AddressInfoForm(prefix="address", instance=personalinfo_instance.permanent_address, data=data)
+        self.address_info_form = AddressInfoForm(prefix="address", instance=personalinfo_instance.permanent_address,
+                                                 data=data)
         self.teacher_form = TeacherForm(instance=instance, data=data, files=files)
 
         # Pre-populate the modules field with the existing values
