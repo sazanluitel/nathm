@@ -102,7 +102,7 @@ WSGI_APPLICATION = "ismt.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 #
-LIVE_DATABASE = config("LIVE_DATABASE", False).lower() in ['true', '1']
+LIVE_DATABASE = config("LIVE_DATABASE", default=False, cast=bool)
 if LIVE_DATABASE:
     DATABASES = {
         'default': {
@@ -174,13 +174,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Mail Configuration
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"  
-EMAIL_PORT = 587  
-EMAIL_USE_TLS = True  
-EMAIL_USE_SSL = False  
-EMAIL_HOST_USER = "sunbi.qa@gmail.com" 
-EMAIL_HOST_PASSWORD = "ozcrymrezxyzzcew" 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER 
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = "sunbi.qa@gmail.com"
+EMAIL_HOST_PASSWORD = "ozcrymrezxyzzcew"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 BACKEND_DOMAIN = config("BACKEND_DOMAIN", "http://localhost:8000")
 COLLEGE_NAME = config("COLLEGE_NAME", "NATHM")
