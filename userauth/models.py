@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
-
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -15,9 +14,7 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-
         return self.create_user(email, password, **extra_fields)
-
 
 ROLE_CHOICES = [
     ('admin', 'Admin'),
@@ -30,11 +27,10 @@ ROLE_CHOICES = [
     ('parent', 'Parent'),
 ]
 
-
 class User(AbstractUser):
     title = models.CharField(max_length=255, null=True, blank=True)
     email = models.EmailField(unique=True)
-    username = models.CharField(max_length=100)
+    username = models.CharField(max_length=100, unique=True, blank=True)
     first_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100)
@@ -47,14 +43,14 @@ class User(AbstractUser):
     objects = UserManager()
 
     def save(self, *args, **kwargs):
-        if self.role in ['admin']:
-            self.is_superuser = True
-        elif self.role in ['admission', 'it', 'student_service', 'college']:
-            self.is_staff = True
-        else:
-            self.is_staff = False
+        """Assigns user permissions based on role and ensures unique usernames."""
+        
+        # Set permissions based on role
+        self.is_superuser = self.role == 'admin'
+        self.is_staff = self.role in ['admission', 'it', 'student_service', 'college', 'admin']
 
-        if not self.username and self.email:
+        # Ensure username is unique and auto-generate if missing
+        if not self.username:
             base_username = self.email.split('@')[0]
             unique_username = base_username
             counter = 1
@@ -66,14 +62,19 @@ class User(AbstractUser):
         super().save(*args, **kwargs)
 
     def get_full_name(self):
+        """Returns the full name of the user."""
         full_name = self.full_name_raw()
         return full_name if full_name else ""
 
     def full_name_raw(self):
+        """Returns raw full name combining title, first, middle, and last names."""
         parts = [self.title or "", self.first_name or "", self.middle_name or "", self.last_name or ""]
         return " ".join(part for part in parts if part).strip()
 
+    def __str__(self):
+        return self.get_full_name() or self.email
 
+# Address Information
 class AddressInfo(models.Model):
     address = models.CharField(max_length=200, null=True, blank=True)
     city = models.CharField(max_length=200, null=True, blank=True)
@@ -82,18 +83,17 @@ class AddressInfo(models.Model):
     postcode = models.CharField(max_length=100, null=True, blank=True)
     contact_number = models.CharField(max_length=100, null=True, blank=True)
 
-
+# Education History
 class EducationHistory(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="education_histories")
     degree_name = models.CharField(max_length=100, null=True, blank=True)
     institution_name = models.CharField(max_length=100, null=True, blank=True)
     graduation_year = models.IntegerField(null=True, blank=True)
     major_subject = models.CharField(max_length=100, null=True, blank=True)
     file = models.TextField(null=True, blank=True)
 
-
+# English Test Details
 class EnglishTest(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     TESTS = [
         ('TOEFL', 'TOEFL'),
         ('IELTS', 'IELTS'),
@@ -101,21 +101,22 @@ class EnglishTest(models.Model):
         ('CAMBRIDGE', 'Cambridge'),
         ('OTHER', 'Other'),
     ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="english_tests")
     test = models.CharField(max_length=50, choices=TESTS, null=True, blank=True)
     score = models.FloatField(null=True, blank=True, default=0.0)
     date = models.DateField(null=True, blank=True)
     files = models.TextField(null=True, blank=True)
 
-
+# Employment History
 class EmploymentHistory(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="employment_histories")
     employer_name = models.CharField(max_length=100, null=True, blank=True)
     title = models.CharField(max_length=100, null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     job_description = models.TextField(null=True, blank=True)
 
-
+# Emergency Contact
 class EmergencyContact(models.Model):
     RELATION = [
         ('Father', 'Father'),
@@ -124,30 +125,29 @@ class EmergencyContact(models.Model):
         ('Relative', 'Relative'),
         ('OTHER', 'Other'),
     ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="emergency_contacts")
     name = models.CharField(max_length=100, null=True, blank=True)
     relationship = models.CharField(max_length=100, choices=RELATION, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, null=True, blank=True)
 
-
+# Personal Information
 class PersonalInfo(models.Model):
     GENDER_CHOICES = [
         ('male', 'Male'),
         ('female', 'Female'),
         ('other', 'Other'),
     ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="personal_info")
     citizenship_number = models.CharField(max_length=20, null=True, blank=True)
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES, null=True, blank=True)
     date_of_birth_in_ad = models.DateField(null=True, blank=True)
     citizenship_img = models.TextField(null=True, blank=True)
-    permanent_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='permanent_address',
-                                          null=True, blank=True)
-    temporary_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='temporary_address',
-                                          null=True, blank=True)
+    permanent_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='permanent_address', null=True, blank=True)
+    temporary_address = models.ForeignKey(AddressInfo, on_delete=models.CASCADE, related_name='temporary_address', null=True, blank=True)
     emergency_contact = models.ForeignKey(EmergencyContact, on_delete=models.CASCADE, null=True, blank=True)
 
-
+# Sections Model
 class Sections(models.Model):
     SEMESTER_CHOICES = [
         ('1', "First Semester"),
@@ -169,7 +169,6 @@ class Sections(models.Model):
         program_name = self.program.name if self.program else "No Program"
         year_display = f"Year {self.year}" if self.year else "No Year"
         semester_display = self.get_semester_display() if self.semester else "No Semester"
-
         return f"{self.section_name} - {program_name} - {year_display} - {semester_display}"
 
     def __str__(self):
