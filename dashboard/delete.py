@@ -127,14 +127,14 @@ class DeleteHelper:
                                 student_kwargs)
 
     def get_sections(self, ids):
-        def student_title(obj):
+        def section_title(obj):
             return obj.section_name
 
-        def student_kwargs(obj):
+        def section_kwargs(obj):
             return None
 
-        return self.get_objects(ids, Sections, "Sections", None, student_title,
-                                student_kwargs)
+        return self.get_objects(ids, Sections, "Sections", None, section_title,
+                                section_kwargs)
 
     def get_teacher(self, ids):
         def teacher_title(obj):
@@ -217,6 +217,18 @@ class DeleteHelper:
             return "Libraries" if total > 1 else "Library"
         elif post_type == "User":
             return "Users" if total > 1 else "User"
+        elif post_type == "routine":
+            return "Routines" if total > 1 else "Routine"
+        elif post_type == "exam_routine":
+            return "Exam Routines" if total > 1 else "Exam Routine"
+        elif post_type == "examgrouproutine":
+            return "Exam Group Routines" if total > 1 else "Exam Group Routine"
+        elif post_type == "notices":
+            return "Notices" if total > 1 else "Notice"
+        elif post_type == "assignment":
+            return "Assignments" if total > 1 else "Assignment"
+        elif post_type == "sections":
+            return "Sections" if total > 1 else "Section"
         return "Objects"
 
     def get_delete_objects(self, delete_type, selected_ids=None):

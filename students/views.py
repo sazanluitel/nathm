@@ -602,7 +602,7 @@ class SectionView(View):
         sections = Sections.objects.order_by("-id")
         if search_value:
             sections = sections.filter(
-                Q(section_name__first_name__icontains=search_value)
+               Q(section_name__icontains=search_value)
             )
         paginator = Paginator(sections, length)
         page_sections = paginator.page(page_number)
@@ -633,7 +633,7 @@ class SectionView(View):
                         <a href="{edit_url}" class="btn btn-success btn-sm">Edit</a>
                         <a href="{routine_url}" class="btn btn-warning btn-sm">Routines</a>
                         <input type="hidden" name="_selected_id" value="{section_id}" />
-                        <input type="hidden" name="_selected_type" value="student" />
+                        <input type="hidden" name="_selected_type" value="sections" />
                         <input type="hidden" name="_back_url" value="{backurl}" />
                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </form>
