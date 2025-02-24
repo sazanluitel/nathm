@@ -213,7 +213,6 @@ class StudentAddForm:
 
             return instance
 
-
 class StudentEditForm:
     def __init__(self, *args, **kwargs):
         instance = kwargs.pop('instance', None)
@@ -226,6 +225,12 @@ class StudentEditForm:
         # Instead of raising an error, create PersonalInfo if missing
         if not personalinfo_instance:
             personalinfo_instance = PersonalInfo.objects.create(user=instance.user)
+
+        # Ensure EmergencyContact exists and is linked to the User
+        if not personalinfo_instance.emergency_contact:
+            emergency_contact = EmergencyContact.objects.create(user=instance.user)
+            personalinfo_instance.emergency_contact = emergency_contact
+            personalinfo_instance.save()
 
         self.user_form = UserForm(instance=instance.user, data=data)
         self.permanent_address_form = AddressInfoForm(prefix="permanent", data=data,
@@ -240,6 +245,58 @@ class StudentEditForm:
                                                       data=data)
         self.student_form = StudentForm(prefix="student", instance=instance, data=data)
 
+    def is_valid(self):
+        return all([
+            self.user_form.is_valid(),
+            self.permanent_address_form.is_valid(),
+            self.temporary_address_form.is_valid(),
+            self.payment_address_form.is_valid(),
+            self.personal_info_form.is_valid(),
+            self.emergency_contact_form.is_valid(),
+            self.emergency_address_form.is_valid(),
+            self.student_form.is_valid(),
+        ])
+
+    def save(self, commit=True):
+        with transaction.atomic():
+            user = self.user_form.save(commit=False)
+            if commit:
+                user.save()
+
+            personal_info = self.personal_info_form.save(commit=False)
+            personal_info.user = user
+
+            instance = self.student_form.save(commit=False)
+            instance.user = user
+
+            permanent_address = self.permanent_address_form.save(commit=False)
+            temporary_address = self.temporary_address_form.save(commit=False)
+            payment_address = self.payment_address_form.save(commit=False)
+            emergency_contact = self.emergency_contact_form.save(commit=False)
+            emergency_address = self.emergency_address_form.save(commit=False)
+
+            if commit:
+                permanent_address.save()
+                temporary_address.save()
+                payment_address.save()
+                emergency_address.save()
+                emergency_contact.user = user  # Ensure emergency contact is linked to the user
+                emergency_contact.address = emergency_address
+                emergency_contact.save()
+
+            # Set relationships
+            personal_info.permanent_address = permanent_address
+            personal_info.temporary_address = temporary_address
+            personal_info.emergency_contact = emergency_contact
+            instance.payment_address = payment_address
+
+            if commit:
+                personal_info.save()
+                instance.personal_info = personal_info
+                instance.save()
+
+            return instance
+        
 class KioskForm:
     def __init__(self, data=None):
         self.user_form = UserForm(data)

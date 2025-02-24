@@ -120,7 +120,9 @@ class StudentEditView(View):
 
         # Ensure EmergencyContact exists
         if not personalinfo.emergency_contact:
-            emergency_contact = EmergencyContact.objects.create()
+            emergency_contact, _ = EmergencyContact.objects.get_or_create(
+                user=student.user
+            )
             personalinfo.emergency_contact = emergency_contact
             personalinfo.save()
 
@@ -651,8 +653,15 @@ class UploadExcelView(View):
             return redirect("student_admin:list")
 
         file = request.FILES["file"]
+
+        # Check file extension
+        if not file.name.endswith((".xls", ".xlsx")):
+            messages.error(request, "Invalid file format. Only .xls and .xlsx files are supported.")
+            return redirect("student_admin:list")
+
         try:
-            df = pd.read_excel(file)
+            # Read Excel file
+            df = pd.read_excel(file, engine="openpyxl" if file.name.endswith(".xlsx") else "xlrd")
             self.process_excel_data(df)
             messages.success(request, "Excel file uploaded and records created successfully.")
         except ValidationError as e:
@@ -684,8 +693,6 @@ class UploadExcelView(View):
                 date_of_admission = self.parse_date(row.get("Date of Admission"))
                 shift = self.get_valid_shift(row.get("Shift"))
 
-                address = self.get_or_create_address(row)
-
                 if not Student.objects.filter(user=user).exists():
                     Student.objects.create(
                         user=user,
@@ -695,7 +702,6 @@ class UploadExcelView(View):
                         program=program,
                         date_of_admission=date_of_admission,
                         shift=shift,
-                        payment_address=address,
                     )
 
     def get_related_object(self, model, name):
@@ -711,9 +717,8 @@ class UploadExcelView(View):
         return shift if shift in dict(Student.SHIFT).keys() else None
 
 
-    def get_or_create_address(self, row):
-        address_text = row.get("Address", "").strip()
-        if not address_text:
-            return None
-        address, _ = AddressInfo.objects.get_or_create(address=address_text)
-        return address
+
+
+
+
+
