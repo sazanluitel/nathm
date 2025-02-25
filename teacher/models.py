@@ -4,13 +4,10 @@ from dashboard.models import Campus, Department, Program,Modules
 from mail.modules.welcome import WelcomeMessage
 
 class Teacher(models.Model):
-    POSITIONS = [
-        ('instructor', 'Instructor'),
-        ('senior_instr', 'Senior Instructor'),
-        ('chief_inst', 'Chief Instructor'),
-        ('deputy_hod', 'Deputy HOD'),
-        ('hod', 'HOD'),
-        ('principal', 'Principal'),
+    CATEGORy = [
+        ('adminstrative', 'Adminstrative'),
+        ('academic', 'Academic'),
+        
     ]
     SHIFT_CHOICES = [
         ('MORNING', 'Morning'),
@@ -24,7 +21,8 @@ class Teacher(models.Model):
     modules = models.ManyToManyField(Modules)
     personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE)
     shift = models.CharField(max_length=100, choices=SHIFT_CHOICES)
-    position = models.CharField(max_length=100, choices=POSITIONS)
+    category = models.CharField(max_length=100, choices=CATEGORy)
+    position = models.CharField(max_length=100)
     section = models.ManyToManyField(Sections, blank=True)
     date_joined = models.DateField(blank=True, null=True)
     college_email = models.EmailField(null=True, blank=True, unique=True)

@@ -11,7 +11,7 @@ from .models import Teacher
 class TeacherForm(forms.ModelForm):
     class Meta:
         model = Teacher
-        fields = ['campus', 'department', 'program', 'shift', 'section', 'date_joined', 'modules', 'position']
+        fields = ['campus', 'department', 'program', 'shift', 'section', 'date_joined', 'modules', 'position', 'category']
         widgets = {
             'campus': forms.Select(attrs={
                 'class': 'form-control',
@@ -53,6 +53,11 @@ class TeacherForm(forms.ModelForm):
                 'class': 'form-control',
                 'id': 'position',
                 'data-placeholder': 'Select a position'
+            }),
+             'category': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'category',
+                'data-placeholder': 'Select a category'
             }),
         }
 
