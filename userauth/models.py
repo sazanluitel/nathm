@@ -172,4 +172,4 @@ class Sections(models.Model):
         return f"{self.section_name} - {program_name} - {year_display} - {semester_display}"
 
     def __str__(self):
-        return self.section_name if self.section_name else "Unnamed Section"
+        return self.get_title()
