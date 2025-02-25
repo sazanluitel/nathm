@@ -672,26 +672,33 @@ class UploadExcelView(View):
         return redirect("student_admin:list")
 
     def process_excel_data(self, df):
+        df = df.fillna("")
+        
         with transaction.atomic():
             for _, row in df.iterrows():
-                email = row.get("Email")
-                if not email:
-                    raise ValidationError("Email is required for each record.")
+                email = str(row.get("Email") or "").strip()
+                student_id = str(row.get("Student ID") or "").strip()
+                first_name = str(row.get("First Name") or "").strip()
+                middle_name = str(row.get("Middle Name") or "").strip()
+                last_name = str(row.get("Last Name") or "").strip()
 
-                student_id = row.get("Student ID")
-                first_name = row.get("First Name", "").strip()
-                last_name = row.get("Last Name", "").strip()
 
-                user, _ = User.objects.get_or_create(
-                    email=email,
-                    defaults={"first_name": first_name, "last_name": last_name, "role": "student"},
-                )
+                # Handle cases where email is empty
+                if email:
+                    user, _ = User.objects.get_or_create(
+                        email=email,
+                        defaults={"first_name": first_name, "middle_name": middle_name, "last_name": last_name, "role": "student"},
+                    )
+                else:
+                    user = User.objects.create(
+                        first_name=first_name, middle_name=middle_name, last_name=last_name, role="student"
+                    )
 
-                campus = self.get_related_object(Campus, row.get("Campus"))
-                department = self.get_related_object(Department, row.get("Department"))
-                program = self.get_related_object(Program, row.get("Program"))
+                campus = self.get_related_object(Campus, str(row.get("Campus", "")))
+                department = self.get_related_object(Department, str(row.get("Department", "")))
+                program = self.get_related_object(Program, str(row.get("Program", "")))
                 date_of_admission = self.parse_date(row.get("Date of Admission"))
-                shift = self.get_valid_shift(row.get("Shift"))
+                shift = self.get_valid_shift(str(row.get("Shift", "")))
 
                 if not Student.objects.filter(user=user).exists():
                     Student.objects.create(
