@@ -183,13 +183,14 @@
                             <span class="ps-micon">
                                 <i class="fa-solid fa-chalkboard-user"></i>
                             </span>
-                        <span class="ps-mtext">Teacher</span>
+                        <span class="ps-mtext">Staffs</span>
                         <span class="ps-arrow"><i class="fa fa-angle-right"></i></span>
                     </a>
 
                     <ul class="ps-submenu">
                         <li class="ps-item"><a class="ps-link" href="{% url 'teacher:add' %}">Add New</a></li>
-                        <li class="ps-item"><a class="ps-link" href="{% url 'teacher:list' %}">List Teacher</a></li>
+                        <li class="ps-item"><a class="ps-link" href="{% url 'teacher:list' %}">Academic</a></li>
+                        <li class="ps-item"><a class="ps-link" href="{% url 'teacher:stafflist' %}">Administrative</a></li>
                     </ul>
                 </li>
 
@@ -210,8 +211,6 @@
                         <li class="ps-item"><a class="ps-link"
                                                href="{% url 'userauth_urls:users' role='student_service' %}">Student
                             Service</a></li>
-                        <li class="ps-item"><a class="ps-link" href="{% url 'teacher:add' %}">Teacher</a></li>
-                        <li class="ps-item"><a class="ps-link" href="{% url 'student_admin:add' %}">Student</a></li>
                         <li class="ps-item"><a class="ps-link" href="{% url 'userauth_urls:users' role='parent' %}">Parent</a>
                         </li>
                     </ul>

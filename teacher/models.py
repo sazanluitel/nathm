@@ -37,9 +37,12 @@ class Teacher(models.Model):
             self.college_email = self.generate_unique_college_email()
 
         # Set the user role to 'teacher' only for this model
-        if self.user.role != "teacher":  
+        if self.category == "academic":
             self.user.role = "teacher"
-            self.user.save(update_fields=["role"])  # Update only the 'role' field
+        elif self.category == "administrative":
+            self.user.role = "college"
+
+        self.user.save(update_fields=["role"])  # Save the updated role only
 
         super().save(*args, **kwargs)
 
