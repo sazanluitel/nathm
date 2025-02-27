@@ -6,7 +6,7 @@ from openpyxl.styles import Alignment, PatternFill
 from openpyxl.workbook import Workbook
 
 from exam.models import Subject
-from ismt.settings import MEDIA_ROOT
+from config.settings import MEDIA_ROOT
 from django.views import View
 from django.contrib import messages
 from django.core.paginator import Paginator

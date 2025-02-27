@@ -5,7 +5,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-from ismt.settings import BASE_DIR
+from config.settings import BASE_DIR
 
 
 class ImagePickerField(models.TextField):

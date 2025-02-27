@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
 from core.context_processors import get_settings
-from ismt.settings import MEDIA_ROOT
+from config.settings import MEDIA_ROOT
 from .forms import TemplateForm, CertificateForm
 from django.contrib import messages
 from .models import RequestCertificate

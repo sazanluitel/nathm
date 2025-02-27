@@ -392,7 +392,7 @@ class QRView(View):
                 "id": user.id,
                 "name": user.get_full_name(),
                 "email": user.email,
-                "profile": "https://ismt.sunbi.com.np" + user.profile_image if user.profile_image else "https://ismt.sunbi.com.np/static/user.png"
+                "profile": "https://nathm.sunbi.com.np" + user.profile_image if user.profile_image else "https://nathm.sunbi.com.np/static/user.png"
             }
             if student:
                 qr_data["college_email"] = student.college_email
@@ -405,7 +405,7 @@ class QRView(View):
                 qr_data["section"] = student.section.section_name if student.section else "Unknown"
 
             qr_data_str = json.dumps({
-                "ismt": qr_data
+                "nathm": qr_data
             })
             qr.add_data(qr_data_str)
             qr.make(fit=True)
