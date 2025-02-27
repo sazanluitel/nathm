@@ -32,7 +32,7 @@ class DashboardView(View):
             "Teachers": Teacher.objects.count(),
             "Courses": Program.objects.count(),
             "Departments": Department.objects.count(),
-            "Universities": Campus.objects.count(),
+            "Campuses": Campus.objects.count(),
         }
         return render(request, "dashboard/parts/index.html", context={"data": data})
 
