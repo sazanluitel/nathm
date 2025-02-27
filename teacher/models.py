@@ -6,12 +6,12 @@ from mail.modules.welcome import WelcomeMessage
 
 class Teacher(models.Model):
     CATEGORy = [
-        ("adminstrative", "Adminstrative"),
+        ("administrative", "Administrative"),
         ("academic", "Academic"),
     ]
     SHIFT_CHOICES = [
         ("MORNING", "Morning"),
-        ("AFTERNOON", "Afternoon"),
+        ("DAY", "Day"),
         ("EVENING", "Evening"),
     ]
     POSITION_CHOICES = [

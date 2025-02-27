@@ -36,7 +36,7 @@ class Student(models.Model):
 
     SHIFT = [
         ('MORNING', 'Morning'),
-        ('AFTERNOON', 'Afternoon'),
+        ('DAY', 'Day'),
         ('EVENING', 'Evening'),
     ]
 
