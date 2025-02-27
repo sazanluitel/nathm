@@ -1,19 +1,35 @@
 from django.db import models
 from userauth.models import *
-from dashboard.models import Campus, Department, Program,Modules
+from dashboard.models import Campus, Department, Program, Modules
 from mail.modules.welcome import WelcomeMessage
+
 
 class Teacher(models.Model):
     CATEGORy = [
-        ('adminstrative', 'Adminstrative'),
-        ('academic', 'Academic'),
-        
+        ("adminstrative", "Adminstrative"),
+        ("academic", "Academic"),
     ]
     SHIFT_CHOICES = [
-        ('MORNING', 'Morning'),
-        ('AFTERNOON', 'Afternoon'),
-        ('EVENING', 'Evening'),
+        ("MORNING", "Morning"),
+        ("AFTERNOON", "Afternoon"),
+        ("EVENING", "Evening"),
     ]
+    POSITION_CHOICES = [
+        ("instructor", "Instructor"),
+        ("senior_instr", "Senior Instructor"),
+        ("chief_inst", "Chief Instructor"),
+        ("deputy_hod", "Deputy HOD"),
+        ("hod", "HOD"),
+        ("principal", "Principal"),
+        ("assistant", "Assistant"),
+        ("officer", "Officer"),
+        ("senior_officer", "Senior Officer"),
+        ("chief_officer", "Chief Officer"),
+        ("deputy_hod", "Deputy HOD"),
+        ("hod", "HOD"),
+        ("executive_director", "Executive Director"),
+    ]
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
@@ -22,15 +38,17 @@ class Teacher(models.Model):
     personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE)
     shift = models.CharField(max_length=100, choices=SHIFT_CHOICES)
     category = models.CharField(max_length=100, choices=CATEGORy)
-    position = models.CharField(max_length=100)
+    position = models.CharField(max_length=100, choices= POSITION_CHOICES)
     section = models.ManyToManyField(Sections, blank=True)
     date_joined = models.DateField(blank=True, null=True)
     college_email = models.EmailField(null=True, blank=True, unique=True)
-    
+
     def save(self, *args, **kwargs):
         """Ensure unique college email and set user role to 'teacher' only when saving Teacher"""
 
-        email_was_empty = not self.college_email  # Check if email was empty before saving
+        email_was_empty = (
+            not self.college_email
+        )  # Check if email was empty before saving
 
         # Generate unique college email if not already set
         if not self.college_email and self.user:
@@ -52,7 +70,9 @@ class Teacher(models.Model):
 
     def generate_unique_college_email(self):
         """Generate a unique college email in the format first_name.last_name@nathm.gov.np"""
-        base_email = f"{self.user.first_name.lower()}.{self.user.last_name.lower()}@nathm.gov.np"
+        base_email = (
+            f"{self.user.first_name.lower()}.{self.user.last_name.lower()}@nathm.gov.np"
+        )
         unique_email = base_email
         counter = 1
 
