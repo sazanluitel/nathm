@@ -187,9 +187,10 @@ class ChangePasswordView(LoginRequiredMixin, View):
         form = ChangePasswordForm(user=request.user, data=request.POST)
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(request, user)  # Keep the user logged in after changing the password
+            # update_session_auth_hash(request, user)
+            logout(request)
             messages.success(request, "Your password has been successfully changed.")
-            return redirect("userauth:change-password")
+            return redirect("userauth:login")
         else:
             messages.error(request, "Please correct the errors below.")
 
