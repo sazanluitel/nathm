@@ -213,9 +213,9 @@ class PaymentSuccessView(View):
     template_name = 'dashboard/payment/payment_success.html'
 
     def get(self, request, *args, **kwargs):
-        student = get_object_or_404(Student, user=request.user)
-        student.payment_due = 0.0
-        student.save()
+        # student = get_object_or_404(Student, user=request.user)
+        # student.payment_due = 0.0
+        # student.save()
 
         return render(request, self.template_name, {})
 
