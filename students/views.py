@@ -673,7 +673,7 @@ class UploadExcelView(View):
 
     def process_excel_data(self, df):
         df = df.fillna("")
-        
+
         with transaction.atomic():
             for _, row in df.iterrows():
                 email = str(row.get("Email") or "").strip()
@@ -681,11 +681,25 @@ class UploadExcelView(View):
                 first_name = str(row.get("First Name") or "").strip()
                 middle_name = str(row.get("Middle Name") or "").strip()
                 last_name = str(row.get("Last Name") or "").strip()
-                mobile = str(row.get("Mobile Number" or "")).strip()
-                gender = str(row.get("Gender" or "")).strip()
-                commencing_term = str(row.get("Commencing Term" or "")).strip()
-                scholarship_details = str(row.get("Scholarship Details" or "")).strip()
+                mobile = str(row.get("Mobile Number") or "").strip()
+                citizenship_number = str(row.get("Citizenship Number") or "").strip()
+                commencing_term = str(row.get("Commencing Term") or "").strip()
+                scholarship_details = str(row.get("Scholarship Details") or "").strip()
                 date_of_admission = self.parse_date(row.get("Date of Admission" or ""))
+                date_of_birth_in_ad = self.parse_date(row.get("Date of Birth in AD" or ""))
+
+                # Normalize gender to match Django choices
+                gender = str(row.get("Gender") or "").strip().lower()
+                if gender in ["male", "female", "other"]:
+                    gender = gender
+                elif gender == "Male":
+                    gender = "male"
+                elif gender == "Female":
+                    gender = "female"
+                elif gender == "Other":
+                    gender = "other"
+                else:
+                    gender = None  # Set to None if value is invalid
 
                 # Handle cases where email is empty
                 if email:
@@ -698,7 +712,13 @@ class UploadExcelView(View):
                         first_name=first_name, middle_name=middle_name, last_name=last_name, role="student"
                     )
 
-                user.gender = gender
+                # Ensure a PersonalInfo object exists
+                personal_info, _ = PersonalInfo.objects.get_or_create(user=user)
+                personal_info.gender = gender  # Assign normalized gender
+                personal_info.citizenship_number = citizenship_number
+                personal_info.date_of_birth_in_ad = date_of_birth_in_ad
+                personal_info.save()
+
                 user.mobile = mobile
                 user.save()
 
@@ -706,7 +726,6 @@ class UploadExcelView(View):
                 campus = self.get_related_object(Campus, str(row.get("Campus", "")))
                 department = self.get_related_object(Department, str(row.get("Department", "")))
                 program = self.get_related_object(Program, str(row.get("Program", "")))
-                date_of_admission = self.parse_date(row.get("Date of Admission"))
                 shift = self.get_valid_shift(str(row.get("Shift", "")))
 
                 admission_officer = self.get_related_object(User, str(row.get("Admission Officer", "")))
@@ -728,6 +747,7 @@ class UploadExcelView(View):
                         referred_by=referred_by,
                         authorize_person=authorize_person,
                     )
+
 
     def get_related_object(self, model, name):
         name = (name or "").strip()
