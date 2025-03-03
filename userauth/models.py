@@ -30,6 +30,7 @@ ROLE_CHOICES = [
 class User(AbstractUser):
     title = models.CharField(max_length=255, null=True, blank=True)
     email = models.EmailField(unique=True)
+    mobile = models.CharField(max_length=20, null=True, blank=True)
     username = models.CharField(max_length=100, unique=True, blank=True)
     first_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, blank=True, null=True)

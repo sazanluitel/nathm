@@ -71,12 +71,14 @@ class RegisterForm(forms.ModelForm):
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['title', 'email', 'first_name', 'middle_name', 'last_name', 'profile_image','role',]
+        fields = ['title', 'email', 'first_name', 'middle_name', 'last_name', 'profile_image','role','mobile',]
         widgets = {
             'title': forms.TextInput(
                 attrs={'class': 'form-control', 'id': 'user_title', 'placeholder': 'Mr, Ms, Mrs...)'}),
             'email': forms.EmailInput(
                 attrs={'class': 'form-control', 'id': 'user_email', 'placeholder': 'Email Address'}),
+            'mobile': forms.TextInput(
+                attrs={'class': 'form-control', 'id': 'user_mobile', 'placeholder': 'Mobile Number'}),
             'first_name': forms.TextInput(
                 attrs={'class': 'form-control', 'id': 'user_first_name', 'placeholder': 'First Name'}),
             'middle_name': forms.TextInput(

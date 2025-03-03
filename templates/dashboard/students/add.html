@@ -132,13 +132,19 @@
                                         {{ form.user_form.last_name }}
                                         {% include "parts/error.html" with errors=form.user_form.last_name.errors %}
                                     </div>
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-3 mb-3">
                                         <label for="{{ form.personal_info_form.gender.id_for_label }}"
                                                class="form-label">Gender:</label>
                                         {{ form.personal_info_form.gender }}
                                         {% include "parts/error.html" with errors=form.personal_info_form.gender.errors %}
                                     </div>
-                                    <div class="col-md-8 mb-3">
+                                    <div class="col-md-4 mb-3">
+                                        <label for="{{ form.user_form.mobile.id_for_label }}"
+                                               class="form-label">Mobile Number:</label>
+                                        {{ form.user_form.mobile }}
+                                        {% include "parts/error.html" with errors=form.user_form.mobile.errors %}
+                                    </div>
+                                    <div class="col-md-5 mb-3">
                                         <label for="{{ form.user_form.email.id_for_label }}"
                                                class="form-label">Email:</label>
                                         {{ form.user_form.email }}

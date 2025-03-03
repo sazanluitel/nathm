@@ -681,11 +681,15 @@ class UploadExcelView(View):
                 first_name = str(row.get("First Name") or "").strip()
                 middle_name = str(row.get("Middle Name") or "").strip()
                 last_name = str(row.get("Last Name") or "").strip()
-
+                mobile = str(row.get("Mobile Number" or "")).strip()
+                gender = str(row.get("Gender" or "")).strip()
+                commencing_term = str(row.get("Commencing Term" or "")).strip()
+                scholarship_details = str(row.get("Scholarship Details" or "")).strip()
+                date_of_admission = self.parse_date(row.get("Date of Admission" or ""))
 
                 # Handle cases where email is empty
                 if email:
-                    user, _ = User.objects.get_or_create(
+                    user, created = User.objects.get_or_create(
                         email=email,
                         defaults={"first_name": first_name, "middle_name": middle_name, "last_name": last_name, "role": "student"},
                     )
@@ -694,11 +698,20 @@ class UploadExcelView(View):
                         first_name=first_name, middle_name=middle_name, last_name=last_name, role="student"
                     )
 
+                user.gender = gender
+                user.mobile = mobile
+                user.save()
+
+                # Handle student-related fields
                 campus = self.get_related_object(Campus, str(row.get("Campus", "")))
                 department = self.get_related_object(Department, str(row.get("Department", "")))
                 program = self.get_related_object(Program, str(row.get("Program", "")))
                 date_of_admission = self.parse_date(row.get("Date of Admission"))
                 shift = self.get_valid_shift(str(row.get("Shift", "")))
+
+                admission_officer = self.get_related_object(User, str(row.get("Admission Officer", "")))
+                referred_by = self.get_related_object(User, str(row.get("Referred By", "")))
+                authorize_person = self.get_related_object(User, str(row.get("Authorize Person", "")))
 
                 if not Student.objects.filter(user=user).exists():
                     Student.objects.create(
@@ -709,6 +722,11 @@ class UploadExcelView(View):
                         program=program,
                         date_of_admission=date_of_admission,
                         shift=shift,
+                        commencing_term=commencing_term,
+                        scholarship_details=scholarship_details,
+                        admission_officer=admission_officer,
+                        referred_by=referred_by,
+                        authorize_person=authorize_person,
                     )
 
     def get_related_object(self, model, name):
@@ -722,10 +740,5 @@ class UploadExcelView(View):
     def get_valid_shift(self, shift):
         shift = (shift or "").upper()
         return shift if shift in dict(Student.SHIFT).keys() else None
-
-
-
-
-
 
 
