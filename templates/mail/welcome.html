@@ -18,6 +18,7 @@
     <p style="margin-bottom: 20px;">Welcome to {{ COLLEGE_NAME }}! We are excited to have you on board.</p>
     <p style="margin-bottom: 20px;">Your IMS Login ID {% if team_id %} and team Id{% endif %} have been successfully assigned. You can now access all the resources and connect with your peers.</p>
     <p><strong>IMS Login ID:</strong> {{ college_email }}</p>
+    <p><strong>Username:</strong>{{username}}</p>
     {% if team_id %}
         <p style="margin-bottom: 20px;"><strong>Teams ID:</strong> {{ team_id }}</p>
     {% endif %}

@@ -29,7 +29,8 @@ ROLE_CHOICES = [
 
 class User(AbstractUser):
     title = models.CharField(max_length=255, null=True, blank=True)
-    email = models.EmailField(unique=True)
+    # email = models.EmailField(unique=True)
+    email = models.EmailField(null=True, blank=True)
     mobile = models.CharField(max_length=20, null=True, blank=True)
     username = models.CharField(max_length=100, unique=True, blank=True)
     first_name = models.CharField(max_length=100)
@@ -38,8 +39,9 @@ class User(AbstractUser):
     profile_image = models.TextField(blank=True, null=True)
     role = models.CharField(max_length=100, choices=ROLE_CHOICES, default="student", null=True, blank=True)
 
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ['username']
+    # USERNAME_FIELD = "email"
+    USERNAME_FIELD = "username"
+    # REQUIRED_FIELDS = ['username']
 
     objects = UserManager()
 

@@ -36,62 +36,116 @@ from django.contrib.auth import update_session_auth_hash
 class LoginView(View):
     def post(self, request, *args, **kwargs):
         form = LoginForm(request.POST)
-        try:
-            if form.is_valid():
-                username = form.cleaned_data.get("username")
-                password = form.cleaned_data.get("password")
 
-                if not username:
-                    raise Exception("Email is required")
-                if not password:
-                    raise Exception("Password is required")
+        if form.is_valid():
+            username = form.cleaned_data.get("username")
+            password = form.cleaned_data.get("password")
 
-                # Check if the user is a student
-                student = Student.objects.filter(college_email=username).first()
-                if student:
-                    user = student.user
-                else:
-                    # Check if the user is a teacher
-                    teacher = Teacher.objects.filter(college_email=username).first()
-                    if teacher:
-                        user = teacher.user
-                    else:
-                        # Check if the user is a regular user
-                        user = User.objects.filter(email=username).first()
+            if not username:
+                form.add_error("username", "Username is required")
+            if not password:
+                form.add_error("password", "Password is required")
 
-                if user:
-                    user = authenticate(request, username=user.email, password=password)
+            user = None
 
-                if user is not None:
-                    login(request, user)
+            student = Student.objects.filter(college_email=username).first()
+            if student:
+                user = student.user
 
-                    # Redirect based on user role
-                    if user.role == "admission":
-                        return redirect("admission_department:index")
-                    elif user.role == "it":
-                        return redirect("it_department:index")
-                    elif user.role == "student_service":
-                        return redirect("student_service:index")
-                    elif user.role == "student":
-                        return redirect("students:studentdashboard")
-                    elif user.role == "teacher":
-                        return redirect("teacherurl:teacherdashboard")
-                    else:
-                        return redirect("dashboard:index")
-                else:
-                    raise Exception("Invalid username or password")
+            if not user:
+                teacher = Teacher.objects.filter(college_email=username).first()
+                if teacher:
+                    user = teacher.user
 
-        except Exception as e:
-            form.add_error("username", str(e))
+            if not user:
+                user = User.objects.filter(email=username).first()
+
+            if user:
+                user = authenticate(request, username=user.username, password=password)
+
+            if user is not None:
+                login(request, user)
+
+                role_redirects = {
+                    "admission": "admission_department:index",
+                    "it": "it_department:index",
+                    "student_service": "student_service:index",
+                    "student": "students:studentdashboard",
+                    "teacher": "teacherurl:teacherdashboard",
+                }
+
+                return redirect(role_redirects.get(user.role, "dashboard:index"))
+
+            form.add_error("username", "Invalid username or password")
 
         return render(request, "dashboard/auth/login.html", {"form": form})
 
     def get(self, request, *args, **kwargs):
-        if request.user and request.user.is_authenticated:
+        if request.user.is_authenticated:
             return redirect("dashboard:index")
 
         form = LoginForm()
         return render(request, "dashboard/auth/login.html", {"form": form})
+    
+# class LoginView(View):
+#     def post(self, request, *args, **kwargs):
+#         form = LoginForm(request.POST)
+#         try:
+#             if form.is_valid():
+#                 username = form.cleaned_data.get("username")
+#                 password = form.cleaned_data.get("password")
+
+#                 if not username:
+#                     raise Exception("Email is required")
+#                 if not password:
+#                     raise Exception("Password is required")
+
+#                 # Check if the user is a student
+#                 student = Student.objects.filter(college_email=username).first()
+#                 if student:
+#                     user = student.user
+#                 else:
+#                     # Check if the user is a teacher
+#                     teacher = Teacher.objects.filter(college_email=username).first()
+#                     if teacher:
+#                         user = teacher.user
+#                     else:
+#                         # Check if the user is a regular user
+#                         user = User.objects.filter(email=username).first()
+
+#                 if user:
+#                     user = authenticate(request, username=user.email, password=password)
+
+#                 if user is not None:
+#                     login(request, user)
+
+#                     # Redirect based on user role
+#                     if user.role == "admission":
+#                         return redirect("admission_department:index")
+#                     elif user.role == "it":
+#                         return redirect("it_department:index")
+#                     elif user.role == "student_service":
+#                         return redirect("student_service:index")
+#                     elif user.role == "student":
+#                         return redirect("students:studentdashboard")
+#                     elif user.role == "teacher":
+#                         return redirect("teacherurl:teacherdashboard")
+#                     else:
+#                         return redirect("dashboard:index")
+#                 else:
+#                     raise Exception("Invalid username or password")
+
+#         except Exception as e:
+#             form.add_error("username", str(e))
+
+#         return render(request, "dashboard/auth/login.html", {"form": form})
+
+#     def get(self, request, *args, **kwargs):
+#         if request.user and request.user.is_authenticated:
+#             return redirect("dashboard:index")
+
+#         form = LoginForm()
+#         return render(request, "dashboard/auth/login.html", {"form": form})
     
 class ForgetPassView(View):
     def get(self, request, *args, **kwargs):

@@ -11,6 +11,8 @@ from userauth.forms import *
 from django.http import JsonResponse
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
+from mail.modules.welcome import WelcomeMessage
+
 # Create your views here.
 
 class TeacherAddView(View):
@@ -79,14 +81,17 @@ class TeacherEditView(View):
     def get(self, request, *args, **kwargs):
         teacher_id = kwargs.pop('id', None)
         teacher = get_object_or_404(Teacher, id=teacher_id)
-        personalinfo = get_or_none(PersonalInfo, user=teacher.user)
+        personalinfo, created = PersonalInfo.objects.get_or_create(user=teacher.user)
 
-        # Initialize forms with existing instances
+        if not personalinfo.emergency_contact:
+            emergency_contact, _ = EmergencyContact.objects.get_or_create(user=teacher.user)
+            personalinfo.emergency_contact = emergency_contact
+            personalinfo.save()
+
         education_history_form = EducationHistoryForm()
         english_test_form = EnglishTestForm()
         employment_history_form = EmploymentHistoryForm()
 
-        # Pre-populate the teacher edit form with existing data, including modules
         form = TeacherEditForm(instance=teacher, personalinfo_instance=personalinfo)
 
         return render(request, self.template_name, {
@@ -100,18 +105,29 @@ class TeacherEditView(View):
     def post(self, request, *args, **kwargs):
         teacher_id = kwargs.pop('id', None)
         teacher = get_object_or_404(Teacher, id=teacher_id)
-        personalinfo = get_object_or_404(PersonalInfo, user=teacher.user)
+        personalinfo, created = PersonalInfo.objects.get_or_create(user=teacher.user)
 
-        # Initialize forms without existing instances for the POST request
+        if not personalinfo.emergency_contact:
+            emergency_contact = EmergencyContact.objects.create()
+            personalinfo.emergency_contact = emergency_contact
+            personalinfo.save()
+
         education_history_form = EducationHistoryForm()
         english_test_form = EnglishTestForm()
         employment_history_form = EmploymentHistoryForm()
 
-        # Pass the personalinfo_instance during POST as well
+        old_email = teacher.user.email  # Store old email before update
+
         form = TeacherEditForm(data=request.POST, files=request.FILES, instance=teacher, personalinfo_instance=personalinfo)
 
         if form.is_valid():
             form.save()
+
+            new_email = teacher.user.email  
+
+            if new_email and (not old_email or old_email != new_email) and teacher.user:
+                WelcomeMessage(teacher.user, email_changed=bool(old_email), old_email=old_email).send()
+
             messages.success(request, "Teacher updated successfully")
             return redirect('teacher:list')
         else:

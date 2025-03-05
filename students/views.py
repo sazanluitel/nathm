@@ -115,14 +115,10 @@ class StudentEditView(View):
         student_id = kwargs.pop('id', None)
         student = get_object_or_404(Student, id=student_id)
 
-        # Ensure PersonalInfo exists
         personalinfo, created = PersonalInfo.objects.get_or_create(user=student.user)
 
-        # Ensure EmergencyContact exists
         if not personalinfo.emergency_contact:
-            emergency_contact, _ = EmergencyContact.objects.get_or_create(
-                user=student.user
-            )
+            emergency_contact, _ = EmergencyContact.objects.get_or_create(user=student.user)
             personalinfo.emergency_contact = emergency_contact
             personalinfo.save()
 
@@ -143,10 +139,8 @@ class StudentEditView(View):
         student_id = kwargs.pop('id', None)
         student = get_object_or_404(Student, id=student_id)
 
-        # Ensure PersonalInfo exists
         personalinfo, created = PersonalInfo.objects.get_or_create(user=student.user)
 
-        # Ensure EmergencyContact exists
         if not personalinfo.emergency_contact:
             emergency_contact = EmergencyContact.objects.create()
             personalinfo.emergency_contact = emergency_contact
@@ -156,10 +150,18 @@ class StudentEditView(View):
         english_test_form = EnglishTestForm()
         employment_history_form = EmploymentHistoryForm()
 
+        old_email = student.user.email  # Store old email before update
+
         form = StudentEditForm(data=request.POST, instance=student, personalinfo_instance=personalinfo)
 
         if form.is_valid():
             form.save()
+
+            new_email = student.user.email  
+
+            if new_email and (not old_email or old_email != new_email) and student.user:
+                WelcomeMessage(student.user, email_changed=bool(old_email), old_email=old_email).send()
+
             messages.success(request, "Student updated successfully")
             return redirect('student_admin:list')
         else:
@@ -701,14 +703,14 @@ class UploadExcelView(View):
                 else:
                     gender = None  # Set to None if value is invalid
 
-                # Handle cases where email is empty
                 if email:
                     user, created = User.objects.get_or_create(
-                        email=email,
+                        email=email.strip(),
                         defaults={"first_name": first_name, "middle_name": middle_name, "last_name": last_name, "role": "student"},
                     )
                 else:
                     user = User.objects.create(
+                        email="",  
                         first_name=first_name, middle_name=middle_name, last_name=last_name, role="student"
                     )
 

@@ -5,8 +5,10 @@ from userauth.models import User
 from mail.helpers import EmailHelper
 
 class WelcomeMessage(EmailHelper):
-    def __init__(self, user: User) -> None:
+    def __init__(self, user: User, email_changed=False, old_email=None) -> None:
         self.user = user
+        self.email_changed = email_changed
+        self.old_email = old_email
 
     def send(self):
         from students.models import Student
@@ -23,17 +25,25 @@ class WelcomeMessage(EmailHelper):
         reset_link = f"http://127.0.0.1:8000/reset-password/{uid}/{token}/"
         # reset_link = f"https://nathm.sunbi.com.np/reset-password/{uid}/{token}/"
 
-        message = self.get_template_content("welcome", {
+        email_template = "welcome"
+
+        message_context = {
             "first_name": self.user.first_name,
             "user_id": self.user.id,
+            "username": self.user.username,
             "college_email": college_email,
             "team_id": team_id,
             "reset_link": reset_link,
-        })
+        }
+
+        if self.email_changed:
+            message_context["old_email"] = self.old_email
+            message_context["new_email"] = self.user.email
+
+        message = self.get_template_content(email_template, message_context)
 
         return self.send_email(
-            subject="Welcome to NATHM!",
-            # to_email=college_email if college_email else self.user.email,
+            subject="Your Email Has Been Updated" if self.email_changed else "Welcome to NATHM!",
             to_email=self.user.email,
             message=message
         )
