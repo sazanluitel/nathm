@@ -2,16 +2,18 @@
 {% block title %}Create an Account{% endblock title %}
 
 {% block content %}
-<form class="theme-form emailform" method="post" data-message="Please Wait . . ." action="{% url 'userauth:register' %}">
+<form class="theme-form emailform" method="post" data-message="Please Wait . . ."
+    action="{% url 'userauth:register' %}">
     {% csrf_token %}
     <h4>Create an account </h4>
     <p>Enter your email &amp; password to register</p>
 
     {% include 'dashboard/alert.html' with messages=messages %}
+
     {% if form.errors.username %}
     <div class="alert alert-danger">{{ form.errors.username }}</div>
     {% endif %}
-    
+
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
@@ -21,7 +23,14 @@
                 </div>
             </div>
         </div>
-
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="col-form-label">Middle Name </label>
+                <div class="form-input position-relative">
+                    {{ form.middle_name }}
+                </div>
+            </div>
+        </div>
         <div class="col-md-6">
             <div class="form-group">
                 <label class="col-form-label">Last Name </label>
@@ -34,7 +43,7 @@
         <div class="col-md-12">
             <div class="form-group">
                 <label class="col-form-label">Email Address</label>
-                {{ form.username }}
+                {{ form.email }}
             </div>
         </div>
 
@@ -44,11 +53,11 @@
                 <div class="password_strength_check" data-disable="button[type=submit]">
                     <div class="form-input position-relative password_field">
                         {{ form.password }}
-                        <div class="show-hide"> 
+                        <div class="show-hide">
                             <i class="fa-regular fa-eye-slash"></i>
                         </div>
                     </div>
-    
+
                     <div class="password-meter">
                         <div class="meter-section rounded me-2"></div>
                         <div class="meter-section rounded me-2"></div>
@@ -56,8 +65,9 @@
                         <div class="meter-section rounded me-2"></div>
                         <div class="meter-section rounded"></div>
                     </div>
-                    
-                    <div class="form-text text-muted help">Use 8 or more characters with a mix of letters, numbers & symbols.</div>
+
+                    <div class="form-text text-muted help">Use 8 or more characters with a mix of letters, numbers &
+                        symbols.</div>
                 </div>
             </div>
         </div>
@@ -67,7 +77,7 @@
                 <label class="col-form-label">Confirm Password </label>
                 <div class="form-input position-relative password_field">
                     {{ form.cpassword }}
-                    <div class="show-hide"> 
+                    <div class="show-hide">
                         <i class="fa-regular fa-eye-slash"></i>
                     </div>
                 </div>
@@ -87,8 +97,9 @@
             <button class="btn btn-primary btn-block w-100" type="submit">Register</button>
         </div>
     </div>
-    
-    <p class="mt-4 mb-0 text-center">Aready have an Account?<a class="ms-2" href="{% url 'userauth:login' %}">Login</a></p>
+
+    <p class="mt-4 mb-0 text-center">Already have an Account?<a class="ms-2" href="{% url 'userauth:login' %}">Login</a>
+    </p>
 
 </form>
 {% endblock content %}

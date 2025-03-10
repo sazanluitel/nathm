@@ -226,9 +226,9 @@ class StudentDashboardEditView(LoginRequiredMixin, View):
         student = get_object_or_404(Student, user=request.user)
         personalinfo, created = PersonalInfo.objects.get_or_create(user=student.user)
 
-        # Ensure EmergencyContact exists
+        # Ensure EmergencyContact exists with the correct user
         if not personalinfo.emergency_contact:
-            emergency_contact = EmergencyContact.objects.create()
+            emergency_contact, created = EmergencyContact.objects.get_or_create(user=student.user)
             personalinfo.emergency_contact = emergency_contact
             personalinfo.save()
 
@@ -262,9 +262,19 @@ class StudentDashboardEditView(LoginRequiredMixin, View):
             and employment_history_form.is_valid()
         ):
             form.save()
-            education_history_form.save()
-            english_test_form.save()
-            employment_history_form.save()
+
+            employment_history = employment_history_form.save(commit=False)
+            employment_history.user = student.user  # Set the user field
+            employment_history.save()
+
+            # Similarly set the user field for other forms
+            english_test = english_test_form.save(commit=False)
+            english_test.user = student.user  # Set the user field
+            english_test.save()
+
+            education_history = education_history_form.save(commit=False)
+            education_history.user = student.user  # Set the user field
+            education_history.save()
 
             messages.success(request, "Your profile has been updated successfully.")
             return redirect('students:studentdashboard')
@@ -278,6 +288,7 @@ class StudentDashboardEditView(LoginRequiredMixin, View):
             'employment_history_form': employment_history_form,
             'student_id': student.id,
         })
+
 
 class StudentResultView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
