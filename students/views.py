@@ -550,12 +550,13 @@ class SectionAssignUsersView(View):
 class SectionSelectView(View):
     def get(self, request, *args, **kwargs):
         sections = Sections.objects.order_by("-id")
-        data = []
-        for section in sections:
-            data.append({
+        data = [
+            {
                 'id': section.id,
-                'text': section.section_name
-            })
+                'text': section.get_title() 
+            }
+            for section in sections
+        ]
 
         return JsonResponse({
             'results': data,
