@@ -180,10 +180,10 @@ class StudentAddForm:
 
             # Save personal info
             personal_info = self.personal_info_form.save(commit=False)
-            personal_info.user = user
+            personal_info.user = user  # Assign user
 
             instance = self.student_form.save(commit=False)
-            instance.user = user
+            instance.user = user  # Assign user
 
             if hasattr(self, 'permanent_address_form'):
                 permanent_address = self.permanent_address_form.save(commit=False)
@@ -191,6 +191,8 @@ class StudentAddForm:
                 payment_address = self.payment_address_form.save(commit=False)
                 emergency_contact = self.emergency_contact_form.save(commit=False)
                 emergency_address = self.emergency_address_form.save(commit=False)
+
+                emergency_contact.user = user  # Important fix!
 
                 if commit:
                     permanent_address.save()
@@ -212,6 +214,7 @@ class StudentAddForm:
                 instance.save()
 
             return instance
+
 
 class StudentEditForm:
     def __init__(self, *args, **kwargs):
