@@ -84,14 +84,17 @@ class Student(models.Model):
 
     def save(self, *args, **kwargs):
         """Generate a unique college email before saving if not already set"""
-        email_was_empty = not self.college_email  # Check if email was empty before saving
+        email_was_empty = not self.college_email
 
         if not self.college_email and self.user:
             self.college_email = self.generate_unique_college_email()
-        
-        super().save(*args, **kwargs)
 
-        # Send welcome message only if the email was just created
+        if self.user and self.user.role != "student":
+            self.user.role = "student"
+            self.user.save()
+            
+        super().save(*args, **kwargs)
+        
         if email_was_empty and self.college_email:
             WelcomeMessage(self.user).send()
 
