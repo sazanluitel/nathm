@@ -9,3 +9,5 @@ reload.sh
 .idea/
 
 db.sqlite3
+
+media/
