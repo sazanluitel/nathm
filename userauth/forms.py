@@ -73,14 +73,11 @@ class RegisterForm(forms.ModelForm):
         user = super().save(commit=False)
         user.set_password(self.cleaned_data['password'])
 
+        user.role = "student"
+
         if commit:
             user.save()
-        
-        if hasattr(user, 'role'): 
-            if user.role == "student":
-                Student.objects.get_or_create(user=user)
-            elif user.role == "teacher":
-                Teacher.objects.get_or_create(user=user)
+            Student.objects.get_or_create(user=user) 
 
         return user
         
