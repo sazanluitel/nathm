@@ -63,7 +63,6 @@ class LoginView(View):
             if not user:
                 user = User.objects.filter(username=username_or_email).first()
 
-            # Authenticate user
             if user:
                 user = authenticate(request, username=user.username, password=password)
 
