@@ -33,37 +33,45 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import update_session_auth_hash
 
 # Create your views here.
+
 class LoginView(View):
     def post(self, request, *args, **kwargs):
         form = LoginForm(request.POST)
 
         if form.is_valid():
-            username = form.cleaned_data.get("username")
+            username_or_email = form.cleaned_data.get("username")  
             password = form.cleaned_data.get("password")
 
-            if not username:
-                form.add_error("username", "Username is required")
+            if not username_or_email:
+                form.add_error("username", "Username or College Email is required")
+                return render(request, "dashboard/auth/login.html", {"form": form})
+
             if not password:
                 form.add_error("password", "Password is required")
+                return render(request, "dashboard/auth/login.html", {"form": form})
 
             user = None
 
-            student = Student.objects.filter(college_email=username).first()
+            student = Student.objects.filter(college_email=username_or_email).first()
             if student:
                 user = student.user
 
             if not user:
-                teacher = Teacher.objects.filter(college_email=username).first()
+                teacher = Teacher.objects.filter(college_email=username_or_email).first()
                 if teacher:
                     user = teacher.user
-
             if not user:
-                user = User.objects.filter(email=username).first()
+                user = User.objects.filter(username=username_or_email).first()
 
+            # Authenticate user
             if user:
                 user = authenticate(request, username=user.username, password=password)
 
             if user is not None:
+                if not user.role:
+                    form.add_error("username", "Invalid role. Contact support.")
+                    return render(request, "dashboard/auth/login.html", {"form": form})
+
                 login(request, user)
 
                 role_redirects = {
@@ -73,7 +81,6 @@ class LoginView(View):
                     "student": "students:studentdashboard",
                     "teacher": "teacherurl:teacherdashboard",
                 }
-
                 return redirect(role_redirects.get(user.role, "dashboard:index"))
 
             form.add_error("username", "Invalid username or password")
@@ -86,6 +93,7 @@ class LoginView(View):
 
         form = LoginForm()
         return render(request, "dashboard/auth/login.html", {"form": form})
+
     
 # class LoginView(View):
 #     def post(self, request, *args, **kwargs):
