@@ -293,17 +293,20 @@ class DeleteFinalView(View, DeleteHelper):
         back = request.POST.get("_back_url", None)
         objects, originals = self.get_delete_objects(delete_type, selected_ids)
 
+        deleted_count = 0
         for original in originals:
             try:
-                object_title = original.id
                 original.delete()
-                messages.success(request, f"Successfully deleted #{object_title}")
+                deleted_count += 1
             except Exception as e:
                 messages.error(request, str(e))
 
-        if back:
-            return redirect(back)
-        return redirect("dashboard:index")
+        if deleted_count == 1:
+            messages.success(request, "Successfully deleted 1 item.")
+        elif deleted_count > 1:
+            messages.success(request, f"Successfully deleted {deleted_count} items.")
+
+        return redirect(back if back else "dashboard:index")
 
 
 @method_decorator(csrf_exempt, name='dispatch')

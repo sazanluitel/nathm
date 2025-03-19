@@ -1,11 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.db.models import Max
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError('The Email field must be set')
-        email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -45,24 +45,37 @@ class User(AbstractUser):
 
     objects = UserManager()
 
+
     def save(self, *args, **kwargs):
         """Assigns user permissions based on role and ensures unique usernames."""
-        
+
         # Set permissions based on role
         self.is_superuser = self.role == 'admin'
         self.is_staff = self.role in ['admission', 'it', 'student_service', 'college', 'admin']
 
-        # Ensure username is unique and auto-generate if missing
         if not self.username:
-            base_username = self.email.split('@')[0]
+            if self.email:
+                base_username = self.email.split('@')[0]
+            else:
+                base_username = f"{(self.first_name or '')}{(self.last_name or '')}".strip().lower()
+            
+            base_username = base_username.replace(" ", "_") 
             unique_username = base_username
-            counter = 1
-            while User.objects.filter(username=unique_username).exists():
-                unique_username = f"{base_username}_{counter}"
-                counter += 1
+
+            existing_usernames = User.objects.filter(username__startswith=base_username).values_list('username', flat=True)
+
+            if base_username in existing_usernames:
+                suffix_numbers = [
+                    int(username.split("_")[-1]) for username in existing_usernames
+                    if username.startswith(f"{base_username}_") and username.split("_")[-1].isdigit()
+                ]
+                next_number = max(suffix_numbers, default=0) + 1
+                unique_username = f"{base_username}{next_number}"
+
             self.username = unique_username
 
         super().save(*args, **kwargs)
+
 
     def get_full_name(self):
         """Returns the full name of the user."""

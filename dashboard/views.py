@@ -115,7 +115,7 @@ class CampusAjax(View):
                 [
                     campus.name,
                     campus.location,
-                    campus.contact,  # Assuming MenuItem has a 'price' field
+                    campus.contact,
                     self.get_action(campus.id),
                 ]
             )
