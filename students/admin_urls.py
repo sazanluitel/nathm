@@ -4,9 +4,9 @@ from .views import *
 app_name = "student_admin"
 
 urlpatterns = [
-    path('students/add/', StudentView.as_view(), name='add'),
-    path('students/edit/<id>', StudentEditView.as_view(), name='edit'),
-    path('students/', StudentList.as_view(), name='list'),
+    path('add/', StudentView.as_view(), name='add'),
+    path('edit/<id>', StudentEditView.as_view(), name='edit'),
+    path('list/', StudentList.as_view(), name='list'),
     path('students/<filter_by>/', StudentList.as_view(), name='list_filter'),
     path('students/<filter_by>/ajax', StudentAjax.as_view(), name='ajax'),
 
