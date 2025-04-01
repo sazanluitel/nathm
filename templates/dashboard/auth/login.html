@@ -9,7 +9,7 @@
     <p>Enter your email &amp; password to login</p>
 
     {% with messages=messages %}
-        {% include 'dashboard/alert.html' %}
+    {% include 'dashboard/alert.html' %}
     {% endwith %}
 
     {% if form.errors.username %}
@@ -17,15 +17,15 @@
     {% endif %}
 
     <div class="form-group">
-        <label class="col-form-label">Email Address / Username</label>
+        <label class="col-form-label">Email / Username</label>
         {{ form.username }}
     </div>
-    
+
     <div class="form-group position-relative password_field">
         <label class="col-form-label">Password </label>
         <div class="form-input position-relative">
             {{ form.password }}
-            <div class="show-hide"> 
+            <div class="show-hide">
                 <i class="fa-regular fa-eye-slash"></i>
             </div>
         </div>

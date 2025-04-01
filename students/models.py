@@ -83,20 +83,22 @@ class Student(models.Model):
     payment_due = models.FloatField(null=True, blank=True, default=0.0)
 
     def save(self, *args, **kwargs):
-        """Generate a unique college email before saving if not already set"""
-        email_was_empty = not self.college_email
+        """Ensure user role is 'student' and generate a unique college email before saving"""
+        
+        if self.user and getattr(self.user, "role", None) != "student":
+            self.user.role = "student"
+            self.user.save(update_fields=["role"])  
+        
+        email_was_empty = not self.college_email  
 
         if not self.college_email and self.user:
             self.college_email = self.generate_unique_college_email()
-
-        if self.user and self.user.role != "student":
-            self.user.role = "student"
-            self.user.save()
-            
-        super().save(*args, **kwargs)
         
+        super().save(*args, **kwargs)
+
         if email_was_empty and self.college_email:
             WelcomeMessage(self.user).send()
+
 
     def generate_unique_college_email(self):
         """Generate a unique college email in the format first_name.last_name@nathm.gov.np"""
