@@ -32,6 +32,9 @@ ALLOWED_HOSTS = ["*"]
 AUTH_USER_MODEL = "userauth.User"
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
+CSRF_TRUSTED_ORIGINS = ['https://nathm-mis.com', 'http://nathm-mis.com','https://www.nathm-mis.com', 'http://www.nathm-mis.com']
+
+
 
 # Application definition
 
