@@ -61,7 +61,6 @@ INSTALLED_APPS = [
     "notices",
     "assignment",
     "exam",
-    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -75,7 +74,6 @@ MIDDLEWARE = [
 
     'userauth.middleware.AccessCheck',
 
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 INTERNAL_IPS = [

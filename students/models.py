@@ -96,8 +96,8 @@ class Student(models.Model):
         
         super().save(*args, **kwargs)
 
-        if email_was_empty and self.college_email:
-            WelcomeMessage(self.user).send()
+        # if email_was_empty and self.college_email:
+        #     WelcomeMessage(self.user).send()
 
 
     def generate_unique_college_email(self):
