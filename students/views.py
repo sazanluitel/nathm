@@ -784,6 +784,15 @@ class UploadExcelView(View):
 
                 existing_username.add(unique_username)
 
+                # Generate a unique college_email
+                base_email = f"{first_name.lower()}.{last_name.lower()}@nathm.gov.np"
+                college_email = base_email
+                counter = 1
+
+                while Student.objects.filter(college_email=college_email).exists():
+                    college_email = f"{first_name.lower()}.{last_name.lower()}{counter}@nathm.gov.np"
+                    counter += 1
+
                 # Create a User object
                 user = User(
                     username=unique_username,
@@ -819,9 +828,8 @@ class UploadExcelView(View):
                     User, str(row.get("Authorize Person", ""))
                 )
 
-                # Create a Student object
                 student = Student(
-                    user=user,  # Associate with user
+                    user=user,  
                     student_id=student_id,
                     campus=campus,
                     department=department,
@@ -833,8 +841,9 @@ class UploadExcelView(View):
                     admission_officer=admission_officer,
                     referred_by=referred_by,
                     authorize_person=authorize_person,
+                    college_email=college_email,
                 )
-
+                
                 students.append((user, personal_info, student))
 
             # Bulk create users first

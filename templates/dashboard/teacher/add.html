@@ -1,178 +1,182 @@
 {% extends 'dashboard/admin-base.html' %}
 {% load static %}
 {% block title %}
-  Add Teacher
+Add Staff
 {% endblock %}
 {% block breadcrumb %}
-  Add Teacher
+Add Staff
 {% endblock %}
 {% block maintitle %}
-  Add Teacher
+Add Staff
 {% endblock %}
 {% block content %}
-  <div class="row">
-    <div class="col-sm-12">
-      <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {% with messages=messages %}
-          {% include 'dashboard/alert.html' %}
-        {% endwith %}
-        <div class="card mb-4">
-          <div class="card-header h5 py-3">Overview</div>
-          <div class="card-body">
-            <div class="row">
-              <!-- Campus Field -->
-              <div class="col-md-3 mb-3">
-                <label for="{{ form.teacher_form.campus.id_for_label }}" class="form-label">Campus</label>
-                {{ form.teacher_form.campus }}
-                {% include 'parts/error.html' with errors=form.teacher_form.campus.errors %}
-              </div>
+<div class="row">
+  <div class="col-sm-12">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% with messages=messages %}
+      {% include 'dashboard/alert.html' %}
+      {% endwith %}
+      <div class="card mb-4">
+        <div class="card-header h5 py-3">Overview</div>
+        <div class="card-body">
+          <div class="row">
+            <!-- Campus Field -->
+            <div class="col-md-3 mb-3">
+              <label for="{{ form.teacher_form.campus.id_for_label }}" class="form-label">Campus</label>
+              {{ form.teacher_form.campus }}
+              {% include 'parts/error.html' with errors=form.teacher_form.campus.errors %}
+            </div>
 
-              <!-- Department Field -->
-              <div class="col-md-3 mb-3">
-                <label for="{{ form.teacher_form.department.id_for_label }}" class="form-label">Department</label>
-                {{ form.teacher_form.department }}
-                {% include 'parts/error.html' with errors=form.teacher_form.department.errors %}
-              </div>
+            <!-- Department Field -->
+            <div class="col-md-3 mb-3">
+              <label for="{{ form.teacher_form.department.id_for_label }}" class="form-label">Department</label>
+              {{ form.teacher_form.department }}
+              {% include 'parts/error.html' with errors=form.teacher_form.department.errors %}
+            </div>
 
-              <!-- Program Field -->
-              <div class="col-md-3 mb-3">
-                <label for="{{ form.teacher_form.program.id_for_label }}" class="form-label">Program</label>
-                {{ form.teacher_form.program }}
-                {% include 'parts/error.html' with errors=form.teacher_form.program.errors %}
-              </div>
-              <!-- Shift Field -->
-              <div class="col-md-3 mb-3">
-                <label for="{{ form.teacher_form.shift.id_for_label }}" class="form-label">Shift</label>
-                {{ form.teacher_form.shift }}
-                {% include 'parts/error.html' with errors=form.teacher_form.shift.errors %}
-              </div>
-              <!-- modules Field -->
-              <div class="col-md-5 mb-3">
-                <label for="{{ form.teacher_form.modules.id_for_label }}" class="form-label">Modules</label>
-                {{ form.teacher_form.modules }}
-                {% include 'parts/error.html' with errors=form.teacher_form.modules.errors %}
-              </div>
+            <!-- Program Field -->
+            <div class="col-md-3 mb-3">
+              <label for="{{ form.teacher_form.program.id_for_label }}" class="form-label">Program</label>
+              {{ form.teacher_form.program }}
+              {% include 'parts/error.html' with errors=form.teacher_form.program.errors %}
+            </div>
+            <!-- Shift Field -->
+            <div class="col-md-3 mb-3">
+              <label for="{{ form.teacher_form.shift.id_for_label }}" class="form-label">Shift</label>
+              {{ form.teacher_form.shift }}
+              {% include 'parts/error.html' with errors=form.teacher_form.shift.errors %}
+            </div>
+            <!-- modules Field -->
+            <div class="col-md-5 mb-3">
+              <label for="{{ form.teacher_form.modules.id_for_label }}" class="form-label">Modules</label>
+              {{ form.teacher_form.modules }}
+              {% include 'parts/error.html' with errors=form.teacher_form.modules.errors %}
+            </div>
 
-              <!-- Section Field -->
-              <div class="col-md-5 mb-3">
-                <label for="{{ form.teacher_form.section.id_for_label }}" class="form-label">Section</label>
-                {{ form.teacher_form.section }}
-                {% include 'parts/error.html' with errors=form.teacher_form.section.errors %}
-              </div>
+            <!-- Section Field -->
+            <div class="col-md-5 mb-3">
+              <label for="{{ form.teacher_form.section.id_for_label }}" class="form-label">Section</label>
+              {{ form.teacher_form.section }}
+              {% include 'parts/error.html' with errors=form.teacher_form.section.errors %}
+            </div>
 
-              <!-- Date of Admission Field -->
-              <div class="col-md-2 mb-3">
-                <label for="{{ form.teacher_form.date_joined.id_for_label }}" class="form-label">Date Joined</label>
-                {{ form.teacher_form.date_joined }}
-                {% include 'parts/error.html' with errors=form.teacher_form.date_joined.errors %}
+            <!-- Date of Admission Field -->
+            <div class="col-md-2 mb-3">
+              <label for="{{ form.teacher_form.date_joined.id_for_label }}" class="form-label">Date Joined</label>
+              {{ form.teacher_form.date_joined }}
+              {% include 'parts/error.html' with errors=form.teacher_form.date_joined.errors %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card mb-4">
+        <div class="card-header h5 py-3">Personal Details</div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-10">
+              <div class="row">
+                <!-- Category Field -->
+                <div class="col-md-6 mb-3">
+                  <label for="{{ form.teacher_form.category.id_for_label }}" class="form-label">Category</label>
+                  {{ form.teacher_form.category }}
+                  {% include 'parts/error.html' with errors=form.teacher_form.category.errors %}
+                </div>
+
+                <!-- Position Field -->
+                <div class="col-md-6 mb-3">
+                  <label for="{{ form.teacher_form.position.id_for_label }}" class="form-label">Position</label>
+                  {{ form.teacher_form.position }}
+                  {% include 'parts/error.html' with errors=form.teacher_form.position.errors %}
+                </div>
+
+                <div class="col-md-2 mb-3">
+                  <label for="{{ form.user_form.title.id_for_label }}" class="form-label">Title:</label>
+                  {{ form.user_form.title }}
+                  {% include 'parts/error.html' with errors=form.user_form.title.errors %}
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label for="{{ form.user_form.first_name.id_for_label }}" class="form-label">First Name:</label>
+                  {{ form.user_form.first_name }}
+                  {% include 'parts/error.html' with errors=form.user_form.first_name.errors %}
+                </div>
+                <div class="col-md-2">
+                  <label for="{{ form.user_form.middle_name.id_for_label }}" class="form-label">Middle Name:</label>
+                  {{ form.user_form.middle_name }}
+                  {% include 'parts/error.html' with errors=form.user_form.middle_name.errors %}
+                </div>
+                <div class="col-md-4">
+                  <label for="{{ form.user_form.last_name.id_for_label }}" class="form-label">Last Name:</label>
+                  {{ form.user_form.last_name }}
+                  {% include 'parts/error.html' with errors=form.user_form.last_name.errors %}
+                </div>
+                <div class="col-md-3 mb-3">
+                  <label for="{{ form.personal_info_form.gender.id_for_label }}" class="form-label">Gender:</label>
+                  {{ form.personal_info_form.gender }}
+                  {% include 'parts/error.html' with errors=form.personal_info_form.gender.errors %}
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label for="{{ form.user_form.mobile.id_for_label }}" class="form-label">Mobile Number:</label>
+                  {{ form.user_form.mobile }}
+                  {% include "parts/error.html" with errors=form.user_form.mobile.errors %}
+                </div>
+                <div class="col-md-5 mb-3">
+                  <label for="{{ form.user_form.email.id_for_label }}" class="form-label">Email:</label>
+                  {{ form.user_form.email }}
+                  {% include 'parts/error.html' with errors=form.user_form.email.errors %}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="col-md-12">
+                <label for="profile_image" class="form-label">Profile Image:</label>
+                {% include 'dashboard/image-picker.html' with name=form.user_form.profile_image.name
+                image=form.user_form.profile_image.value %}
+                {% include 'parts/error.html' with errors=form.user_form.profile_image.errors %}
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-7">
+              <div class="col-md-12 mb-3">
+                <label for="{{ form.personal_info_form.date_of_birth_in_ad.id_for_label }}" class="form-label">Date of
+                  Birth:</label>
+                {{ form.personal_info_form.date_of_birth_in_ad }}
+                {% include 'parts/error.html' with errors=form.personal_info_form.date_of_birth_in_ad.errors %}
+              </div>
+              <div class="col-md-12 mb-3">
+                <label for="{{ form.personal_info_form.citizenship_number.id_for_label }}"
+                  class="form-label">Citizenship Number:</label>
+                {{ form.personal_info_form.citizenship_number }}
+                {% include 'parts/error.html' with errors=form.personal_info_form.citizenship_number.errors %}
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="col-md-12 mb-3">
+                <label for="citizenship_card" class="form-label">Citizenship:</label>
+                {% include 'dashboard/image-picker.html' with name=form.personal_info_form.citizenship_img.name
+                image=form.personal_info_form.citizenship_img.value %}
+                {% include 'parts/error.html' with errors=form.personal_info_form.citizenship_img.errors %}
               </div>
             </div>
           </div>
         </div>
-        <div class="card mb-4">
-          <div class="card-header h5 py-3">Personal Details</div>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-md-10">
-                <div class="row">
-                  <!-- Category Field -->
-                  <div class="col-md-6 mb-3">
-                    <label for="{{ form.teacher_form.category.id_for_label }}" class="form-label">Category</label>
-                    {{ form.teacher_form.category }}
-                    {% include 'parts/error.html' with errors=form.teacher_form.category.errors %}
-                  </div>
+      </div>
 
-                  <!-- Position Field -->
-                  <div class="col-md-6 mb-3">
-                    <label for="{{ form.teacher_form.position.id_for_label }}" class="form-label">Position</label>
-                    {{ form.teacher_form.position }}
-                    {% include 'parts/error.html' with errors=form.teacher_form.position.errors %}
-                  </div>
+      <!-- Other sections (Address Info, Education History, etc.) go here -->
 
-                  <div class="col-md-2 mb-3">
-                    <label for="{{ form.user_form.title.id_for_label }}" class="form-label">Title:</label>
-                    {{ form.user_form.title }}
-                    {% include 'parts/error.html' with errors=form.user_form.title.errors %}
-                  </div>
-                  <div class="col-md-4 mb-3">
-                    <label for="{{ form.user_form.first_name.id_for_label }}" class="form-label">First Name:</label>
-                    {{ form.user_form.first_name }}
-                    {% include 'parts/error.html' with errors=form.user_form.first_name.errors %}
-                  </div>
-                  <div class="col-md-2">
-                    <label for="{{ form.user_form.middle_name.id_for_label }}" class="form-label">Middle Name:</label>
-                    {{ form.user_form.middle_name }}
-                    {% include 'parts/error.html' with errors=form.user_form.middle_name.errors %}
-                  </div>
-                  <div class="col-md-4">
-                    <label for="{{ form.user_form.last_name.id_for_label }}" class="form-label">Last Name:</label>
-                    {{ form.user_form.last_name }}
-                    {% include 'parts/error.html' with errors=form.user_form.last_name.errors %}
-                  </div>
-                  <div class="col-md-3 mb-3">
-                    <label for="{{ form.personal_info_form.gender.id_for_label }}" class="form-label">Gender:</label>
-                    {{ form.personal_info_form.gender }}
-                    {% include 'parts/error.html' with errors=form.personal_info_form.gender.errors %}
-                  </div>
-                  <div class="col-md-4 mb-3">
-                    <label for="{{ form.user_form.mobile.id_for_label }}"class="form-label">Mobile Number:</label>
-                    {{ form.user_form.mobile }}
-                    {% include "parts/error.html" with errors=form.user_form.mobile.errors %}
-                  </div>
-                  <div class="col-md-5 mb-3">
-                    <label for="{{ form.user_form.email.id_for_label }}" class="form-label">Email:</label>
-                    {{ form.user_form.email }}
-                    {% include 'parts/error.html' with errors=form.user_form.email.errors %}
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="col-md-12">
-                  <label for="profile_image" class="form-label">Profile Image:</label>
-                  {% include 'dashboard/image-picker.html' with name=form.user_form.profile_image.name image=form.user_form.profile_image.value %}
-                  {% include 'parts/error.html' with errors=form.user_form.profile_image.errors %}
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-7">
-                <div class="col-md-12 mb-3">
-                  <label for="{{ form.personal_info_form.date_of_birth_in_ad.id_for_label }}" class="form-label">Date of Birth:</label>
-                  {{ form.personal_info_form.date_of_birth_in_ad }}
-                  {% include 'parts/error.html' with errors=form.personal_info_form.date_of_birth_in_ad.errors %}
-                </div>
-                <div class="col-md-12 mb-3">
-                  <label for="{{ form.personal_info_form.citizenship_number.id_for_label }}" class="form-label">Citizenship Number:</label>
-                  {{ form.personal_info_form.citizenship_number }}
-                  {% include 'parts/error.html' with errors=form.personal_info_form.citizenship_number.errors %}
-                </div>
-              </div>
-              <div class="col-md-5">
-                <div class="col-md-12 mb-3">
-                  <label for="citizenship_card" class="form-label">Citizenship:</label>
-                  {% include 'dashboard/image-picker.html' with name=form.personal_info_form.citizenship_img.name image=form.personal_info_form.citizenship_img.value %}
-                  {% include 'parts/error.html' with errors=form.personal_info_form.citizenship_img.errors %}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Other sections (Address Info, Education History, etc.) go here -->
-
-        <div class="flex mb-5 ms-3">
-          <button type="submit" class="btn btn-success mt-3">Submit</button>
-          <a href="{% url 'teacher:list' %}" class="btn btn-secondary mt-3">Cancel</a>
-        </div>
-      </form>
-    </div>
+      <div class="flex mb-5 ms-3">
+        <button type="submit" class="btn btn-success mt-3">Submit</button>
+        <a href="{% url 'teacher:list' %}" class="btn btn-secondary mt-3">Cancel</a>
+      </div>
+    </form>
   </div>
+</div>
 {% endblock %}
 
 {% block footer %}
 <script>
-  ;(function ($) {
+  ; (function ($) {
     $(document).ready(function () {
       const positions = {
         academic: [
@@ -193,19 +197,19 @@
           { value: 'executive_director', text: 'Executive Director' }
         ]
       }
-  
+
       let $categorySelect = $(document).find('#category')
       let $positionSelect = $(document).find('#position')
-  
+
       let selectedCategory = $categorySelect.val()
       let selectedPosition = $positionSelect.val()
-  
+
       function populatePositions(category, selectedPos = null) {
         $positionSelect.empty()
         if (category && positions[category]) {
           $positionSelect.prop('disabled', false)
           $positionSelect.append(new Option('Select Position', ''))
-  
+
           positions[category].forEach(function (pos) {
             let option = new Option(pos.text, pos.value)
             if (selectedPos && pos.value === selectedPos) {
@@ -218,16 +222,16 @@
           $positionSelect.append(new Option('Select a category first', ''))
         }
       }
-  
+
       if (selectedCategory) {
         $categorySelect.val(selectedCategory).trigger('change')
       }
-  
+
       $categorySelect.on('change', function () {
         let selectedCat = $(this).val()
         populatePositions(selectedCat, selectedPosition)
       })
-  
+
       if (selectedCategory) {
         console.log(selectedCategory, selectedPosition)
         populatePositions(selectedCategory, selectedPosition)

@@ -39,11 +39,11 @@ class LoginView(View):
         form = LoginForm(request.POST)
 
         if form.is_valid():
-            username_or_email = form.cleaned_data.get("username")  
+            username_or_email = form.cleaned_data.get("username").strip()
             password = form.cleaned_data.get("password")
 
             if not username_or_email:
-                form.add_error("username", "Username or College Email is required")
+                form.add_error("username", "Username or Email is required")
                 return render(request, "dashboard/auth/login.html", {"form": form})
 
             if not password:
@@ -52,16 +52,19 @@ class LoginView(View):
 
             user = None
 
-            student = Student.objects.filter(college_email=username_or_email).first()
-            if student:
-                user = student.user
+            user = User.objects.filter(username=username_or_email).first()
 
             if not user:
-                teacher = Teacher.objects.filter(college_email=username_or_email).first()
-                if teacher:
-                    user = teacher.user
+                user = User.objects.filter(email=username_or_email).first()
+
             if not user:
-                user = User.objects.filter(username=username_or_email).first()
+                student = Student.objects.filter(college_email=username_or_email).first()
+                if student:
+                    user = student.user
+                else:
+                    teacher = Teacher.objects.filter(college_email=username_or_email).first()
+                    if teacher:
+                        user = teacher.user
 
             if user:
                 user = authenticate(request, username=user.username, password=password)
@@ -92,7 +95,6 @@ class LoginView(View):
 
         form = LoginForm()
         return render(request, "dashboard/auth/login.html", {"form": form})
-
     
 # class LoginView(View):
 #     def post(self, request, *args, **kwargs):
