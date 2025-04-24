@@ -6,32 +6,32 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dashboard', '0009_alter_campus_code_alter_department_code_and_more'),
+        ("dashboard", "0009_alter_campus_code_alter_department_code_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='campus',
-            name='code',
-            field=models.CharField(default='TEST', max_length=20, unique=True),
+            model_name="campus",
+            name="code",
+            field=models.CharField(max_length=20, unique=True),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='department',
-            name='code',
-            field=models.CharField(default='TEST', max_length=20, unique=True),
+            model_name="department",
+            name="code",
+            field=models.CharField(max_length=20, unique=True),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='modules',
-            name='code',
-            field=models.CharField(default='TEST', max_length=300, unique=True),
+            model_name="modules",
+            name="code",
+            field=models.CharField(max_length=300, unique=True),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='program',
-            name='code',
-            field=models.CharField(default='TEST', max_length=20, unique=True),
+            model_name="program",
+            name="code",
+            field=models.CharField(max_length=20, unique=True),
             preserve_default=False,
         ),
     ]
