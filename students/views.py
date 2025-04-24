@@ -31,34 +31,24 @@ class AddStudentIds(View):
         college_email = request.POST.get("college_email")
         teams_id = request.POST.get("teams_id")
 
-        if college_email and not re.match(rf"^[a-zA-Z0-9._%+-]+{EMAIL_DOMAIN}$", college_email):
+        if college_email and not re.match(rf"^[a-zA-Z0-9._%+-]+{re.escape(EMAIL_DOMAIN)}$", college_email):
             return JsonResponse(
-                {
-                    "success": False,
-                    "message": f"Invalid email. It must end with {EMAIL_DOMAIN}",
-                },
+                {"success": False, "message": f"Invalid email. It must end with {EMAIL_DOMAIN}"},
                 status=400,
             )
 
         student = get_object_or_404(Student, id=student_id)
 
-        is_sent_mail = (
-            (college_email and student.college_email != college_email)
-            or (teams_id and student.team_id != teams_id)
-        )
+        if college_email:
+            student.college_email = college_email
+        if teams_id:
+            student.team_id = teams_id
 
-        student.college_email = college_email
-        student.team_id = teams_id
-
-        if is_sent_mail:
-            WelcomeMessage(student.user).send()
-            student.email_sent_count += 1  # 👈 Increment counter
-
+        WelcomeMessage(student.user).send()
+        student.email_sent_count += 1
         student.save()
 
-        label = "Add Ids"
-        if student.college_email or student.team_id:
-            label = "Update Ids"
+        label = "Update Ids" if student.college_email or student.team_id else "Add Ids"
 
         return JsonResponse(
             {
@@ -68,7 +58,7 @@ class AddStudentIds(View):
                 "student_id": student.id,
                 "email": student.college_email,
                 "team_id": student.team_id,
-                "email_sent_count": student.email_sent_count,  
+                "email_sent_count": student.email_sent_count,
             }
         )
 
@@ -305,15 +295,16 @@ class StudentAjax(View):
 
         if not student.college_email:
             ids_button = (
-                f'<button type="button" class="btn btn-primary btn-sm addIdsModal" '
-                f'data-studentid="{student_id}">Add IDs</button>'
+                    f'<button type="button" class="btn btn-primary btn-sm addIdsModal" '
+                    f'data-studentid="{student_id}" data-emailcount="{student.email_sent_count or 0}">Add IDs</button>'
             )
         else:
             ids_button = (
                 f'<button type="button" class="btn btn-primary btn-sm addIdsModal" '
-                f'data-studentid="{student_id}" data-email="{student.college_email}"'
-                f' data-teamid="{student.team_id}">Update IDs</button>'
+                f'data-studentid="{student_id}" data-email="{student.college_email}" '
+                f'data-teamid="{student.team_id}" data-emailcount="{student.email_sent_count or 0}">Update IDs</button>'
             )
+
         fee_button = (
             f'<button type="button" class="btn btn-primary updateFeeModal" '
             f'data-studentid="{student_id}" data-fee="{student.payment_due}">Update Fee</button>'

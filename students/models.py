@@ -49,7 +49,7 @@ class Student(models.Model):
     team_id = models.CharField(max_length=50, null=True, blank=True)
     college_email = models.EmailField(null=True, blank=True, unique=True)
 
-    email_sent_count = models.PositiveIntegerField(default=0)
+    email_sent_count = models.PositiveIntegerField(default=1)
 
     commencing_term = models.TextField(null=True, blank=True)
     date_of_admission = models.DateField(null=True, blank=True, default=timezone.now)

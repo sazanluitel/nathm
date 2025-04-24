@@ -8,7 +8,7 @@ from filehub.fields import ImagePickerField
 
 class Campus(models.Model):
     name = models.CharField(max_length=100, blank=False, null=False)
-    code = models.CharField(blank=False, max_length=20, unique=True)
+    code = models.CharField(max_length=20, null=True, blank=True)
     location = models.CharField(max_length=50)
     contact = models.CharField(blank=False, max_length=15)
     image = models.TextField()
@@ -20,7 +20,7 @@ class Campus(models.Model):
 
 class Department(models.Model):
     name = models.CharField(max_length=100)
-    code = models.CharField(blank=False, max_length=20, unique=True)
+    code = models.CharField(max_length=20, null=True, blank=True)
     image = models.TextField()
     campus = models.ManyToManyField(Campus)
     description = models.TextField(blank=True, null=True)
@@ -36,7 +36,7 @@ class Program(models.Model):
     ]
 
     name = models.CharField(max_length=100)
-    code = models.CharField(blank=False, max_length=20, unique=True)
+    code = models.CharField(max_length=20, null=True, blank=True)
     tenure = models.IntegerField(default=3)
     academic_plan = models.CharField(
         max_length=20, choices=ACADEMIC_PLAN, default="sem"
@@ -59,7 +59,7 @@ class Modules(models.Model):
     ]
 
     name = models.CharField(max_length=100)
-    code = models.CharField(blank=False, max_length=300, unique=True)
+    code = models.CharField(max_length=300, null=True, blank=True)
     credit_hours = models.IntegerField(blank=False)
     level = models.CharField(max_length=1, choices=LEVEL_CHOICES, blank=False)
     program = models.ManyToManyField(Program)
