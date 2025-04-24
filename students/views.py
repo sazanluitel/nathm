@@ -182,10 +182,10 @@ class StudentEditView(View):
 
             new_email = student.user.email
 
-            if new_email and (not old_email or old_email != new_email) and student.user:
-                WelcomeMessage(
-                    student.user, email_changed=bool(old_email), old_email=old_email
-                ).send()
+            # if new_email and (not old_email or old_email != new_email) and student.user:
+            #     WelcomeMessage(
+            #         student.user, email_changed=bool(old_email), old_email=old_email
+            #     ).send()
 
             messages.success(request, "Student updated successfully")
             return redirect("student_admin:list")
@@ -849,9 +849,9 @@ class UploadExcelView(View):
             PersonalInfo.objects.bulk_create([p[1] for p in students])
             Student.objects.bulk_create([s[2] for s in students])
 
-            for user in users:
-                if user.email:
-                    WelcomeMessage(user).send()
+            # for user in users:
+            #     if user.email:
+            #         WelcomeMessage(user).send()
 
     def get_related_object(self, model, code):
         code = (code or "").strip()
