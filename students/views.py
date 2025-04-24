@@ -804,11 +804,10 @@ class UploadExcelView(View):
                 )
 
                 # Get related objects
-                campus = self.get_related_object(Campus, str(row.get("Campus", "")))
-                department = self.get_related_object(
-                    Department, str(row.get("Department", ""))
-                )
-                program = self.get_related_object(Program, str(row.get("Program", "")))
+                campus = self.get_related_object(Campus, str(row.get("Campus Code", "")))
+                department = self.get_related_object(Department, str(row.get("Department Code", "")))
+                program = self.get_related_object(Program, str(row.get("Program Code", "")))
+
                 shift = self.get_valid_shift(str(row.get("Shift", "")))
                 admission_officer = self.get_related_object(
                     User, str(row.get("Admission Officer", ""))
@@ -854,9 +853,10 @@ class UploadExcelView(View):
                 if user.email:
                     WelcomeMessage(user).send()
 
-    def get_related_object(self, model, name):
-        name = (name or "").strip()
-        return model.objects.filter(name=name).first() if name else None
+    def get_related_object(self, model, code):
+        code = (code or "").strip()
+        return model.objects.filter(code=code).first() if code else None
+
 
     def parse_date(self, date_str):
         date = pd.to_datetime(date_str, errors="coerce")

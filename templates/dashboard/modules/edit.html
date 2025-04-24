@@ -27,8 +27,11 @@
           </div>
 
           <div class="form-group mb-3">
-              <label for="{{ form.code.id_for_label }}" class="form-label">Subject Code <span style="color: red;">*</span></label>
-              {{ form.code }}
+            <label for="{{ form.code.id_for_label }}" class="form-label">Subject Code <span style="color: red;">*</span></label>
+            {{ form.code }}
+            {% if form.code.errors %}
+              <div class="invalid-feedback d-block">{{ form.code.errors }}</div>
+            {% endif %}
           </div>
 
           <div class="form-group mb-3">
