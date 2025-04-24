@@ -31,10 +31,7 @@ class AddStudentIds(View):
         college_email = request.POST.get("college_email")
         teams_id = request.POST.get("teams_id")
 
-        # Validate email format
-        if college_email and not re.match(
-            rf"^[a-zA-Z0-9._%+-]+{EMAIL_DOMAIN}$", college_email
-        ):
+        if college_email and not re.match(rf"^[a-zA-Z0-9._%+-]+{EMAIL_DOMAIN}$", college_email):
             return JsonResponse(
                 {
                     "success": False,
@@ -45,18 +42,19 @@ class AddStudentIds(View):
 
         student = get_object_or_404(Student, id=student_id)
 
-        is_sent_mail = False
+        is_sent_mail = (
+            (college_email and student.college_email != college_email)
+            or (teams_id and student.team_id != teams_id)
+        )
 
-        if student.college_email != college_email or student.team_id != teams_id:
-            is_sent_mail = (
-                college_email and student.college_email != college_email
-            ) or (teams_id and student.team_id != teams_id)
-            student.college_email = college_email
-            student.team_id = teams_id
-            student.save()
+        student.college_email = college_email
+        student.team_id = teams_id
 
         if is_sent_mail:
             WelcomeMessage(student.user).send()
+            student.email_sent_count += 1  # 👈 Increment counter
+
+        student.save()
 
         label = "Add Ids"
         if student.college_email or student.team_id:
@@ -70,9 +68,9 @@ class AddStudentIds(View):
                 "student_id": student.id,
                 "email": student.college_email,
                 "team_id": student.team_id,
+                "email_sent_count": student.email_sent_count,  
             }
         )
-
 
 class StudentView(View):
     template_name = "dashboard/students/add.html"

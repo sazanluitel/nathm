@@ -355,11 +355,18 @@
                 prevBtn.attr("disabled", true).html("Please wait . . .");
             },
             success: function (response) {
+                // Update the button with new email and team info
                 rowButton.attr("data-email", response?.email);
                 rowButton.attr("data-teamid", response?.team_id);
                 rowButton.html(response?.label || "Add Ids");
+
+                // Clear the form fields
                 form.find("input").val("");
                 form.closest(".modal").modal("hide");
+
+                // Update the email sent count in the modal
+                const modal = $(document).find("#addIdsModal");
+                modal.find("#email_sent_count").text(response?.email_sent_count || 0); // Update the count dynamically
             },
             error: function (xhr, status, error) {
                 alert('An error occurred while updating ids.');
@@ -368,7 +375,7 @@
                 prevBtn.attr("disabled", false).html(prevHTML);
             }
         });
-    })
+    });
 
     $(document).on("click", ".sameAsPermanent", function () {
         const address = $(document).find("[name='permanent-address']").val();
