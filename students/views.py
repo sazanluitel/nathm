@@ -785,13 +785,17 @@ class UploadExcelView(View):
                 existing_username.add(unique_username)
 
                 # Generate a unique college_email
-                base_email = f"{first_name.lower()}.{last_name.lower()}@nathm.gov.np"
+                first_name_clean = first_name.replace(" ", "").lower().strip()
+                last_name_clean = last_name.replace(" ", "").lower().strip()
+
+                base_email = f"{first_name_clean}.{last_name_clean}@nathm.gov.np"
                 college_email = base_email
                 counter = 1
 
                 while Student.objects.filter(college_email=college_email).exists():
-                    college_email = f"{first_name.lower()}.{last_name.lower()}{counter}@nathm.gov.np"
+                    college_email = f"{first_name_clean}.{last_name_clean}{counter}@nathm.gov.np"
                     counter += 1
+
 
                 # Create a User object
                 user = User(

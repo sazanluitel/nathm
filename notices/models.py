@@ -1,12 +1,18 @@
 from django.db import models
+from dashboard.models import Campus, Department, Program
 from filehub.fields import ImagePickerField
 
-
-# Create your models here.
 class Notices(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    RECIPIENT_CHOICES = (
+        ('student', 'Student'),
+        ('teacher', 'Teacher'),
+        ('both', 'Both'),
+    )
 
-    def __str__(self):
-        return self.name
+    name = models.CharField(max_length=200)
+    description = models.TextField()
+    campuses = models.ManyToManyField(Campus, blank=True)
+    departments = models.ManyToManyField(Department, blank=True)
+    programs = models.ManyToManyField(Program, blank=True)
+    recipient_type = models.CharField(max_length=10, choices=RECIPIENT_CHOICES, default='student')
+    created_at = models.DateTimeField(auto_now_add=True)

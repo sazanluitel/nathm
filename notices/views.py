@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.db.models import Q
 from django.urls import reverse
 from .models import Notices
+from userauth.models import User
 
 
 class NoticeAddView(View):
@@ -20,8 +21,9 @@ class NoticeAddView(View):
             form = NoticeAddForm(request.POST)
 
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Notice saved successfully')
+            notice = form.save()  # Just this is enough
+            self.send_notice(notice)
+            messages.success(request, 'Notice saved and sent successfully')
             return redirect('notices_admin_urls:add')
         else:
             messages.error(request, 'Error in the form submission')
@@ -36,8 +38,37 @@ class NoticeAddView(View):
         else:
             form = NoticeAddForm()
 
-        notices = Notices.objects.all()
+        notices = Notices.objects.all().order_by('-created_at')
         return render(request, 'dashboard/notices/add.html', {'form': form, 'notices': notices})
+
+    def send_notice(self, notice):
+        users = User.objects.all()
+
+        if notice.recipient_type != "both":
+            users = users.filter(role=notice.recipient_type)
+
+        # Apply filters based on selected campus, department, program
+        if notice.departments.exists():
+            users = users.filter(
+                Q(student__department__in=notice.departments.all()) |
+                Q(teacher__department__in=notice.departments.all())
+            )
+        if notice.programs.exists():
+            users = users.filter(
+                Q(student__program__in=notice.programs.all()) |
+                Q(teacher__program__in=notice.programs.all())
+            )
+        if notice.campuses.exists():
+            users = users.filter(
+                Q(student__campus__in=notice.campuses.all()) |
+                Q(teacher__campus__in=notice.campuses.all())
+            )
+
+        users = users.distinct()
+
+        # Simulate sending notice (replace with actual logic like Notification or email)
+        for user in users:
+            print(f"[Sent] Notice '{notice.name}' to {user.username} ({user.role})")
 
 
 class NoticeAjaxView(View):
