@@ -20,6 +20,7 @@ class Campus(models.Model):
 
 class Department(models.Model):
     name = models.CharField(max_length=100)
+    code = models.CharField(blank=False, max_length=20, unique=True)
     image = models.TextField()
     campus = models.ManyToManyField(Campus)
     description = models.TextField(blank=True, null=True)
@@ -35,6 +36,7 @@ class Program(models.Model):
     ]
 
     name = models.CharField(max_length=100)
+    code = models.CharField(blank=False, max_length=20, unique=True)
     tenure = models.IntegerField(default=3)
     academic_plan = models.CharField(max_length=20, choices=ACADEMIC_PLAN, default="sem")
     image = models.TextField()

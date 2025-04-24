@@ -24,42 +24,49 @@
         <form method="post" enctype="multipart/form-data" action="{% url 'dashboard:department' %}">
           {% csrf_token %}
           <div class="form-group mb-3">
-          <label for="{{ form.name.id_for_label }}" class="form-label">Department Name <span style="color: red;">*</span></label>
-          {{ form.name }}
-          {% if form.name.errors %}
+            <label for="{{ form.name.id_for_label }}" class="form-label">Department Name <span style="color: red;">*</span></label>
+            {{ form.name }}
+            {% if form.name.errors %}
               <div class="invalid-feedback d-block">{{ form.name.errors }}</div>
-          {% endif %}
-      </div>
+            {% endif %}
+          </div>
 
-      <div class="form-group mb-3">
-          <label for="{{ form.campus.id_for_label }}" class="form-label">Campus <span style="color: red;">*</span></label>
-          {{ form.campus }}
-          {% if form.campus.errors %}
+          <div class="form-group mb-3">
+            <label for="{{ form.code.id_for_label }}" class="form-label">Department Code <span style="color: red;">*</span></label>
+            {{ form.code }}
+            {% if form.code.errors %}
+              <div class="invalid-feedback d-block">{{ form.code.errors }}</div>
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="{{ form.campus.id_for_label }}" class="form-label">Campus <span style="color: red;">*</span></label>
+            {{ form.campus }}
+            {% if form.campus.errors %}
               <div class="invalid-feedback d-block">{{ form.campus.errors }}</div>
-          {% endif %}
-      </div>
-      <div class="form-group mt-3">
-          <label for="id_items_image">Image</label>
-          {% include 'dashboard/image-picker.html' with name="items_image" %}
+            {% endif %}
+          </div>
+          <div class="form-group mt-3">
+            <label for="id_items_image">Image</label>
+            {% include 'dashboard/image-picker.html' with name='items_image' %}
 
-          {% if form.image.errors %}
+            {% if form.image.errors %}
               <div class="invalid-feedback d-block">{{ form.image.errors }}</div>
-          {% endif %}
+            {% endif %}
 
-          {% if form.instance.image %}
+            {% if form.instance.image %}
               <div class="mt-2">
-                  <img src="{{ form.instance.image.url }}" class="img-fluid" style="max-width: 200px;" alt="Current Image">
+                <img src="{{ form.instance.image.url }}" class="img-fluid" style="max-width: 200px;" alt="Current Image" />
               </div>
-          {% endif %}
-      </div>
-      <div class="form-group mb-3">
-          <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
-          {{ form.description }}
-          {% if form.description.errors %}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+            {{ form.description }}
+            {% if form.description.errors %}
               <div class="invalid-feedback d-block">{{ form.description.errors }}</div>
-          {% endif %}
-      </div>
-      
+            {% endif %}
+          </div>
 
           <div class="flex mb-5 ms-3">
             <button type="submit" class="btn btn-success mt-3">Submit</button>

@@ -20,33 +20,41 @@
 
         <form method="post" enctype="multipart/form-data" action="{% url 'dashboard:departmentedit' id=department_id %}">
           {% csrf_token %}
-            <div class="form-group mb-3">
-                <label for="{{ form.name.id_for_label }}" class="form-label">Department Name<span style="color: red;">*</span></label>
-                {{ form.name }}
-            </div>
+          <div class="form-group mb-3">
+            <label for="{{ form.name.id_for_label }}" class="form-label">Department Name<span style="color: red;">*</span></label>
+            {{ form.name }}
+          </div>
 
-            <div class="form-group mb-3">
-                <label for="{{ form.campus.id_for_label }}" class="form-label">Campus<span style="color: red;">*</span></label>
-                {{ form.campus }}
-            </div>
-            <div class="form-group mt-3">
-              <label class="form-label" for="catIcon">Image</label>
-              {% with image=form.instance.image %}
-                  {% with name="image" %}
-                      {% include 'dashboard/image-picker.html' %}
-                  {% endwith %}
+          <div class="form-group mb-3">
+            <label for="{{ form.code.id_for_label }}" class="form-label">Department Code <span style="color: red;">*</span></label>
+            {{ form.code }}
+            {% if form.code.errors %}
+              <div class="invalid-feedback d-block">{{ form.code.errors }}</div>
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="{{ form.campus.id_for_label }}" class="form-label">Campus<span style="color: red;">*</span></label>
+            {{ form.campus }}
+          </div>
+          <div class="form-group mt-3">
+            <label class="form-label" for="catIcon">Image</label>
+            {% with image=form.instance.image %}
+              {% with name='image' %}
+                {% include 'dashboard/image-picker.html' %}
               {% endwith %}
-            </div>
+            {% endwith %}
+          </div>
 
-            <div class="form-group mb-3">
-                <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
-                {{ form.description }}
-            </div> 
+          <div class="form-group mb-3">
+            <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+            {{ form.description }}
+          </div>
 
-            <div class="flex mb-5 ms-3">
-                <button type="submit" class="btn btn-success mt-3">Submit</button>
-                <a href="{% url 'dashboard:departmentlist' %}" class="btn btn-secondary mt-3">Cancel</a>
-            </div>
+          <div class="flex mb-5 ms-3">
+            <button type="submit" class="btn btn-success mt-3">Submit</button>
+            <a href="{% url 'dashboard:departmentlist' %}" class="btn btn-secondary mt-3">Cancel</a>
+          </div>
         </form>
       </div>
     </div>

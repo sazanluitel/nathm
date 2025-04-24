@@ -83,9 +83,19 @@ class DepartmentForm(forms.ModelForm):
     })
     )
 
+    code = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control', 
+            'id': 'code', 
+            'placeholder': 'Enter departmnet code',
+            'oninput': "this.value = this.value.toUpperCase()"
+        }),
+        label='Campus Code'
+    )
+
     class Meta:
         model = Department
-        fields = ['name', 'image', 'campus', 'description']
+        fields = ['name','code', 'image', 'campus', 'description']
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'form-control', 
@@ -107,6 +117,16 @@ class ProgramForm(forms.ModelForm):
             'id': 'image',
             'placeholder': 'Choose the image'
         })
+    )
+
+    code = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control', 
+            'id': 'code', 
+            'placeholder': 'Enter program code',
+            'oninput': "this.value = this.value.toUpperCase()"
+        }),
+        label='Campus Code'
     )
 
     campus = forms.ModelMultipleChoiceField(
@@ -131,7 +151,7 @@ class ProgramForm(forms.ModelForm):
 
     class Meta:
         model = Program
-        fields = ['name', 'tenure', 'academic_plan', 'image', 'campus', 'department', 'description']
+        fields = ['name', 'code', 'tenure', 'academic_plan', 'image', 'campus', 'department', 'description']
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'form-control', 
