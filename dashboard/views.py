@@ -324,7 +324,7 @@ class ProgramAjax(View):
         output = []
         for department in obj.department.all():
             output.append(department.name)
-        return ", ".join(output)
+        return "<br>".join(output)
 
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
@@ -339,8 +339,9 @@ class ProgramAjax(View):
 
         if search_value:
             programs = programs.filter(
-                Q(name__icontains=search_value) | Q(description__icontains=search_value)
-            )
+                Q(name__icontains=search_value) | Q(description__icontains=search_value)|
+                Q(code__icontains=search_value) |Q(department__name__icontains=search_value)
+            ).distinct()
 
         programs = programs.order_by("name")
 
@@ -349,14 +350,10 @@ class ProgramAjax(View):
 
         data = []
         for program in page_menu_items:
-            campus_name = program.campus.name if program.campus else "N/A"
-            department_name = program.department.name if program.department else "N/A"
-
+          
             data.append(
                 [
                     program.name,
-                    program.tenure,
-                    program.academic_plan,
                     self.get_campuses(program),
                     self.get_department(program),
                     self.get_action(program.id),
@@ -439,6 +436,12 @@ class ModulesEdit(View):
         })
 
 class ModulesAjax(View):
+    def get_program(self, obj):
+        output = []
+        for program in obj.program.all():
+            output.append(program.name)
+        return "<br>".join(output)
+    
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
         start = int(request.GET.get("start", 0))
@@ -449,8 +452,8 @@ class ModulesAjax(View):
         modules = Modules.objects.all()
         if search_value:
             modules = modules.filter(
-                Q(name__icontains=search_value) | Q(description__icontains=search_value)
-            )
+                Q(name__icontains=search_value) | Q(code__icontains=search_value) | Q(program__name__icontains=search_value)
+            ).distinct()
 
         modules = modules.order_by("name")
 
@@ -464,7 +467,7 @@ class ModulesAjax(View):
                 [
                     module.name,
                     module.code,
-                    module.credit_hours,
+                    self.get_program(module),
                     self.get_action(module.id, syllabus),
                 ]
             )
