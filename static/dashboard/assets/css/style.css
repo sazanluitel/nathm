@@ -297,7 +297,7 @@
     --ps-sidebar-background: transparent;
     --ps-sidebar-color: #5b6b79;
     --ps-sidebar-color-rgb: 91, 107, 121;
-    --primary: rgba(27, 92, 156, 1);
+    --primary: rgba(156, 16, 6, 1);
     --ps-sidebar-shadow: none;
     --ps-sidebar-caption-color: #3e4853;
     --ps-sidebar-border: 1px dashed #bec8d0;
@@ -4421,4 +4421,13 @@ body .fc-daygrid-dot-event button {
 
 body .fc-daygrid-dot-event button i {
     font-size: 12px;
+}
+
+.logout-btn{
+    background-color: var(--primary); 
+    color:white;
+}
+.logout-btn:hover{
+    background-color: var(--primary); 
+    color:white;;
 }
