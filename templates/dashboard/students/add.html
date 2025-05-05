@@ -162,17 +162,25 @@
                         </div>
                         <div class="row">
                             <div class="col-md-7">
-                                <div class="col-md-12 mb-3">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
                                     <label for="{{ form.personal_info_form.date_of_birth_in_ad.id_for_label }}"
-                                           class="form-label">Date of Birth:</label>
+                                           class="form-label">Date of Birth(AD):</label>
                                     {{ form.personal_info_form.date_of_birth_in_ad }}
                                     {% include "parts/error.html" with errors=form.personal_info_form.date_of_birth_in_ad.errors %}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.personal_info_form.date_of_birth_in_bs.id_for_label }}"
+                                           class="form-label">Date of Birth(BS):</label>
+                                    {{ form.personal_info_form.date_of_birth_in_bs }}
+                                    {% include "parts/error.html" with errors=form.personal_info_form.date_of_birth_in_bs.errors %}
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <label for="{{ form.personal_info_form.citizenship_number.id_for_label }}"
                                            class="form-label">Citizenship Number:</label>
                                     {{ form.personal_info_form.citizenship_number }}
                                     {% include "parts/error.html" with errors=form.personal_info_form.citizenship_number.errors %}
+                                </div>
                                 </div>
                             </div>
                             <div class="col-md-5">

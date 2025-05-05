@@ -36,7 +36,15 @@
                     fineEle.closest(".ps-item").addClass("active");
                 }
             }
+
+            setTimeout(function () {
+                const element = fineEle[0];
+                if (element && typeof element.scrollIntoView === "function") {
+                    element.scrollIntoView({ behavior: "smooth", block: "center" });
+                }
+            }, 300);
         }
+
     });
 
 
@@ -561,7 +569,32 @@
             });
         }
     });
+    $(document).ready(function () {
+        const $adInput = $('#date_of_birth_in_ad');
+        const $bsInput = $('#date_of_birth_in_bs');
 
+        $adInput.on('change', function () {
+            const adValue = $adInput.val();
+            if (adValue) {
+                $.get('/api/convert-date/', { ad: adValue }, function (data) {
+                    if (data.bs) {
+                        $bsInput.val(data.bs);
+                    }
+                });
+            }
+        });
+
+        $bsInput.on('change', function () {
+            const bsValue = $bsInput.val();
+            if (bsValue) {
+                $.get('/api/convert-date/', { bs: bsValue }, function (data) {
+                    if (data.ad) {
+                        $adInput.val(data.ad);
+                    }
+                });
+            }
+        });
+    });
 })(jQuery);
 
 

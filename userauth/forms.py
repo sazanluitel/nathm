@@ -110,7 +110,16 @@ class UserForm(forms.ModelForm):
 class PersonalInfoForm(forms.ModelForm):
     class Meta:
         model = PersonalInfo
-        fields = ['citizenship_number', 'gender', 'date_of_birth_in_ad', 'citizenship_img']
+        fields = [
+            'citizenship_number',
+            'gender',
+            'date_of_birth_in_ad',
+            'date_of_birth_in_bs',
+            'citizenship_img',
+            'permanent_address',
+            'temporary_address',
+            'emergency_contact',
+        ]
         widgets = {
             'citizenship_number': forms.TextInput(
                 attrs={'class': 'form-control', 'id': 'citizenship_number', 'placeholder': 'Citizenship Number'}),
@@ -119,6 +128,9 @@ class PersonalInfoForm(forms.ModelForm):
             'date_of_birth_in_ad': forms.DateInput(
                 attrs={'class': 'form-control', 'id': 'date_of_birth_in_ad', 'type': 'date',
                        'placeholder': 'Date of Birth'}),
+            'date_of_birth_in_bs': forms.DateInput(
+                attrs={'class': 'form-control', 'id': 'date_of_birth_in_bs', 'type': 'date',
+                       'placeholder': 'Date of Birth BS'}),
             'citizenship_img': forms.TextInput(
                 attrs={'class': 'form-control', 'id': 'citizenship_img', 'placeholder': 'Citizenship Image URL'}),
         }
