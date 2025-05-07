@@ -31,8 +31,6 @@ from django.utils.encoding import force_bytes
 from mail.helpers import EmailHelper
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import update_session_auth_hash
-import nepali_datetime
-from datetime import date
 
 class LoginView(View):
     def post(self, request, *args, **kwargs):
@@ -596,28 +594,3 @@ class RolesAjaxView(View):
             </form>
         '''
 
-def convert_date(request):
-    ad = request.GET.get('ad')
-    bs = request.GET.get('bs')
-
-    if ad:
-        try:
-            y, m, d = map(int, ad.split('-'))
-            nep_date = nepali_datetime.date.from_datetime_date(date(y, m, d))
-            return JsonResponse({
-                'bs': f'{nep_date.year}-{nep_date.month:02d}-{nep_date.day:02d}'
-            })
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-
-    if bs:
-        try:
-            y, m, d = map(int, bs.split('-'))
-            ad_date = nepali_datetime.date(y, m, d).to_datetime_date()
-            return JsonResponse({
-                'ad': ad_date.strftime('%Y-%m-%d')
-            })
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-
-    return JsonResponse({'error': 'Invalid parameters'}, status=400)

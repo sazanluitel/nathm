@@ -75,6 +75,7 @@ class StudentView(View):
             try:
                 form.save()
                 messages.success(request, "Student added/updated successfully")
+                
                 return redirect("student_admin:list")
             except Exception as e:
                 messages.error(request, f"An error occurred while saving: {e}")

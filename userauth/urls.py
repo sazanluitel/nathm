@@ -10,7 +10,6 @@ from userauth.views import (
     QRView,
     LandingPage,
     DashboardView,
-    convert_date,
 )
 
 app_name = "userauth"
@@ -27,5 +26,4 @@ urlpatterns = [
     path('', LandingPage.as_view(), name='index'),
     path('admin/', DashboardView.as_view(), name='dashboard'),
 
-    path("api/convert-date/", convert_date, name="convert_date"),
 ]

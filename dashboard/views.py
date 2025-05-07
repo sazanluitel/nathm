@@ -490,6 +490,8 @@ class ModulesAjax(View):
         
         view_file = ""
         if syllabus and syllabus.file:
+            syllabus_btn = f'<button type="button" class="btn btn-primary btn-sm" onclick="openSyllabusModal({module_id})">Replace Syllabus</button>'
+
             view_file = f'''
                 <a href="{syllabus.file.url}" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer">
                     View File
@@ -512,6 +514,7 @@ class ModulesAjax(View):
 
 class AddSyllabusView(View):
     def post(self, request, *args, **kwargs):
+
         file = request.FILES.get('syllabus_file')
         module_id = request.POST.get('module_id')
 
@@ -525,10 +528,17 @@ class AddSyllabusView(View):
             messages.error(request, "Module not found.")
             return redirect('dashboard:moduleslist')
 
-        syllabus = Syllabus(modules=module, file=file)
-        syllabus.save()
+        syllabus = Syllabus.objects.filter(modules=module).first()
 
-        messages.success(request, "Syllabus added successfully.")
+        if syllabus:
+            syllabus.file = file
+            syllabus.save()
+            messages.success(request, "Syllabus replaced successfully.")
+        else:
+           Syllabus.objects.create(modules=module, file=file)
+           messages.success(request, "Syllabus added successfully.")
+           return redirect('dashboard:moduleslist')
+
         return redirect('dashboard:moduleslist')
 
 

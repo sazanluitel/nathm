@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db.models import Max
-import nepali_datetime
-from datetime import date
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -200,7 +198,7 @@ class PersonalInfo(models.Model):
         max_length=6, choices=GENDER_CHOICES, null=True, blank=True
     )
     date_of_birth_in_ad = models.DateField(null=True, blank=True)
-    date_of_birth_in_bs = models.CharField(max_length=10, null=True, blank=True)  # e.g. 2080-01-01
+    date_of_birth_in_bs = models.TextField(null=True, blank=True)
     citizenship_img = models.TextField(null=True, blank=True)
     permanent_address = models.ForeignKey(
         AddressInfo,
@@ -220,23 +218,6 @@ class PersonalInfo(models.Model):
         EmergencyContact, on_delete=models.CASCADE, null=True, blank=True
     )
     
-    def save(self, *args, **kwargs):
-        # Convert only if one is missing
-        if self.date_of_birth_in_ad and not self.date_of_birth_in_bs:
-            try:
-                dob_nepali = nepali_datetime.date.from_datetime_date(self.date_of_birth_in_ad)
-                self.date_of_birth_in_bs = f"{dob_nepali.year}-{dob_nepali.month:02d}-{dob_nepali.day:02d}"
-            except Exception:
-                pass
-
-        elif self.date_of_birth_in_bs and not self.date_of_birth_in_ad:
-            try:
-                year, month, day = map(int, self.date_of_birth_in_bs.split("-"))
-                self.date_of_birth_in_ad = nepali_datetime.date(year, month, day).to_datetime_date()
-            except Exception:
-                pass
-
-        super().save(*args, **kwargs)
 
 
 class Sections(models.Model):
