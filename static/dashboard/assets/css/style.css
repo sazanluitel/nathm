@@ -4431,3 +4431,12 @@ body .fc-daygrid-dot-event button i {
     background-color: var(--primary); 
     color:white;;
 }
+.login-btn {
+    background-color: rgba(156, 16, 6, 1);
+    color: white;
+}
+
+.login-btn:hover {
+    background-color: rgba(156, 16, 6, 1);
+    color: white;
+}

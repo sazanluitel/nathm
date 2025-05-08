@@ -5,42 +5,42 @@
 {% block maintitle %}Users {% if role_title %}({{ role_title }}){% endif %}{% endblock %}
 
 {% block content %}
-    <div class="col-lg-4">
-        <div class="card">
-            <div class="card-header">Add User {% if role_title %}({{ role_title }}){% endif %}</div>
-            <div class="card-body">
-                {% with messages=messages %}
-                    {% include 'dashboard/alert.html' %}
-                {% endwith %}
+<div class="col-lg-4">
+    <div class="card">
+        <div class="card-header">Add User {% if role_title %}({{ role_title }}){% endif %}</div>
+        <div class="card-body">
+            {% with messages=messages %}
+            {% include 'dashboard/alert.html' %}
+            {% endwith %}
 
-                <form method="POST">
-                    {% csrf_token %}
+            <form method="POST">
+                {% csrf_token %}
 
-                    {{ form.as_p }}
+                {{ form.as_p }}
 
-                    <button type="submit" class="btn btn-primary w-100">{% if form.instance.id %}Update User{% else %}Add User{% endif %}</button>
-                </form>
-            </div>
+                <button type="submit" class="btn login-btn btn-block w-100">{% if form.instance.id %}Update User{% else
+                    %}Add
+                    User{% endif %}</button>
+            </form>
         </div>
     </div>
+</div>
 
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header">List of users {% if role_title %}({{ role_title }}){% endif %}</div>
-            <div class="card-body">
-                <table
-                        class="table ajaxdatatable table-bordered"
-                        data-ajax="{% url "userauth_urls:rolesajax" role=role %}"
-                >
-                    <thead>
+<div class="col-lg-8">
+    <div class="card">
+        <div class="card-header">List of users {% if role_title %}({{ role_title }}){% endif %}</div>
+        <div class="card-body">
+            <table class="table ajaxdatatable table-bordered" data-ajax="{% url " userauth_urls:rolesajax" role=role
+                %}">
+                <thead>
                     <tr>
                         <th>Full Name</th>
                         <th>email</th>
                         <th>Actions</th>
                     </tr>
-                    </thead>
-                </table>
-            </div>
+                </thead>
+            </table>
         </div>
     </div>
+</div>
 {% endblock %}
