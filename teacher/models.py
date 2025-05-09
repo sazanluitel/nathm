@@ -31,12 +31,12 @@ class Teacher(models.Model):
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
-    program = models.ForeignKey(Program, on_delete=models.CASCADE)
-    modules = models.ManyToManyField(Modules)
+    campus = models.ManyToManyField(Campus, blank=True)
+    department = models.ManyToManyField(Department, blank=True)
+    program = models.ManyToManyField(Program, blank=True)
+    modules = models.ManyToManyField(Modules, blank=True)
     personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE)
-    shift = models.CharField(max_length=100, choices=SHIFT_CHOICES)
+    shift = models.CharField(max_length=100, choices=SHIFT_CHOICES, blank=True)
     category = models.CharField(max_length=100, choices=CATEGORy)
     position = models.CharField(max_length=100, choices= POSITION_CHOICES)
     section = models.ManyToManyField(Sections, blank=True)

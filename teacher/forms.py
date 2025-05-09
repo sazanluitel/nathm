@@ -2,64 +2,92 @@ from django import forms
 from django.db import transaction
 from teacher.models import Teacher
 from userauth.forms import UserForm, PersonalInfoForm, AddressInfoForm, EducationHistoryForm, EnglishTestForm, \
-    EmploymentHistoryForm
-
+    EmploymentHistoryForm, Sections
+from dashboard.models import *
 from django import forms
 from .models import Teacher
 
 
 class TeacherForm(forms.ModelForm):
+    campus = forms.ModelMultipleChoiceField(
+        queryset=Campus.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-control w-100',
+            'id': 'campus-select',
+            'data-placeholder': 'Select campus',
+        }),
+        required=False
+    )
+
+    department = forms.ModelMultipleChoiceField(
+        queryset=Department.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-control',
+            'id': 'department',
+            'data-placeholder': 'Select department'
+        }),
+        required=False
+    )
+
+    program = forms.ModelMultipleChoiceField(
+        queryset=Program.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-control',
+            'id': 'program',
+            'data-placeholder': 'Select program'
+        }),
+        required=False
+    )
+
+    modules = forms.ModelMultipleChoiceField(
+        queryset=Modules.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-control',
+            'id': 'modules',
+            'data-placeholder': 'Select modules'
+        }),
+        required=False
+    )
+
+    section = forms.ModelMultipleChoiceField(
+        queryset=Sections.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'class': 'form-control',
+            'id': 'section',
+            'data-placeholder': 'Select section'
+        }),
+        required=False
+    )
+    
+    date_joined = forms.DateField(
+        widget=forms.DateInput(attrs={
+            'class': 'form-control',
+            'type': 'date',
+            'id': 'date_joined',
+        })
+    )
+
     class Meta:
         model = Teacher
-        fields = ['campus', 'department', 'program', 'shift', 'section', 'date_joined', 'modules', 'position', 'category']
+        fields = ['campus', 'department', 'program', 'section', 'date_joined', 'modules', 'position', 'category', 'shift']
         widgets = {
-            'campus': forms.Select(attrs={
+            'position': forms.Select(attrs={
                 'class': 'form-control',
-                'id': 'campus',
-                'data-placeholder': 'Select any campus',
+                'id': 'position',
+                'data-placeholder': 'Select position'
             }),
-            'department': forms.Select(attrs={
+            'category': forms.Select(attrs={
                 'class': 'form-control',
-                'id': 'department',
-                'data-placeholder': 'Select a department'
-            }),
-            'program': forms.Select(attrs={
-                'class': 'form-control',
-                'id': 'program',
-                'data-placeholder': 'Select a program'
-            }),
-            'modules': forms.SelectMultiple(attrs={
-                'class': 'form-control',
-                'id': 'modules',
-                'data-placeholder': 'Select modules'
-            }),
-            'section': forms.SelectMultiple(attrs={
-                'class': 'form-control',
-                'id': 'section',
-                'data-placeholder': 'Select section'
+                'id': 'category',
+                'data-placeholder': 'Select category'
             }),
             'shift': forms.Select(attrs={
                 'class': 'form-control',
                 'id': 'shift',
                 'data-placeholder': 'Select a shift'
             }),
-            'date_joined': forms.DateInput(attrs={
-                'class': 'form-control',
-                'id': 'date_joined',
-                'type': 'date',
-                'placeholder': 'Choose the date',
-            }),
-            'position': forms.Select(attrs={
-                'class': 'form-control',
-                'id': 'position',
-                'data-placeholder': 'Select a position'
-            }),
-             'category': forms.Select(attrs={
-                'class': 'form-control',
-                'id': 'category',
-                'data-placeholder': 'Select a category'
-            }),
         }
+
 
 
 class TeacherAddForm:
@@ -90,8 +118,10 @@ class TeacherAddForm:
                 if commit:
                     user.save()
 
-                # Save Address Info
-                address_info = self.address_info_form.save()
+                # Save Address
+                address_info = self.address_info_form.save(commit=False)
+                if commit:
+                    address_info.save()
 
                 # Save Personal Info
                 personal_info = self.personal_info_form.save(commit=False)
@@ -100,21 +130,19 @@ class TeacherAddForm:
                 if commit:
                     personal_info.save()
 
-                # Save the Teacher instance
+                # Save Teacher
                 teacher = self.teacher_form.save(commit=False)
                 teacher.user = user
                 teacher.personal_info = personal_info
-
                 if commit:
                     teacher.save()
 
-                # Save ManyToManyField (modules) after the Teacher instance is saved
-                self.teacher_form.save_m2m()  # This saves the selected modules
+                # Save M2M relations
+                self.teacher_form.save_m2m()
 
                 return teacher
 
         except Exception as e:
-            # Handle or log the error as necessary
             print(f"Error while saving: {e}")
             return None
 

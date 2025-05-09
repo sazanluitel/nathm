@@ -6,12 +6,12 @@ Staff
 Staff
 {% endblock %}
 {% block maintitle %}
-Staff
+Teachers
 {% endblock %}
 
 {% block rightbutton %}
 <div class="d-flex justify-content-end mb-2">
-  <a href="{% url 'teacher:add' %}" class="btn btn-primary mt-3">Add New Staff</a>
+  <a href="{% url 'teacher:add' %}" class="btn btn-primary mt-3">Add New Teacher</a>
 </div>
 {% endblock %}
 
@@ -39,7 +39,7 @@ Staff
         data-nodata="No Data Found">
         <thead>
           <tr>
-            <th>Teachers</th>
+            <th>Teacher Name</th>
             <th>Department</th>
             <th>Program</th>
             <th>Actions</th>

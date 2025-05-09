@@ -23,15 +23,19 @@ class TeacherAddView(View):
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
-        # Initialize form with POST data and any files (if applicable)
         form = TeacherAddForm(data=request.POST, files=request.FILES)
         
         if form.is_valid():
             try:
-                # Save the form and commit the changes
-                form.save()
-                messages.success(request, "Teacher added successfully")
+                # Save the form and get the teacher instance
+                teacher = form.save()
+                messages.success(request, "Staff added successfully")
+
+                # 👇 Redirect based on teacher.category
+                if teacher.category == 'administrative':
+                    return redirect('teacher:stafflist')
                 return redirect('teacher:list')
+
             except Exception as e:
                 messages.error(request, f"An error occurred while saving: {e}")
         else:
@@ -54,6 +58,7 @@ class TeacherAddView(View):
             if not form_instance.is_valid():
                 for field, errors in form_instance.errors.items():
                     print(f"Errors for {form_name} - {field}: {errors}")
+
                     
 class TeacherList(View):
     def get(self, request, *args, **kwargs):
@@ -116,20 +121,23 @@ class TeacherEditView(View):
         english_test_form = EnglishTestForm()
         employment_history_form = EmploymentHistoryForm()
 
-        old_email = teacher.user.email  # Store old email before update
+        old_email = teacher.user.email
 
         form = TeacherEditForm(data=request.POST, files=request.FILES, instance=teacher, personalinfo_instance=personalinfo)
 
         if form.is_valid():
             form.save()
 
-            new_email = teacher.user.email  
-
+            new_email = teacher.user.email
             if new_email and (not old_email or old_email != new_email) and teacher.user:
                 WelcomeMessage(teacher.user, email_changed=bool(old_email), old_email=old_email).send()
 
-            messages.success(request, "Teacher updated successfully")
+            messages.success(request, "Staff updated successfully")
+
+            if teacher.category == 'administrative':
+                return redirect('teacher:stafflist')
             return redirect('teacher:list')
+
         else:
             messages.error(request, "Please correct the errors below.")
 
@@ -142,6 +150,18 @@ class TeacherEditView(View):
         })
 
 class TeacherAjax(View):
+    
+    def get_programs(self, obj):
+        output = []
+        for program in obj.program.all():
+            output.append(program.name)
+        return ", ".join(output)
+    def get_department(self, obj):
+        output = []
+        for department in obj.department.all():
+            output.append(department.name)
+        return ", ".join(output)
+
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
         start = int(request.GET.get("start", 0))
@@ -153,7 +173,7 @@ class TeacherAjax(View):
 
         page_number = (start // length) + 1
 
-        teachers = Teacher.objects.select_related('department', 'program', 'personal_info', 'user').prefetch_related('modules').filter(user__role='teacher').order_by("-id")        
+        teachers = Teacher.objects.select_related('personal_info', 'user').prefetch_related('department', 'program', 'modules').filter(user__role='teacher').order_by("-id")
         if department_id:
             teachers = teachers.filter(department_id=department_id)
         if modules_id:
@@ -181,8 +201,8 @@ class TeacherAjax(View):
             modules = ', '.join([module.name for module in teacher.modules.all()])
             data.append([
                 teacher.user.get_full_name() + '<br />' + teacher.user.email,
-                teacher.department.name if teacher.department else "",
-                teacher.program.name if teacher.program else "",
+                self.get_department(teacher),
+                self.get_programs(teacher),
                 self.get_action(teacher)
             ])
 
@@ -195,9 +215,14 @@ class TeacherAjax(View):
 
     def get_action(self, teacher):
         teacher_id = teacher.id
-        edit_url = reverse('teacher:edit', kwargs={'id': teacher_id})
+
+        if teacher.category == 'administrative':
+            backurl = reverse('teacher:stafflist')
+        else:
+            backurl = reverse('teacher:list')
+
+        edit_url = f"{reverse('teacher:edit', kwargs={'id': teacher_id})}?_back_url={backurl}"
         delete_url = reverse('generic:delete')
-        backurl = reverse('teacher:list')
 
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
@@ -208,9 +233,19 @@ class TeacherAjax(View):
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
         '''
-    
 
 class StaffAjax(View):
+    def get_programs(self, obj):
+        output = []
+        for program in obj.program.all():
+            output.append(program.name)
+        return ", ".join(output)
+    def get_department(self, obj):
+        output = []
+        for department in obj.department.all():
+            output.append(department.name)
+        return ", ".join(output)
+    
     def get(self, request, *args, **kwargs):
         draw = int(request.GET.get("draw", 1))
         start = int(request.GET.get("start", 0))
@@ -222,9 +257,7 @@ class StaffAjax(View):
 
         page_number = (start // length) + 1
 
-        teachers = Teacher.objects.select_related('department', 'program', 'personal_info', 'user').prefetch_related('modules').exclude(user__role="teacher").order_by("-id")
-
-
+        teachers = Teacher.objects.select_related('personal_info', 'user').prefetch_related('department', 'program', 'modules').exclude(user__role="teacher").order_by("-id")
         if department_id:
             teachers = teachers.filter(department_id=department_id)
         if modules_id:
@@ -252,8 +285,8 @@ class StaffAjax(View):
             modules = ', '.join([module.name for module in teacher.modules.all()])
             data.append([
                 teacher.user.get_full_name() + '<br />' + teacher.user.email,
-                teacher.department.name if teacher.department else "",
-                teacher.program.name if teacher.program else "",
+                self.get_department(teacher),
+                self.get_programs(teacher),
                 self.get_action(teacher)
             ])
 
@@ -266,9 +299,14 @@ class StaffAjax(View):
 
     def get_action(self, teacher):
         teacher_id = teacher.id
-        edit_url = reverse('teacher:edit', kwargs={'id': teacher_id})
+
+        if teacher.category == 'administrative':
+            backurl = reverse('teacher:stafflist')
+        else:
+            backurl = reverse('teacher:list')
+
+        edit_url = f"{reverse('teacher:edit', kwargs={'id': teacher_id})}?_back_url={backurl}"
         delete_url = reverse('generic:delete')
-        backurl = reverse('teacher:list')
 
         return f'''
             <form method="post" action="{delete_url}" class="button-group">
@@ -279,7 +317,6 @@ class StaffAjax(View):
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
             </form>
         '''
-    
     
 class EducationalHistoryJson(View):
     def get(self, request, *args, **kwargs):
